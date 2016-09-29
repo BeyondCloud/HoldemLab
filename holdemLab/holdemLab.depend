@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1474697833 source:c:\users\a1989\desktop\holdemlab\src\gameengine.cpp
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<vector>
+	<iostream>
+	<algorithm>
+
+1475142357 source:c:\users\administrator\desktop\holdemlab\src\gameengine.cpp
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<vector>
+	<iostream>
+	<algorithm>
+
