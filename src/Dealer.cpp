@@ -7,7 +7,7 @@ Dealer::Dealer()
 {
     srand(time(0));
     //new deck
-    card c;
+    card_t c;
     for(int i = 2;i<=14;i++)
     {
         for(int j = 0;j<4;j++)
@@ -29,24 +29,19 @@ Dealer::Dealer()
 //type 7 full house
 //type 8 quad
 //type 9 straight flush
-strength_t Dealer::judge(vector<card> &c)
+strength_t Dealer::judge(vector<card_t> &c)
 {
-    card hole[2] = {c[0],c[1]};
+    card_t hole[2] = {c[0],c[1]};
     strength_t strength;
 
     sort(c.begin(),c.end(),Greater());
-
-//    for(int i=0;i<7;i++)
-//        print_card(c[i]);
 
     //pair , set, quad
     int same = 0;
     int prev_val = 0;
     vector<int> pairs;
     int SET = 0;
-
     int straight = 0;
-
     int suit[4] = {0};
     int flush = 0;
     for(int i=0;i<7;i++)
@@ -220,7 +215,7 @@ strength_t Dealer::judge(vector<card> &c)
 }
 //return the top card of straight if it is
 //else return 0
-int Dealer::check_straight(vector<card> c)
+int Dealer::check_straight(vector<card_t> c)
 {
     int straight_cnt = 0;
     int prev_val = 0;

@@ -5,15 +5,15 @@ class Dealer
 {
     public:
         Dealer();
-        vector<card> deck;
-        vector<card> cards7;
+        vector<card_t> deck;
+        vector<card_t> cards7;
         strength_t strength;
-        strength_t judge(vector<card> &c);
+        strength_t judge(vector<card_t> &c);
     private:
 
-        int check_straight(vector<card> c);
+        int check_straight(vector<card_t> c);
         void new_deck();
         void shuffle();
-        vector<card> cardsFlush;
+        vector<card_t> cardsFlush;
 };
 #endif

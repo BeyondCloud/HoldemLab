@@ -2,7 +2,7 @@
 #define MYSTRUCT_H
 #include <vector>
 using namespace std;
-struct card
+struct card_t
 {
     int val;
     int suit;
@@ -12,9 +12,10 @@ struct strength_t
     int type;
     vector<int> kicker;
 };
+
 struct Greater
 {
-    bool operator()( const card& l, const card& r ) const {
+    bool operator()( const card_t& l, const card_t& r ) const {
         return l.val < r.val;
     }
 };
