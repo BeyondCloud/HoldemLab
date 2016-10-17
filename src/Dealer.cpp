@@ -1,41 +1,12 @@
-#include <stdio.h>      /* printf, scanf, puts, NULL */
-#include <stdlib.h>     /* srand, rand */
+#include "Dealer.h"
 #include <time.h>       /* time */
-#include <vector>
-#include <iostream>
+#include <stdlib.h>     /* srand, rand */
 #include <algorithm>
-#define ROUND 10
-#define PLAYERS 2
-using namespace std;
-struct card
+#include <vector>
+Dealer::Dealer()
 {
-    int val;
-    int suit;
-};
-struct strength_t
-{
-    int type;
-    vector<int>kicker;
-};
-vector<card> deck;
-vector<card> cards7;
-vector<card> cardsFlush;
-const char card_val[15] = {'\0','\0','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
-const char card_suit[4] = {'c','d','h','s'};
-struct Greater
-{
-    bool operator()( const card& l, const card& r ) const {
-        return l.val < r.val;
-    }
-};
-struct int_Greater
-{
-    bool operator()( const int& l, const int& r ) const {
-        return l < r;
-    }
-};
-void new_deck()
-{
+    srand(time(0));
+    //new deck
     card c;
     for(int i = 2;i<=14;i++)
     {
@@ -46,37 +17,7 @@ void new_deck()
             deck.push_back(c);
         }
     }
-}
-void print_card(card c)
-{
-    cout<<card_val[c.val];
-    cout<<card_suit[c.suit]<<endl;
-}
-//return the top card of straight if it is
-//else return 0
-int check_straight(vector<card> c)
-{
-    int straight_cnt = 0;
-    int prev_val = 0;
-
-
-    if(c.back().val == 14)
-        prev_val = 1;
-
-    for(unsigned int i=0;i<c.size();i++)
-    {
-        if(c[i].val-prev_val == 1)
-            straight_cnt++;
-        else if(c[i].val-prev_val > 1)
-        {
-            if(straight_cnt >= 4)
-                return c[i].val;
-            else
-                straight_cnt = 0;
-        }
-        prev_val = c[i].val;
-    }
-    return 0;
+    shuffle();
 }
 //input 2 hole card + 5 community card
 //type 1 high card
@@ -88,7 +29,7 @@ int check_straight(vector<card> c)
 //type 7 full house
 //type 8 quad
 //type 9 straight flush
-strength_t judge(vector<card> c)
+strength_t Dealer::judge(vector<card> &c)
 {
     card hole[2] = {c[0],c[1]};
     strength_t strength;
@@ -105,12 +46,9 @@ strength_t judge(vector<card> c)
     int SET = 0;
 
     int straight = 0;
-    int straight_cnt = 0;
 
     int suit[4] = {0};
     int flush = 0;
-    bool isFlush = false;
-    int straightFlush = 0;
     for(int i=0;i<7;i++)
     {
         suit[c[i].suit]++;
@@ -120,7 +58,6 @@ strength_t judge(vector<card> c)
     {
         if(suit[i] >=5 )
         {
-            isFlush = true;
             cardsFlush.clear();
             if(hole[0].suit == i)
                 flush = c[0].val;
@@ -280,35 +217,34 @@ strength_t judge(vector<card> c)
         strength.kicker.push_back(c[2].val);
         return strength;
     }
-
-
 }
-int main ()
+//return the top card of straight if it is
+//else return 0
+int Dealer::check_straight(vector<card> c)
 {
-    new_deck();
-    srand(time(0));
-    strength_t strength;
-    int record[10] = {0};
+    int straight_cnt = 0;
+    int prev_val = 0;
 
-    for(int cnt =0;cnt<1000;cnt++)
+
+    if(c.back().val == 14)
+        prev_val = 1;
+
+    for(unsigned int i=0;i<c.size();i++)
     {
-        random_shuffle(deck.begin(),deck.end());
-        cards7.clear();
-        for(int i=0;i<7;i++)
+        if(c[i].val-prev_val == 1)
+            straight_cnt++;
+        else if(c[i].val-prev_val > 1)
         {
-            cards7.push_back(deck[i]);
+            if(straight_cnt >= 4)
+                return c[i].val;
+            else
+                straight_cnt = 0;
         }
-        strength=judge(cards7);
-        record [strength.type]++;
+        prev_val = c[i].val;
     }
-
-    for(int i =1;i<=9;i++)
-        cout<<"type"<<i<<" "<<record[i]<<endl;
-
-
-//    cout<<"type"<<strength.type;
-
-
-  return 0;
+    return 0;
 }
-
+void Dealer::shuffle()
+{
+    random_shuffle(deck.begin(),deck.end());
+}
