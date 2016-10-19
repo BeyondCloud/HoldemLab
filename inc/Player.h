@@ -10,6 +10,7 @@ class Player
         Player *next;
         Player *prev;
         strength_t strength;
-        int ID;
+        unsigned int chip;
+        unsigned int ID;
 };
 #endif

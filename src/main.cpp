@@ -7,7 +7,7 @@
 #include "myDefine.h"
 #include "Dealer.h"
 #include "Player.h"
-#include "PlayerMgr.h"
+#include "PositionMgr.h"
 
 using namespace std;
 const char card_val[15] = {'\0','\0','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
@@ -27,7 +27,7 @@ int main ()
 {
     Dealer dealer;
     Player players[PLAYERS];
-    PlayerMgr playerMgr(players);
+    PositionMgr PositionMgr(players);
     for(int i=0;i<PLAYERS;i++)
     {
         players[i].ID=i;
@@ -74,6 +74,15 @@ int main ()
             cout<<players[i].strength.kicker[j]<<" ";
 
     }
+    cout<<PositionMgr.btn->ID<<endl;
+    cout<<PositionMgr.sb->ID<<endl;
+    cout<<PositionMgr.bb->ID<<endl;
+    PositionMgr.new_round();
+    cout<<PositionMgr.btn->ID<<endl;
+    cout<<PositionMgr.sb->ID<<endl;
+    cout<<PositionMgr.bb->ID<<endl;
+
+
 
 //    for(int i=0;i<PLAYERS;i++)
 //    {
@@ -81,7 +90,7 @@ int main ()
 //        cout<<players[i].next->ID<<endl;
 //
 //    }
-//    playerMgr.out(players[2]);
+//    PositionMgr.out(players[2]);
 //    for(int i=0;i<PLAYERS;i++)
 //    {
 //        cout<<players[i].prev->ID<<" ";
