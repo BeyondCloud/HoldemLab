@@ -29,9 +29,9 @@ Dealer::Dealer()
 //type 7 full house
 //type 8 quad
 //type 9 straight flush
-strength_t Dealer::judge(vector<card_t> &c)
+strength_t Dealer::judge(vector<card_t> c)
 {
-    card_t hole[2] = {c[0],c[1]};
+    const card_t hole[2] = {c.end()[-1],c.end()[-2]};
     strength_t strength;
 
     sort(c.begin(),c.end(),Greater());
@@ -55,9 +55,9 @@ strength_t Dealer::judge(vector<card_t> &c)
         {
             cardsFlush.clear();
             if(hole[0].suit == i)
-                flush = c[0].val;
+                flush = hole[0].val;
             if(hole[1].suit == i && hole[1].val > flush)
-                flush = c[1].val;
+                flush = hole[1].val;
             for(int j=0;j<7;j++)
             {
                 if(c[j].suit == i)
@@ -157,11 +157,10 @@ strength_t Dealer::judge(vector<card_t> &c)
         strength.type = 3;
         sort(pairs.begin(),pairs.end(),int_Greater());
         strength.kicker.push_back(pairs.back());
-        pairs.pop_back();
-        strength.kicker.push_back(pairs.back());
-        if(c[6].val == pairs[0])
+        strength.kicker.push_back(pairs.end()[-2]);
+        if(c[6].val == pairs.back())
         {
-            if(c[4].val == pairs[1])
+            if(c[4].val == pairs.end()[-2])
                 strength.kicker.push_back(c[2].val);
             else
                 strength.kicker.push_back(c[4].val);
@@ -177,9 +176,8 @@ strength_t Dealer::judge(vector<card_t> &c)
         strength.kicker.push_back(pairs.back());
         if(c[6].val == pairs.back())
         {
-            strength.kicker.push_back(c[4].val);
-            strength.kicker.push_back(c[3].val);
-            strength.kicker.push_back(c[2].val);
+            for(int i=4;i>=2;i--)
+                strength.kicker.push_back(c[i].val);
         }
         else if(c[5].val == pairs.back())
         {
@@ -195,9 +193,8 @@ strength_t Dealer::judge(vector<card_t> &c)
         }
         else
         {
-            strength.kicker.push_back(c[6].val);
-            strength.kicker.push_back(c[5].val);
-            strength.kicker.push_back(c[4].val);
+            for(int i=6;i>=4;i--)
+                strength.kicker.push_back(c[i].val);
         }
         return strength;
     }
@@ -205,11 +202,8 @@ strength_t Dealer::judge(vector<card_t> &c)
     else
     {
         strength.type = 1;
-        strength.kicker.push_back(c[6].val);
-        strength.kicker.push_back(c[5].val);
-        strength.kicker.push_back(c[4].val);
-        strength.kicker.push_back(c[3].val);
-        strength.kicker.push_back(c[2].val);
+        for(int i=6;i>=2;i--)
+            strength.kicker.push_back(c[i].val);
         return strength;
     }
 }
@@ -231,7 +225,7 @@ int Dealer::check_straight(vector<card_t> c)
         else if(c[i].val-prev_val > 1)
         {
             if(straight_cnt >= 4)
-                return c[i].val;
+                return c[i-1].val;
             else
                 straight_cnt = 0;
         }

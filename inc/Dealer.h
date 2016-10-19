@@ -8,7 +8,7 @@ class Dealer
         vector<card_t> deck;
         vector<card_t> cards7;
         strength_t strength;
-        strength_t judge(vector<card_t> &c);
+        strength_t judge(vector<card_t> c);
     private:
 
         int check_straight(vector<card_t> c);
