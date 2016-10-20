@@ -1,37 +1,33 @@
 #include "PositionMgr.h"
 #include "myStruct.h"
 #include "myDefine.h"
-PositionMgr::PositionMgr(Player (&players)[PLAYERS])
+#include <iostream>
+void out_ring(Player *player)
 {
-    init_players_ring(players);
-    new_round(players[0]);
-
-
+    player->next->prev = player->prev;
+    player->prev->next = player->next;
 }
-void PositionMgr::out(Player player)
-{
-    player.next->prev = player.prev;
-    player.prev->next = player.next;
-
-}
-void PositionMgr::init_players_ring(Player (&players)[PLAYERS])
+void init_players_ring(Player (&players)[PLAYERS])
 {
     for(int i=0;i<PLAYERS;i++)
     {
        players[i].next = &players[i==PLAYERS-1?0:i+1];
        players[i].prev = &players[i==0?PLAYERS-1:i-1];
     }
-
 }
-void PositionMgr::new_round(Player &player)
+position_t set_btn(Player *player,position_t position)
 {
-    btn = &player;
-    sb = btn->next;
-    bb = sb->next;
+    position.btn = player;
+    position.sb = position.btn->next;
+    position.bb = position.sb->next;
+    return position;
 }
-void PositionMgr::new_round()
+position_t new_round(position_t position)
 {
-    btn = btn->next;
-    sb = btn->next;
-    bb = sb->next;
+    position.btn = position.btn->next;
+    position.sb = position.btn->next;
+    position.bb = position.sb->next;
+    position.actor = position.bb->next;
+    position.last_bet = position.bb;
+    return position;
 }

@@ -1,7 +1,9 @@
 #ifndef MYSTRUCT_H
 #define MYSTRUCT_H
 #include <vector>
+
 using namespace std;
+//struct position_t is in PositionMgr
 struct card_t
 {
     int val;

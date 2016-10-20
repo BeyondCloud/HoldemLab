@@ -27,63 +27,96 @@ int main ()
 {
     Dealer dealer;
     Player players[PLAYERS];
-    PositionMgr PositionMgr(players);
+    position_t position;
     for(int i=0;i<PLAYERS;i++)
     {
         players[i].ID=i;
+        players[i].chip=1500;
     }
 
+    init_players_ring(players); //setup double link list
 
+    //game cycle start here
+    position = set_btn(&players[0],position);
+    position = new_round(position);
+    dealer.new_game(players); //init player ring,shuffle and set deck ptr to 0
+
+    //deal card
     for(int i=0;i<PLAYERS;i++)
     {
         players[i].strength.kicker.clear();
-        players[i].hole_card[0] = dealer.deck.back();
-        dealer.deck.pop_back();
-        players[i].hole_card[1] = dealer.deck.back();
-        dealer.deck.pop_back();
+        players[i].hole_card[0] = dealer.deck[dealer.deck_ptr++];
+        players[i].hole_card[1] = dealer.deck[dealer.deck_ptr++];
     }
-    for(int i=0;i<PLAYERS;i++)
+
+//    for(int i=0;i<PLAYERS;i++)
+//    {
+//        dealer.cards7.push_back(players[i].hole_card[0]);
+//        dealer.cards7.push_back(players[i].hole_card[1]);
+//        players[i].strength = dealer.judge(dealer.cards7);
+//        dealer.cards7.pop_back();
+//        dealer.cards7.pop_back();
+//    }
+
+//    for(int i=0;i<PLAYERS;i++)
+//    {
+//        cout<<endl;
+//        cout<< "player "<< i <<"   "<<card5_name[players[i].strength.type]<<endl;
+//        cout<< "kicker: ";
+//        for(int j =0;j<(int)players[i].strength.kicker.size();j++)
+//            cout<<players[i].strength.kicker[j]<<" ";
+//
+//    }
+
+    //pre-flop bet until big blind
+    //set bb to bet leader initially.If someone raise,bet leader will reset
+    while(true)
     {
-        print_card(players[i].hole_card[0]);
-        print_card(players[i].hole_card[1]);
-        cout<<endl;
+        if(position.actor != position.actor->next)
+            position.actor->action(&dealer);
+        if(position.actor == position.last_bet)
+            break;
+        position.actor = position.actor->next;
     }
-    for(int i=0;i<5;i++)
+    cout<<"flop"<<endl;
+    if(position.actor->next != position.actor)
     {
-        dealer.cards7.push_back(dealer.deck.back());
-        dealer.deck.pop_back();
-    }
-    for(int i=0;i<5;i++)
-    {
-        print_card(dealer.cards7[i]);
-    }
-    for(int i=0;i<PLAYERS;i++)
-    {
-        dealer.cards7.push_back(players[i].hole_card[0]);
-        dealer.cards7.push_back(players[i].hole_card[1]);
-        players[i].strength = dealer.judge(dealer.cards7);
-        dealer.cards7.pop_back();
-        dealer.cards7.pop_back();
-    }
-    for(int i=0;i<PLAYERS;i++)
-    {
-        cout<<endl;
-        cout<< "player "<< i <<"   "<<card5_name[players[i].strength.type]<<endl;
-        cout<< "kicker: ";
-        for(int j =0;j<(int)players[i].strength.kicker.size();j++)
-            cout<<players[i].strength.kicker[j]<<" ";
+        for(int i=0;i<3;i++)
+        {
+            dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
+        }
+        while(true)
+        {
+            position.actor->action(&dealer);
+            if(position.actor == position.last_bet)
+                break;
+            position.actor = position.actor->next;
+        }
 
     }
-    cout<<PositionMgr.btn->ID<<endl;
-    cout<<PositionMgr.sb->ID<<endl;
-    cout<<PositionMgr.bb->ID<<endl;
-    PositionMgr.new_round();
-    cout<<PositionMgr.btn->ID<<endl;
-    cout<<PositionMgr.sb->ID<<endl;
-    cout<<PositionMgr.bb->ID<<endl;
+    //turn and river
+    do
+    {
+        dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
 
+        if(dealer.shared_cards.size()==4)
+             cout<<"turn"<<endl;
+        else if(dealer.shared_cards.size()==5)
+             cout<<"river"<<endl;
 
+        while(true)
+        {
+            position.actor->action(&dealer);
 
+            if(position.actor == position.last_bet)
+                break;
+            position.actor = position.actor->next;
+        }
+    }while(position.actor->next != position.actor &&dealer.shared_cards.size()!=5);
+
+    init_players_ring(players); //setup double link list
+
+    cout<<"pot"<<dealer.pot<<" player$ "<<players[0].chip;
 //    for(int i=0;i<PLAYERS;i++)
 //    {
 //        cout<<players[i].prev->ID<<" ";

@@ -1,4 +1,5 @@
 #include "Dealer.h"
+#include "PositionMgr.h"
 #include <time.h>       /* time */
 #include <stdlib.h>     /* srand, rand */
 #include <algorithm>
@@ -17,7 +18,6 @@ Dealer::Dealer()
             deck.push_back(c);
         }
     }
-    shuffle();
 }
 //input 2 hole card + 5 community card
 //type 1 high card
@@ -233,7 +233,10 @@ int Dealer::check_straight(vector<card_t> c)
     }
     return 0;
 }
-void Dealer::shuffle()
+void Dealer::new_game(Player (&players)[PLAYERS])
 {
+    init_players_ring(players); //setup double link list
+    pot = 0;
+    deck_ptr = 0;
     random_shuffle(deck.begin(),deck.end());
 }
