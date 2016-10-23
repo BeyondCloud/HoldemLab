@@ -1,14 +1,21 @@
 #include "Dealer.h"
-#include "PositionMgr.h"
+#include <iostream>
 #include <time.h>       /* time */
 #include <stdlib.h>     /* srand, rand */
 #include <algorithm>
 #include <vector>
+using namespace std;
 Dealer::Dealer()
 {
     srand(time(0));
     //new deck
     card_t c;
+    sb_size = 15;
+    bb_size = 30;
+
+    cout<<"btn set to 0"<<endl;
+    btn_player = 0;
+
     for(int i = 2;i<=14;i++)
     {
         for(int j = 0;j<4;j++)
@@ -19,7 +26,7 @@ Dealer::Dealer()
         }
     }
 }
-//input 2 hole card + 5 community card
+//input 2 hole card
 //type 1 high card
 //type 2 pair
 //type 3 two pair
@@ -31,9 +38,14 @@ Dealer::Dealer()
 //type 9 straight flush
 strength_t Dealer::judge(vector<card_t> c)
 {
-    const card_t hole[2] = {c.end()[-1],c.end()[-2]};
     strength_t strength;
-
+    c.insert( c.end(), shared_cards.begin(), shared_cards.end() );
+    const card_t hole[2] = {c[0],c[1]};
+    if(c.size() != 7)
+    {
+        cout<<"invalid card size to judge,except 7 card"<<endl;
+        return strength;
+    }
     sort(c.begin(),c.end(),Greater());
 
     //pair , set, quad
@@ -233,10 +245,75 @@ int Dealer::check_straight(vector<card_t> c)
     }
     return 0;
 }
-void Dealer::new_game(Player (&players)[PLAYERS])
+void Dealer::next_round(Player (&players)[PLAYERS])
 {
-    init_players_ring(players); //setup double link list
+    cout<<"new round start..."<<endl;
+    cout<<"small blind = "<<sb_size<<endl;
+    cout<<"big blind = "<<bb_size<<endl;
+    players[(btn_player+1)%PLAYERS].chip -= sb_size;
+    players[(btn_player+2)%PLAYERS].chip -= bb_size;
+
+    for(int i =1;i<=2;i++)
+    {
+        int blind;
+        cout<<"Player "<<(btn_player+i)%PLAYERS;
+        if(i == 1)
+        {
+            blind = sb_size;
+            cout<<"(SB)";
+        }
+        else
+        {
+            blind = bb_size;
+            cout<<"(BB)";
+        }
+
+        if(players[(btn_player+i)%PLAYERS].chip<blind)
+        {
+            pot += players[(btn_player+i)%PLAYERS].chip;
+            cout<<players[(btn_player+i)%PLAYERS].chip;
+        }
+        else
+        {
+            pot += blind;
+            cout<<blind;
+        }
+        cout<<"$"<<endl;
+    }
+
+
+//    if(players[(btn_player+1)%PLAYERS].chip<sb_size)
+//    {
+//        pot+=players[(btn_player+1)%PLAYERS].chip;
+//        players[(btn_player+1)%PLAYERS].chip=0;
+//    }
+//    else
+//    {
+//        pot+=sb_size;
+//        players[(btn_player+1)%PLAYERS].chip-=sb_size;
+//    }
+    call_size = bb_size;
+    remain_players = PLAYERS;
     pot = 0;
     deck_ptr = 0;
+    btn_player = (btn_player+1)%PLAYERS;
+    act_player = (btn_player+3)%PLAYERS; //UTG
+    bet_leader = act_player; //UTG
+    for(int i=0;i<PLAYERS;i++)
+        players[i].isFold = false;
     random_shuffle(deck.begin(),deck.end());
+    cout<<"btn is player "<<btn_player<<endl;
+    cout<<"player "<<act_player<<" is first to act"<<endl;
+}
+void Dealer::wake_up(Player &player)
+{
+    if(player.chip >0)
+    {
+        cout<<"Player "<<player.ID<<" turn"<<endl;
+        cout<<"Pot:"<<pot<<" ,Your chip: "<<player.chip<<endl;
+
+        cout<<"Your action?"<<endl;
+        player.action(this);
+    }
+
 }

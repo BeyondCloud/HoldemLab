@@ -7,7 +7,6 @@
 #include "myDefine.h"
 #include "Dealer.h"
 #include "Player.h"
-#include "PositionMgr.h"
 
 using namespace std;
 const char card_val[15] = {'\0','\0','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
@@ -20,6 +19,16 @@ inline void print_card(card_t c)
     cout<<card_val[c.val];
     cout<<card_suit[c.suit]<<" ";
 }
+inline void betting(Dealer &dealer,Player (&players)[PLAYERS])
+{
+    do
+    {
+        if(!players[dealer.act_player].isFold)
+            dealer.wake_up(players[dealer.act_player]);
+        //next one act
+        dealer.act_player = (dealer.act_player+1)%PLAYERS;
+    }while(dealer.act_player != dealer.bet_leader);
+}
 //return the top card of straight if it is
 //else return 0
 
@@ -27,19 +36,20 @@ int main ()
 {
     Dealer dealer;
     Player players[PLAYERS];
-    position_t position;
+    cout<<"How to play: "<<endl;
+    cout<<"c(space)any positive int=check"<<endl;
+    cout<<"c = call"<<endl;
+    cout<<"f = fold,"<<endl;
+    cout<<"r(space)raise amount)=raise"<<endl;
+
     for(int i=0;i<PLAYERS;i++)
     {
         players[i].ID=i;
         players[i].chip=1500;
     }
 
-    init_players_ring(players); //setup double link list
-
     //game cycle start here
-    position = set_btn(&players[0],position);
-    position = new_round(position);
-    dealer.new_game(players); //init player ring,shuffle and set deck ptr to 0
+    dealer.next_round(players); //init player ring,shuffle and set deck ptr to 0
 
     //deal card
     for(int i=0;i<PLAYERS;i++)
@@ -47,6 +57,10 @@ int main ()
         players[i].strength.kicker.clear();
         players[i].hole_card[0] = dealer.deck[dealer.deck_ptr++];
         players[i].hole_card[1] = dealer.deck[dealer.deck_ptr++];
+        cout<<"Player "<<i<<" ";
+        print_card(players[i].hole_card[0]);
+        print_card(players[i].hole_card[1]);
+        cout<<players[i].chip<<"$"<<endl;
     }
 
 //    for(int i=0;i<PLAYERS;i++)
@@ -67,56 +81,43 @@ int main ()
 //            cout<<players[i].strength.kicker[j]<<" ";
 //
 //    }
+    cout<<"pre Flop"<<endl;
 
-    //pre-flop bet until big blind
-    //set bb to bet leader initially.If someone raise,bet leader will reset
-    while(true)
-    {
-        if(position.actor != position.actor->next)
-            position.actor->action(&dealer);
-        if(position.actor == position.last_bet)
-            break;
-        position.actor = position.actor->next;
-    }
-    cout<<"flop"<<endl;
-    if(position.actor->next != position.actor)
-    {
-        for(int i=0;i<3;i++)
-        {
-            dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
-        }
-        while(true)
-        {
-            position.actor->action(&dealer);
-            if(position.actor == position.last_bet)
-                break;
-            position.actor = position.actor->next;
-        }
-
-    }
-    //turn and river
+    dealer.act_player = (dealer.btn_player+3)%PLAYERS;
+    betting(dealer,players);
     do
     {
-        dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
-
-        if(dealer.shared_cards.size()==4)
-             cout<<"turn"<<endl;
-        else if(dealer.shared_cards.size()==5)
-             cout<<"river"<<endl;
-
-        while(true)
+        dealer.call_size = 0;
+        dealer.act_player = (dealer.btn_player+1)%PLAYERS;
+        if(dealer.shared_cards.empty())
         {
-            position.actor->action(&dealer);
-
-            if(position.actor == position.last_bet)
-                break;
-            position.actor = position.actor->next;
+           cout<<"Flop"<<endl;
+           for(int i=0;i<3;i++)
+            {
+                print_card(dealer.deck[dealer.deck_ptr]);
+                dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
+            }
         }
-    }while(position.actor->next != position.actor &&dealer.shared_cards.size()!=5);
+        else
+        {
 
-    init_players_ring(players); //setup double link list
+            if(dealer.shared_cards.size() == 3)
+                cout<<"Turn"<<endl;
+            else
+                cout<<"River"<<endl;
+            cout<<endl;
+            print_card(dealer.deck[dealer.deck_ptr]);
+            dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
+        }
+        betting(dealer,players);
+    }while(dealer.remain_players >1 && dealer.shared_cards.size()!=5);
 
-    cout<<"pot"<<dealer.pot<<" player$ "<<players[0].chip;
+    if(dealer.remain_players == 1)
+    {
+        players[dealer.bet_leader].chip += dealer.pot;
+        cout<<"Player"<<dealer.bet_leader<<"win"<<dealer.pot;
+
+    }
 //    for(int i=0;i<PLAYERS;i++)
 //    {
 //        cout<<players[i].prev->ID<<" ";
