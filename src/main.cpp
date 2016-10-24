@@ -7,18 +7,10 @@
 #include "myDefine.h"
 #include "Dealer.h"
 #include "Player.h"
-
 using namespace std;
-const char card_val[15] = {'\0','\0','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
-const char card_suit[4] = {'c','d','h','s'};
-const string card5_name[10] = {"","high card","pair","two pair","set",
-                            "straight","flush","full house","quad","straight flush"};
 
-inline void print_card(card_t c)
-{
-    cout<<card_val[c.val];
-    cout<<card_suit[c.suit]<<" ";
-}
+
+
 inline void betting(Dealer &dealer,Player (&players)[PLAYERS])
 {
     do
@@ -29,6 +21,7 @@ inline void betting(Dealer &dealer,Player (&players)[PLAYERS])
         dealer.act_player = (dealer.act_player+1)%PLAYERS;
     }while(dealer.act_player != dealer.bet_leader);
 }
+
 //return the top card of straight if it is
 //else return 0
 
@@ -51,18 +44,6 @@ int main ()
     //game cycle start here
     dealer.next_round(players); //init player ring,shuffle and set deck ptr to 0
 
-    //deal card
-    for(int i=0;i<PLAYERS;i++)
-    {
-        players[i].strength.kicker.clear();
-        players[i].hole_card[0] = dealer.deck[dealer.deck_ptr++];
-        players[i].hole_card[1] = dealer.deck[dealer.deck_ptr++];
-        cout<<"Player "<<i<<" ";
-        print_card(players[i].hole_card[0]);
-        print_card(players[i].hole_card[1]);
-        cout<<players[i].chip<<"$"<<endl;
-    }
-
 //    for(int i=0;i<PLAYERS;i++)
 //    {
 //        dealer.cards7.push_back(players[i].hole_card[0]);
@@ -82,9 +63,9 @@ int main ()
 //
 //    }
     cout<<"pre Flop"<<endl;
-
     dealer.act_player = (dealer.btn_player+3)%PLAYERS;
     betting(dealer,players);
+    dealer.collect_bets(players);
     do
     {
         dealer.call_size = 0;
@@ -92,9 +73,10 @@ int main ()
         if(dealer.shared_cards.empty())
         {
            cout<<"Flop"<<endl;
+
            for(int i=0;i<3;i++)
             {
-                print_card(dealer.deck[dealer.deck_ptr]);
+                dealer.print_card(dealer.deck[dealer.deck_ptr]);
                 dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
             }
         }
@@ -106,17 +88,84 @@ int main ()
             else
                 cout<<"River"<<endl;
             cout<<endl;
-            print_card(dealer.deck[dealer.deck_ptr]);
             dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
+            for(int i=0;i<dealer.shared_cards.size();i++)
+                dealer.print_card(dealer.shared_cards[i]);
+            cout<<endl;
+
         }
         betting(dealer,players);
+        dealer.collect_bets(players);
+
     }while(dealer.remain_players >1 && dealer.shared_cards.size()!=5);
 
     if(dealer.remain_players == 1)
     {
         players[dealer.bet_leader].chip += dealer.pot;
-        cout<<"Player"<<dealer.bet_leader<<"win"<<dealer.pot;
+        cout<<"Player"<<dealer.bet_leader<<"win the pot "<<dealer.pot<<"$\n";
+    }
+    else
+    {
+        vector<strength_t> str;
+        vector<int> remain_playerID;
+        int best_type=0;
+        for(int i =0;i<PLAYERS;i++)
+        {
+            if(!players[i].isFold)
+            {
+                str.push_back(dealer.judge(players[i].hole_card));
+                remain_playerID.push_back(i);
+                if(str.back().type > best_type)
+                    best_type = str.back().type;
+            }
+        }
+        cout<<"best type"<<best_type<<endl;
+        vector<int> same_type_ID;
+        for(int i =0;i<remain_playerID.size();i++)
+        {
+            if(str[i].type == best_type)
+                same_type_ID.push_back(remain_playerID[i]);
+        }
+        int remain_players = remain_playerID.size();
+        int kickers = str[same_type_ID[0]].kicker.size();
 
+        for(int k = 0;k<kickers;k++)
+        {
+            int best_kicker=0;
+            for(int i = 0;i<same_type_ID.size();i++)
+            {
+                if(str[same_type_ID[i]].kicker[k] >= best_kicker)
+                    best_kicker=str[same_type_ID[i]].kicker[k];
+            }
+            for(int i = 0;i<same_type_ID.size();i++)
+            {
+                if(same_type_ID[i] != -1)
+                {
+                    if(str[same_type_ID[i]].kicker[k] != best_kicker)
+                    {
+                        same_type_ID[i] = -1;
+                        remain_players--;
+                    }
+                }
+            }
+            if(remain_players==1)
+                break;
+        }
+        for(int i = 0;i<same_type_ID.size();i++)
+        {
+            if(same_type_ID[i] != -1)
+            {
+                cout<<"player"<<same_type_ID[i]<<"win"<<endl;
+            }
+        }
+
+    }
+    for(int i=0;i<PLAYERS;i++)
+    {
+        cout<<"Player "<<i<<" ";
+        dealer.print_card(players[i].hole_card[0]);
+        dealer.print_card(players[i].hole_card[1]);
+        cout<<players[i].chip<<"$"<<endl;
     }
 //    for(int i=0;i<PLAYERS;i++)
 //    {

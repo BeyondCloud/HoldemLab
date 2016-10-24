@@ -9,16 +9,16 @@ class Player
 {
     public:
         Player();
-        card_t hole_card[2];
+        vector<card_t> hole_card;
         strength_t strength;
 
         int chip;
         int ID;
-
+        int bet;
         void fold();
-        int call(int call_size);
+        void  call(int call_size);
         void action(Dealer *dealer);
-        int raise(int bet,int min_raise_size);
+        bool  raise(int raise_to,int call_size);
         bool isFold;
 
         vector<int> pflop_bet;

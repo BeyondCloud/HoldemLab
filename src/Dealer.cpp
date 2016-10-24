@@ -1,10 +1,13 @@
 #include "Dealer.h"
+
 #include <iostream>
 #include <time.h>       /* time */
 #include <stdlib.h>     /* srand, rand */
 #include <algorithm>
 #include <vector>
+
 using namespace std;
+
 Dealer::Dealer()
 {
     srand(time(0));
@@ -41,9 +44,9 @@ strength_t Dealer::judge(vector<card_t> c)
     strength_t strength;
     c.insert( c.end(), shared_cards.begin(), shared_cards.end() );
     const card_t hole[2] = {c[0],c[1]};
-    if(c.size() != 7)
+    if(c.size() < 5)
     {
-        cout<<"invalid card size to judge,except 7 card"<<endl;
+        cout<<"invalid card size,except at least 5 card"<<endl;
         return strength;
     }
     sort(c.begin(),c.end(),Greater());
@@ -56,7 +59,7 @@ strength_t Dealer::judge(vector<card_t> c)
     int straight = 0;
     int suit[4] = {0};
     int flush = 0;
-    for(int i=0;i<7;i++)
+    for(int i=0;i<c.size();i++)
     {
         suit[c[i].suit]++;
     }
@@ -70,7 +73,7 @@ strength_t Dealer::judge(vector<card_t> c)
                 flush = hole[0].val;
             if(hole[1].suit == i && hole[1].val > flush)
                 flush = hole[1].val;
-            for(int j=0;j<7;j++)
+            for(int j=0;j<c.size();j++)
             {
                 if(c[j].suit == i)
                 cardsFlush.push_back(c[i]);
@@ -89,10 +92,9 @@ strength_t Dealer::judge(vector<card_t> c)
     }
 
     //check pair,set,quad
-     for(int i=0;i<7;i++)
+     for(int i=0;i<c.size();i++)
     {
-
-        while(c[i].val == prev_val && i<7)
+        while(c[i].val == prev_val && i<c.size())
         {
             same++;
             i++;
@@ -109,12 +111,12 @@ strength_t Dealer::judge(vector<card_t> c)
                     SET = prev_val;
             break;
             case 3:
-                strength.type = 8;
+                strength.type = 8; //quad
                 strength.kicker.push_back(prev_val);
-                if(c[6].val == prev_val)
-                    strength.kicker.push_back(c[2].val);
+                if(c.back().val == prev_val)
+                    strength.kicker.push_back(c.end()[-5].val);
                 else
-                    strength.kicker.push_back(c[6].val);
+                    strength.kicker.push_back(c.back().val);
                 return strength;
             break;
         }
@@ -144,20 +146,20 @@ strength_t Dealer::judge(vector<card_t> c)
     {
         strength.type = 4;
         strength.kicker.push_back(SET);
-        if(c[6].val == SET)
+        if(c.end()[-1].val == SET)
         {
-            strength.kicker.push_back(c[3].val);
-            strength.kicker.push_back(c[2].val);
+            strength.kicker.push_back(c.end()[-4].val);
+            strength.kicker.push_back(c.end()[-5].val);
         }
-        else if(c[5].val == SET)
+        else if(c.end()[-2].val == SET)
         {
-            strength.kicker.push_back(c[6].val);
-            strength.kicker.push_back(c[2].val);
+            strength.kicker.push_back(c.end()[-1].val);
+            strength.kicker.push_back(c.end()[-5].val);
         }
         else
         {
-            strength.kicker.push_back(c[6].val);
-            strength.kicker.push_back(c[5].val);
+            strength.kicker.push_back(c.end()[-1].val);
+            strength.kicker.push_back(c.end()[-2].val);
         }
         return strength;
     }
@@ -168,17 +170,17 @@ strength_t Dealer::judge(vector<card_t> c)
     {
         strength.type = 3;
         sort(pairs.begin(),pairs.end(),int_Greater());
-        strength.kicker.push_back(pairs.back());
+        strength.kicker.push_back(pairs.end()[-1]);
         strength.kicker.push_back(pairs.end()[-2]);
-        if(c[6].val == pairs.back())
+        if(c.end()[-1].val == pairs.back())
         {
-            if(c[4].val == pairs.end()[-2])
-                strength.kicker.push_back(c[2].val);
+            if(c.end()[-3].val == pairs.end()[-2])
+                strength.kicker.push_back(c.end()[-5].val);
             else
-                strength.kicker.push_back(c[4].val);
+                strength.kicker.push_back(c.end()[-3].val);
         }
         else
-            strength.kicker.push_back(c[6].val);
+            strength.kicker.push_back(c.end()[-1].val);
         return strength;
     }
     //pair checker
@@ -186,27 +188,27 @@ strength_t Dealer::judge(vector<card_t> c)
     {
         strength.type = 2;
         strength.kicker.push_back(pairs.back());
-        if(c[6].val == pairs.back())
+        if(c.end()[-1].val == pairs.back())
         {
             for(int i=4;i>=2;i--)
                 strength.kicker.push_back(c[i].val);
         }
-        else if(c[5].val == pairs.back())
+        else if(c.end()[-2].val == pairs.back())
         {
-            strength.kicker.push_back(c[6].val);
-            strength.kicker.push_back(c[3].val);
-            strength.kicker.push_back(c[2].val);
+            strength.kicker.push_back(c.end()[-1].val);
+            strength.kicker.push_back(c.end()[-4].val);
+            strength.kicker.push_back(c.end()[-5].val);
         }
-        else if(c[4].val == pairs.back())
+        else if(c.end()[-3].val == pairs.back())
         {
-            strength.kicker.push_back(c[6].val);
-            strength.kicker.push_back(c[5].val);
-            strength.kicker.push_back(c[2].val);
+            strength.kicker.push_back(c.end()[-1].val);
+            strength.kicker.push_back(c.end()[-2].val);
+            strength.kicker.push_back(c.end()[-5].val);
         }
         else
         {
-            for(int i=6;i>=4;i--)
-                strength.kicker.push_back(c[i].val);
+            for(int i=-1;i>=-3;i--)
+                strength.kicker.push_back(c.end()[i].val);
         }
         return strength;
     }
@@ -214,8 +216,8 @@ strength_t Dealer::judge(vector<card_t> c)
     else
     {
         strength.type = 1;
-        for(int i=6;i>=2;i--)
-            strength.kicker.push_back(c[i].val);
+        for(int i=-1;i>=-5;i--)
+            strength.kicker.push_back(c.end()[i].val);
         return strength;
     }
 }
@@ -245,13 +247,22 @@ int Dealer::check_straight(vector<card_t> c)
     }
     return 0;
 }
+void Dealer::collect_bets(Player (&players)[PLAYERS])
+{
+    for(int i=0;i<PLAYERS;i++)
+    {
+        if(!players[i].isFold)
+        {
+            pot+=players[i].bet;
+            players[i].bet =0;
+        }
+    }
+}
 void Dealer::next_round(Player (&players)[PLAYERS])
 {
     cout<<"new round start..."<<endl;
     cout<<"small blind = "<<sb_size<<endl;
     cout<<"big blind = "<<bb_size<<endl;
-    players[(btn_player+1)%PLAYERS].chip -= sb_size;
-    players[(btn_player+2)%PLAYERS].chip -= bb_size;
 
     for(int i =1;i<=2;i++)
     {
@@ -270,12 +281,10 @@ void Dealer::next_round(Player (&players)[PLAYERS])
 
         if(players[(btn_player+i)%PLAYERS].chip<blind)
         {
-            pot += players[(btn_player+i)%PLAYERS].chip;
             cout<<players[(btn_player+i)%PLAYERS].chip;
         }
         else
         {
-            pot += blind;
             cout<<blind;
         }
         cout<<"$"<<endl;
@@ -304,6 +313,24 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     random_shuffle(deck.begin(),deck.end());
     cout<<"btn is player "<<btn_player<<endl;
     cout<<"player "<<act_player<<" is first to act"<<endl;
+
+
+    //deal card
+    for(int i=0;i<PLAYERS;i++)
+    {
+        players[i].bet = 0;
+        players[i].strength.kicker.clear();
+        players[i].hole_card.push_back(deck[deck_ptr++]);
+        players[i].hole_card.push_back(deck[deck_ptr++]);
+        cout<<"Player "<<i<<" ";
+        print_card(players[i].hole_card[0]);
+        print_card(players[i].hole_card[1]);
+        cout<<players[i].chip<<"$"<<endl;
+    }
+    players[(btn_player+1)%PLAYERS].bet = sb_size;
+    players[(btn_player+1)%PLAYERS].chip -= sb_size;
+    players[(btn_player+2)%PLAYERS].bet = bb_size;
+    players[(btn_player+2)%PLAYERS].chip -= bb_size;
 }
 void Dealer::wake_up(Player &player)
 {
@@ -317,3 +344,4 @@ void Dealer::wake_up(Player &player)
     }
 
 }
+

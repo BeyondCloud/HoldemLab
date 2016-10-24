@@ -3,33 +3,33 @@
 #include "myStruct.h"
 #include "myDefine.h"
 #include "useful_func.h"
+#include <conio.h>
 #include <cstdlib>
 #include <iostream>
 
 using namespace std;
 Player::Player()
 {
-
+    bet = 0;
 }
 void Player::fold()
 {
         isFold = true;
         cout<<"player "<<ID<<" fold"<<endl;
 }
-int Player::call(int call_size)
+void Player::call(int call_size)
 {
     if(chip<call_size)
     {
         cout<<"you don't have that much money"<<endl;
         cout<<"assume you all in"<<endl;
-        int tmp = chip;
+        bet = chip;
         chip = 0;
-        return tmp;
     }
-    cout<<"you call "<<chip<<"$"<<endl;
+    cout<<"you call "<<call_size<<"$"<<endl;
     chip -= call_size;
 
-    return call_size;
+    bet = call_size;
 }
 
 void Player::record_bet(int bet,int stage)
@@ -51,37 +51,32 @@ void Player::record_bet(int bet,int stage)
         break;
     }
 }
-int Player::raise(int bet,int call_size)
+bool Player::raise(int raise_to,int call_size)
 {
-    if(chip<bet)
+    if(chip<raise_to)
     {
-        cout<<"you don't have that much money(";
-        cout<<call_size<<")"<<endl;
-        cout<<"assume you all in"<<endl;
+        cout<<"you don't have that much money\n";
+        cout<<"assume you go all in"<<endl;
         cout<<"you call "<<chip<<"$"<<endl;
-        int tmp = chip;
+        bet = chip;
         chip = 0;
-        return tmp;
     }
-    if(bet<call_size)
+    if(raise_to<=call_size*2)
     {
-        cout<<"Your raise is smaller than call size(";
-        cout<<call_size <<")"<<endl;
+        cout<<"Your raise is smaller than min raise size(";
+        cout<<  call_size * 2 <<")"<<endl;
         cout<<"please try other action"<<endl;
-        return -1;
+        return false;
     }
-    cout<<"you raise "<<bet<<"$"<<endl;
-    return bet;
+    cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
+    return true;
 }
 void Player::action(Dealer *dealer)
 {
-    char act;
-
-    int bet=0;
+    bool valid_act = true;
     do
     {
-        cin>>act;
-        switch(act)
+         switch(getch())
         {
             case 'f':
                 if(dealer->remain_players > 1)
@@ -93,8 +88,8 @@ void Player::action(Dealer *dealer)
                     cout<<"you are last player in the ring"<<endl;
             break;
             case 'c':
-                if(dealer->call_size != 0)
-                    bet = call(dealer->call_size);
+                if(bet < dealer->call_size)
+                    call(dealer->call_size-bet);
                 else
                     cout<<"you check"<<endl;
             break;
@@ -104,18 +99,18 @@ void Player::action(Dealer *dealer)
                 cin >>bet_char;
                 if(!isNumber(bet_char))
                 {
-                    bet = -1;
+                    valid_act = false;
                     break;
                 }
-                bet = raise(atoi(bet_char),dealer->call_size);
+                int amount = atoi(bet_char);
+                valid_act = raise(amount,dealer->call_size);
                 dealer->bet_leader = ID;
                 dealer->call_size = bet;
             break;
         }
-    }while(bet == -1);
+    }while(!valid_act);
     if(bet != 0)
     {
         record_bet(bet,dealer->shared_cards.size());
-        dealer->pot+=bet;
     }
 }
