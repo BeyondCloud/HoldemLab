@@ -26,10 +26,13 @@ void Player::call(int call_size)
         bet = chip;
         chip = 0;
     }
-    cout<<"you call "<<call_size<<"$"<<endl;
-    chip -= call_size;
+    else
+    {
+        cout<<"you call "<<call_size<<"$"<<endl;
+        chip -= call_size;
+        bet += call_size;
 
-    bet = call_size;
+    }
 }
 
 void Player::record_bet(int bet,int stage)
@@ -68,7 +71,12 @@ bool Player::raise(int raise_to,int call_size)
         cout<<"please try other action"<<endl;
         return false;
     }
-    cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
+    else
+    {
+        cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
+        chip-=raise_to - bet;
+        bet = raise_to;
+    }
     return true;
 }
 void Player::action(Dealer *dealer)

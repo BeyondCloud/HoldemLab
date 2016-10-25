@@ -11,7 +11,9 @@ struct card_t
 };
 struct strength_t
 {
+    int ID;
     int type;
+    int hash_kicker;
     vector<int> kicker;
 };
 
@@ -27,6 +29,11 @@ struct int_Greater
         return l < r;
     }
 };
-
+struct type_Greater
+{
+    bool operator()( const strength_t& l, const strength_t& r ) const {
+        return l.type < r.type;
+    }
+};
 
 #endif

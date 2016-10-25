@@ -2,6 +2,7 @@
 
 
 #include <vector>
+#include <algorithm>    // std::sort
 #include <iostream>
 #include "myStruct.h"
 #include "myDefine.h"
@@ -15,15 +16,23 @@ inline void betting(Dealer &dealer,Player (&players)[PLAYERS])
 {
     do
     {
-        if(!players[dealer.act_player].isFold)
+        if(!players[dealer.act_player].isFold && players[dealer.act_player].chip != 0)
             dealer.wake_up(players[dealer.act_player]);
         //next one act
         dealer.act_player = (dealer.act_player+1)%PLAYERS;
     }while(dealer.act_player != dealer.bet_leader);
 }
 
-//return the top card of straight if it is
-//else return 0
+
+inline int hash_kicker(vector<int> kicker)
+{
+    int tmp=0;
+    for(int i = 0;i<kicker.size();i++)
+    {
+        tmp += (kicker[i]-1)*pow_13[kicker.size()-i];
+    }
+    return tmp;
+}
 
 int main ()
 {
@@ -70,6 +79,7 @@ int main ()
     {
         dealer.call_size = 0;
         dealer.act_player = (dealer.btn_player+1)%PLAYERS;
+        dealer.bet_leader = dealer.act_player;
         if(dealer.shared_cards.empty())
         {
            cout<<"Flop"<<endl;
@@ -108,18 +118,21 @@ int main ()
     {
         vector<strength_t> str;
         vector<int> remain_playerID;
-        int best_type=0;
         for(int i =0;i<PLAYERS;i++)
         {
             if(!players[i].isFold)
             {
                 str.push_back(dealer.judge(players[i].hole_card));
-                remain_playerID.push_back(i);
-                if(str.back().type > best_type)
-                    best_type = str.back().type;
+                str[i].hash_kicker = hash_kicker(str[i].kicker);
+                str[i].ID = i;
             }
         }
-        cout<<"best type"<<best_type<<endl;
+        sort(str.begin(),str.end(),type_Greater());
+
+        cout<<"best type"<<str.back().type<<endl;
+        int current_type = str.begin();
+        //==========================
+
         vector<int> same_type_ID;
         for(int i =0;i<remain_playerID.size();i++)
         {

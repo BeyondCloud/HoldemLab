@@ -334,14 +334,10 @@ void Dealer::next_round(Player (&players)[PLAYERS])
 }
 void Dealer::wake_up(Player &player)
 {
-    if(player.chip >0)
-    {
         cout<<"Player "<<player.ID<<" turn"<<endl;
         cout<<"Pot:"<<pot<<" ,Your chip: "<<player.chip<<endl;
 
         cout<<"Your action?"<<endl;
         player.action(this);
-    }
-
 }
 
