@@ -9,9 +9,6 @@
 #include "Dealer.h"
 #include "Player.h"
 using namespace std;
-
-
-
 inline void betting(Dealer &dealer,Player (&players)[PLAYERS])
 {
     do
@@ -24,12 +21,13 @@ inline void betting(Dealer &dealer,Player (&players)[PLAYERS])
 }
 
 
-inline int hash_kicker(vector<int> kicker)
+inline int hash_rank(const rank_t &str)
 {
-    int tmp=0;
-    for(int i = 0;i<kicker.size();i++)
+    int tmp = 0;
+    tmp += str.type * pow_13[5];
+    for(int i = 0;i < str.kicker.size();i++)
     {
-        tmp += (kicker[i]-1)*pow_13[kicker.size()-i];
+        tmp+= (str.kicker[0]-1)*pow_13[str.kicker.size()-i-1];
     }
     return tmp;
 }
@@ -57,7 +55,7 @@ int main ()
 //    {
 //        dealer.cards7.push_back(players[i].hole_card[0]);
 //        dealer.cards7.push_back(players[i].hole_card[1]);
-//        players[i].strength = dealer.judge(dealer.cards7);
+//        players[i].rank = dealer.judge(dealer.cards7);
 //        dealer.cards7.pop_back();
 //        dealer.cards7.pop_back();
 //    }
@@ -65,10 +63,10 @@ int main ()
 //    for(int i=0;i<PLAYERS;i++)
 //    {
 //        cout<<endl;
-//        cout<< "player "<< i <<"   "<<card5_name[players[i].strength.type]<<endl;
+//        cout<< "player "<< i <<"   "<<card5_name[players[i].rank.type]<<endl;
 //        cout<< "kicker: ";
-//        for(int j =0;j<(int)players[i].strength.kicker.size();j++)
-//            cout<<players[i].strength.kicker[j]<<" ";
+//        for(int j =0;j<(int)players[i].rank.kicker.size();j++)
+//            cout<<players[i].rank.kicker[j]<<" ";
 //
 //    }
     cout<<"pre Flop"<<endl;
@@ -116,60 +114,22 @@ int main ()
     }
     else
     {
-        vector<strength_t> str;
+        vector<rank_t> rnk;
         vector<int> remain_playerID;
         for(int i =0;i<PLAYERS;i++)
         {
             if(!players[i].isFold)
             {
-                str.push_back(dealer.judge(players[i].hole_card));
-                str[i].hash_kicker = hash_kicker(str[i].kicker);
-                str[i].ID = i;
+                rnk.push_back(dealer.judge(players[i].hole_card));
+                rnk[i].hash_val  = hash_rank(rnk[i]);
+                rnk[i].ID = i;
             }
         }
-        sort(str.begin(),str.end(),type_Greater());
-
-        cout<<"best type"<<str.back().type<<endl;
-        int current_type = str.begin();
-        //==========================
-
-        vector<int> same_type_ID;
-        for(int i =0;i<remain_playerID.size();i++)
+        sort(rnk.begin(),rnk.end(),rank_Greater());
+        cout<<"hand rank from best to weakest\n";
+        for(int i = rnk.size()-1; i>=0 ; i--)
         {
-            if(str[i].type == best_type)
-                same_type_ID.push_back(remain_playerID[i]);
-        }
-        int remain_players = remain_playerID.size();
-        int kickers = str[same_type_ID[0]].kicker.size();
-
-        for(int k = 0;k<kickers;k++)
-        {
-            int best_kicker=0;
-            for(int i = 0;i<same_type_ID.size();i++)
-            {
-                if(str[same_type_ID[i]].kicker[k] >= best_kicker)
-                    best_kicker=str[same_type_ID[i]].kicker[k];
-            }
-            for(int i = 0;i<same_type_ID.size();i++)
-            {
-                if(same_type_ID[i] != -1)
-                {
-                    if(str[same_type_ID[i]].kicker[k] != best_kicker)
-                    {
-                        same_type_ID[i] = -1;
-                        remain_players--;
-                    }
-                }
-            }
-            if(remain_players==1)
-                break;
-        }
-        for(int i = 0;i<same_type_ID.size();i++)
-        {
-            if(same_type_ID[i] != -1)
-            {
-                cout<<"player"<<same_type_ID[i]<<"win"<<endl;
-            }
+            cout<<"player"<<rnk[i].ID<<"got"<<rnk[i].type<<"hs"<<rnk[i].hash_val<<endl;
         }
 
     }
@@ -203,8 +163,8 @@ int main ()
 //        {
 //            cards7.push_back(deck[i]);
 //        }
-//        strength=judge(cards7);
-//        record [strength.type]++;
+//        rank=judge(cards7);
+//        record [rank.type]++;
 //    }
 //
 //    for(int i =1;i<=9;i++)

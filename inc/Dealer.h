@@ -4,10 +4,6 @@
 #include "myDefine.h"
 #include "Player.h"
 #include "iostream"
-const char card_val[15] = {'\0','\0','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
-const char card_suit[4] = {'c','d','h','s'};
-const string card5_name[10] = {"","high card","pair","two pair","set",
-                            "straight","flush","full house","quad","straight flush"};
 
 class Dealer
 {
@@ -15,8 +11,8 @@ class Dealer
         Dealer();
         vector<card_t> deck;
         vector<card_t> shared_cards;
-        strength_t strength;
-        strength_t judge(vector<card_t> c);
+        rank_t rank;
+        rank_t judge(vector<card_t> c);
         void next_round(Player (&players)[PLAYERS]);
         void wake_up(Player &player);
         int pot;

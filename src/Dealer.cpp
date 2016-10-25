@@ -39,15 +39,15 @@ Dealer::Dealer()
 //type 7 full house
 //type 8 quad
 //type 9 straight flush
-strength_t Dealer::judge(vector<card_t> c)
+rank_t Dealer::judge(vector<card_t> c)
 {
-    strength_t strength;
+    rank_t rank;
     c.insert( c.end(), shared_cards.begin(), shared_cards.end() );
     const card_t hole[2] = {c[0],c[1]};
     if(c.size() < 5)
     {
         cout<<"invalid card size,except at least 5 card"<<endl;
-        return strength;
+        return rank;
     }
     sort(c.begin(),c.end(),Greater());
 
@@ -81,13 +81,13 @@ strength_t Dealer::judge(vector<card_t> c)
             int top_card = check_straight(cardsFlush);
             if(top_card > 0)
             {
-                strength.type = 9;
-                strength.kicker.push_back(top_card);
-                return strength;
+                rank.type = 9;
+                rank.kicker.push_back(top_card);
+                return rank;
             }
-            strength.type = 6;
-            strength.kicker.push_back(flush);
-            return strength;
+            rank.type = 6;
+            rank.kicker.push_back(flush);
+            return rank;
         }
     }
 
@@ -111,13 +111,13 @@ strength_t Dealer::judge(vector<card_t> c)
                     SET = prev_val;
             break;
             case 3:
-                strength.type = 8; //quad
-                strength.kicker.push_back(prev_val);
+                rank.type = 8; //quad
+                rank.kicker.push_back(prev_val);
                 if(c.back().val == prev_val)
-                    strength.kicker.push_back(c.end()[-5].val);
+                    rank.kicker.push_back(c.end()[-5].val);
                 else
-                    strength.kicker.push_back(c.back().val);
-                return strength;
+                    rank.kicker.push_back(c.back().val);
+                return rank;
             break;
         }
         same = 0;
@@ -128,97 +128,97 @@ strength_t Dealer::judge(vector<card_t> c)
     //full house checker
     if(pairs.size() !=0 && SET != 0)
     {
-        strength.type = 7;
-        strength.kicker.push_back(SET);
-        strength.kicker.push_back(*max_element(pairs.begin(),pairs.end()));
-        return strength;
+        rank.type = 7;
+        rank.kicker.push_back(SET);
+        rank.kicker.push_back(*max_element(pairs.begin(),pairs.end()));
+        return rank;
     }
 
     straight = check_straight(c);
     if(straight != 0)
     {
-        strength.type = 5;
-        strength.kicker.push_back(straight);
-        return strength;
+        rank.type = 5;
+        rank.kicker.push_back(straight);
+        return rank;
     }
 
     if(SET != 0)
     {
-        strength.type = 4;
-        strength.kicker.push_back(SET);
+        rank.type = 4;
+        rank.kicker.push_back(SET);
         if(c.end()[-1].val == SET)
         {
-            strength.kicker.push_back(c.end()[-4].val);
-            strength.kicker.push_back(c.end()[-5].val);
+            rank.kicker.push_back(c.end()[-4].val);
+            rank.kicker.push_back(c.end()[-5].val);
         }
         else if(c.end()[-2].val == SET)
         {
-            strength.kicker.push_back(c.end()[-1].val);
-            strength.kicker.push_back(c.end()[-5].val);
+            rank.kicker.push_back(c.end()[-1].val);
+            rank.kicker.push_back(c.end()[-5].val);
         }
         else
         {
-            strength.kicker.push_back(c.end()[-1].val);
-            strength.kicker.push_back(c.end()[-2].val);
+            rank.kicker.push_back(c.end()[-1].val);
+            rank.kicker.push_back(c.end()[-2].val);
         }
-        return strength;
+        return rank;
     }
 
 
     //two pair checker
     else if(pairs.size() >= 2)
     {
-        strength.type = 3;
+        rank.type = 3;
         sort(pairs.begin(),pairs.end(),int_Greater());
-        strength.kicker.push_back(pairs.end()[-1]);
-        strength.kicker.push_back(pairs.end()[-2]);
+        rank.kicker.push_back(pairs.end()[-1]);
+        rank.kicker.push_back(pairs.end()[-2]);
         if(c.end()[-1].val == pairs.back())
         {
             if(c.end()[-3].val == pairs.end()[-2])
-                strength.kicker.push_back(c.end()[-5].val);
+                rank.kicker.push_back(c.end()[-5].val);
             else
-                strength.kicker.push_back(c.end()[-3].val);
+                rank.kicker.push_back(c.end()[-3].val);
         }
         else
-            strength.kicker.push_back(c.end()[-1].val);
-        return strength;
+            rank.kicker.push_back(c.end()[-1].val);
+        return rank;
     }
     //pair checker
     else if(pairs.size() == 1)
     {
-        strength.type = 2;
-        strength.kicker.push_back(pairs.back());
+        rank.type = 2;
+        rank.kicker.push_back(pairs.back());
         if(c.end()[-1].val == pairs.back())
         {
             for(int i=4;i>=2;i--)
-                strength.kicker.push_back(c[i].val);
+                rank.kicker.push_back(c[i].val);
         }
         else if(c.end()[-2].val == pairs.back())
         {
-            strength.kicker.push_back(c.end()[-1].val);
-            strength.kicker.push_back(c.end()[-4].val);
-            strength.kicker.push_back(c.end()[-5].val);
+            rank.kicker.push_back(c.end()[-1].val);
+            rank.kicker.push_back(c.end()[-4].val);
+            rank.kicker.push_back(c.end()[-5].val);
         }
         else if(c.end()[-3].val == pairs.back())
         {
-            strength.kicker.push_back(c.end()[-1].val);
-            strength.kicker.push_back(c.end()[-2].val);
-            strength.kicker.push_back(c.end()[-5].val);
+            rank.kicker.push_back(c.end()[-1].val);
+            rank.kicker.push_back(c.end()[-2].val);
+            rank.kicker.push_back(c.end()[-5].val);
         }
         else
         {
             for(int i=-1;i>=-3;i--)
-                strength.kicker.push_back(c.end()[i].val);
+                rank.kicker.push_back(c.end()[i].val);
         }
-        return strength;
+        return rank;
     }
     //high card
     else
     {
-        strength.type = 1;
+        rank.type = 1;
         for(int i=-1;i>=-5;i--)
-            strength.kicker.push_back(c.end()[i].val);
-        return strength;
+            rank.kicker.push_back(c.end()[i].val);
+        return rank;
     }
 }
 //return the top card of straight if it is
@@ -319,7 +319,7 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     for(int i=0;i<PLAYERS;i++)
     {
         players[i].bet = 0;
-        players[i].strength.kicker.clear();
+        players[i].rnk.kicker.clear();
         players[i].hole_card.push_back(deck[deck_ptr++]);
         players[i].hole_card.push_back(deck[deck_ptr++]);
         cout<<"Player "<<i<<" ";
