@@ -251,6 +251,7 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
 {
     vector<pot_ID_t> potrnks;
     pot_ID_t potrnk;
+
     for(int i=0;i<PLAYERS;i++)
     {
         if(players[i].bet != 0)
@@ -265,26 +266,33 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
     //sort all player bet to create side pot
     if(potrnks.size() != 0)
     {
-
-        sort(potrnks.begin(),potrnks.end(),pot_ID_Smaller());
-        do
+        sort(potrnks.begin(),potrnks.end(),pot_bet_smaller());
+        while(players[potrnks[0].ID].bet != 0)
         {
             int sum = 0;
+            int smallest_bet;
+            bool update_pot_ID = false;
             sum = players[potrnks.back().ID].bet * potrnks.size();
+            cout<<"sum"<<sum<<endl;
+            smallest_bet = potrnks.back().bet;
             for(int i=0;i<potrnks.size();i++)
             {
-                players[potrnks[i].ID].bet -= potrnks.back().bet;
-                potrnks[potrnks[i].ID].bet -= potrnks.back().bet;
-                if(players[potrnks[i].ID].bet == 0)
+                players[potrnks[i].ID].bet -= smallest_bet;
+                if(players[potrnks[i].ID].chip == 0)
                 {
-                    players[potrnks.back().ID].pot_ID = cur_pot_ID;
-                    potrnks.pop_back();
+                    players[potrnks[i].ID].pot_ID = cur_pot_ID;
+                    update_pot_ID = true;
                 }
             }
-            pots.push_back(sum);
-            if(potrnks.size() != 0)
-                cur_pot_ID++;
-        }while(potrnks.size() != 0);
+            if(update_pot_ID)
+                 cur_pot_ID++;
+            for(int i=0;i<potrnks.size();i++)
+            {
+                if(players[potrnks[i].ID].chip != 0)
+                    players[potrnks[i].ID].pot_ID = cur_pot_ID;
+            }
+            pots.back()+=sum;
+        };
     }
 }
 void Dealer::next_round(Player (&players)[PLAYERS])
@@ -313,7 +321,7 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     btn_player = (btn_player+1)%PLAYERS;
     act_player = (btn_player+3)%PLAYERS; //UTG
     bet_leader = act_player; //UTG
-
+    pots.push_back(0);
     random_shuffle(deck.begin(),deck.end());
     cout<<"btn is player "<<btn_player<<endl;
     cout<<"player "<<act_player<<" is first to act"<<endl;

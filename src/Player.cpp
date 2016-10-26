@@ -74,14 +74,13 @@ void Player::record_bet(int bet,int stage)
 }
 bool Player::raise(int raise_to,int call_to_size)
 {
-    if(chip<raise_to)
+    if(chip+bet<=raise_to)
     {
-        cout<<"you don't have that much money\n";
-        cout<<"assume you go all in"<<endl;
-        cout<<"you call "<<chip<<"$"<<endl;
+        cout<<"You go all in "<<chip<<"$"<<endl;
         isAll_in = true;
-        bet = chip;
+        bet += chip;
         chip = 0;
+        return true;
     }
     if(raise_to<=call_to_size*2)
     {
@@ -95,16 +94,17 @@ bool Player::raise(int raise_to,int call_to_size)
         cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
         chip-=raise_to - bet;
         bet = raise_to;
+        return true;
     }
-    return true;
 }
 //return delta bet
 int Player::action(Dealer *dealer)
 {
-    bool valid_act = true;
+    bool valid_act ;
     int orig_bet = bet;
     do
     {
+        valid_act = true;
          switch(getch())
         {
             case 'f':
@@ -123,18 +123,30 @@ int Player::action(Dealer *dealer)
                     cout<<"you check"<<endl;
             break;
             case 'r':
-                cout<<"amount?"<<endl;
                 char bet_char[16];
-                cin >>bet_char;
-                if(!isNumber(bet_char))
+                int raise_to;
+                if(bet + chip > dealer->call_to_size)
                 {
-                    valid_act = false;
-                    break;
+                    cout<<"amount?"<<endl;
+                    cin >>bet_char;
+                    if(!isNumber(bet_char))
+                    {
+                        valid_act = false;
+                        break;
+                    }
+                    raise_to = atoi(bet_char);
                 }
-                int amount = atoi(bet_char);
-                valid_act = raise(amount,dealer->call_to_size);
+                else
+                    raise_to = bet + chip;
+                valid_act = raise(raise_to,dealer->call_to_size);
+                if(!valid_act)
+                    break;
                 dealer->bet_leader = ID;
                 dealer->call_to_size = bet;
+
+            break;
+            default:
+                valid_act = false;
             break;
         }
     }while(!valid_act);

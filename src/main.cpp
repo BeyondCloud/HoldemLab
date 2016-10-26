@@ -96,13 +96,11 @@ int main ()
                 cout<<"Turn"<<endl;
             else
                 cout<<"River"<<endl;
-            cout<<endl;
             dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
             for(int i=0;i<dealer.shared_cards.size();i++)
                 dealer.print_card(dealer.shared_cards[i]);
-            cout<<endl;
-
         }
+        cout<<endl;
         betting(dealer,players);
 
     }while(dealer.remain_players >1 && dealer.shared_cards.size()!=5);
@@ -114,48 +112,53 @@ int main ()
     }
     else
     {
-        vector<rank_t> rnk;
+        vector<rank_t> card_rnk;
         vector<int> remain_playerID;
         for(int i =0;i<PLAYERS;i++)
         {
             if(!players[i].isFold)
             {
-                rnk.push_back(dealer.judge(players[i].hole_card));
-                rnk[i].hash_val  = hash_rank(rnk[i]);
-                rnk[i].ID = i;
+                card_rnk.push_back(dealer.judge(players[i].hole_card));
+                card_rnk[i].hash_val  = hash_rank(card_rnk[i]);
+                card_rnk[i].ID = i;
             }
         }
-        sort(rnk.begin(),rnk.end(),rank_Greater());
+        sort(card_rnk.begin(),card_rnk.end(),rank_Greater());
         //win pot field
         //players get main pot, side pot...etc
         //if tie , split pot
         //=========================not finished
         int pots_taken = 0;
         int rnkptr = -1;
-        do
+        bool is_pots_clean = false;
+        while(!is_pots_clean)
         {
             int chips = 0;
-            for(pots_taken ;pots_taken <= players[rnk.back().ID].pot_ID;pots_taken++)
+            for(pots_taken ;pots_taken <= players[card_rnk.back().ID].pot_ID;pots_taken++)
             {
-                chips += dealer.pots[pots_taken];
+                 chips += dealer.pots[pots_taken];
             }
             int split = 1;
-            while(rnk.end()[rnkptr].hash_val == rnk.end()[rnkptr-1].hash_val)
+            while(card_rnk.end()[rnkptr].hash_val == card_rnk.end()[rnkptr-1].hash_val)
             {
                 split++;
-                if(rnkptr <= -rnk.size())
+                if(rnkptr <= -card_rnk.size())
                     break;
+                rnkptr--;
             }
+            if(split > 1)
+                cout<<"split the pot\n";
             int final_chip = chips / split;
+            if(players[card_rnk.back().ID].pot_ID==card_rnk.back().ID);
+               is_pots_clean = true;
             for(int i=0;i<split;i++)
             {
-               players[rnk.back().ID].chip += final_chip;
-               rnk.pop_back();
+               players[card_rnk.back().ID].chip += final_chip;
+               card_rnk.pop_back();
             }
-        }while(pots_taken != dealer.pots.size());
+        }
          //=========================not finished^^^^^^^
     }
-
 
     for(int i=0;i<PLAYERS;i++)
     {

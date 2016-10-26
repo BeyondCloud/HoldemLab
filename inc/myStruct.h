@@ -33,7 +33,7 @@ struct rank_Greater
         return l.hash_val < r.hash_val;
     }
 };
-struct pot_ID_Smaller
+struct pot_bet_smaller
 {
     bool operator()( const pot_ID_t& l, const pot_ID_t& r ) const {
         return l.bet > r.bet;
