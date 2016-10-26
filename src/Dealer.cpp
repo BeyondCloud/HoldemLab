@@ -249,38 +249,43 @@ int Dealer::check_straight(vector<card_t> c)
 }
 void Dealer::collect_bets(Player (&players)[PLAYERS])
 {
-    vector<pot_rank_t> ptrnks;
-    pot_rank_t ptrnk;
+    vector<pot_ID_t> potrnks;
+    pot_ID_t potrnk;
     for(int i=0;i<PLAYERS;i++)
     {
         if(players[i].bet != 0)
         {
 //            if(players[i].isAll_in)
-//                players[i].pot_rank = (int)pots.size();
-           ptrnk.ID = players[i].ID ;
-           ptrnk.bet = players[i].bet;
-           ptrnks.push_back( ptrnk);
+//                players[i].pot_ID = (int)pots.size();
+           potrnk.ID = players[i].ID ;
+           potrnk.bet = players[i].bet;
+           potrnks.push_back(potrnk);
         }
     }
-    sort(ptrnks.begin(),ptrnks.end(),pot_Rank_Smaller());
-    do
+    //sort all player bet to create side pot
+    if(potrnks.size() != 0)
     {
-        int cur_pot_rank = 0;
-        int sum = 0;
-        sum = players[ptrnks.back().ID].bet * ptrnks.size();
-        for(int i=0;i<ptrnks.size();i++)
+
+        sort(potrnks.begin(),potrnks.end(),pot_ID_Smaller());
+        do
         {
-            players[i].bet -= players[ptrnks.back().ID].bet;
-            ptrnks[i].bet -= ptrnks[i].bet;
-        }
-        pots.push_back(sum);
-        while(players[ptrnks.back().ID].bet != 0)
-        {
-            players[ptrnks.back().ID].pot_rank = cur_pot_rank;
-            ptrnks.pop_back();
-        }
-        cur_pot_rank++;
-    }while(ptrnks.size() != 0);
+            int sum = 0;
+            sum = players[potrnks.back().ID].bet * potrnks.size();
+            for(int i=0;i<potrnks.size();i++)
+            {
+                players[potrnks[i].ID].bet -= potrnks.back().bet;
+                potrnks[potrnks[i].ID].bet -= potrnks.back().bet;
+                if(players[potrnks[i].ID].bet == 0)
+                {
+                    players[potrnks.back().ID].pot_ID = cur_pot_ID;
+                    potrnks.pop_back();
+                }
+            }
+            pots.push_back(sum);
+            if(potrnks.size() != 0)
+                cur_pot_ID++;
+        }while(potrnks.size() != 0);
+    }
 }
 void Dealer::next_round(Player (&players)[PLAYERS])
 {
@@ -302,9 +307,9 @@ void Dealer::next_round(Player (&players)[PLAYERS])
 //    }
     call_to_size = bb_size;
     remain_players = PLAYERS;
-    pots.clear();
     total_pot = 0;
     deck_ptr = 0;
+    cur_pot_ID = 0;
     btn_player = (btn_player+1)%PLAYERS;
     act_player = (btn_player+3)%PLAYERS; //UTG
     bet_leader = act_player; //UTG

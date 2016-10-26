@@ -25,6 +25,8 @@ class Dealer
         int remain_players;
         int total_pot;
         vector<int> pots;
+        int cur_pot_ID = 0;
+
 
         void collect_bets(Player (&players)[PLAYERS]);
         void print_card(card_t c){

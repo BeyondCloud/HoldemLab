@@ -15,7 +15,7 @@ class Player
         int chip;
         int ID;
         int bet;
-        int pot_rank;
+        int pot_ID;
         void fold();
         void  call(int call_size);
         int  blind_bet(int blind);

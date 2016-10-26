@@ -142,6 +142,6 @@ int Player::action(Dealer *dealer)
     {
         record_bet(bet,dealer->shared_cards.size());
     }
-    return orig_bet - bet;
+    return  bet-orig_bet;
 
 }

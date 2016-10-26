@@ -16,7 +16,7 @@ struct rank_t
     int hash_val;
     vector<int> kicker;
 };
-struct pot_rank_t
+struct pot_ID_t
 {
     int ID;
     int bet;
@@ -33,9 +33,9 @@ struct rank_Greater
         return l.hash_val < r.hash_val;
     }
 };
-struct pot_Rank_Smaller
+struct pot_ID_Smaller
 {
-    bool operator()( const pot_rank_t& l, const pot_rank_t& r ) const {
+    bool operator()( const pot_ID_t& l, const pot_ID_t& r ) const {
         return l.bet > r.bet;
     }
 };

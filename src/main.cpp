@@ -126,17 +126,36 @@ int main ()
             }
         }
         sort(rnk.begin(),rnk.end(),rank_Greater());
-    }
-    //=========================not finished
-    do
-    {
-        int player_pot_rnk = players[rnk.back().ID].pot_rank;
-        for(int i = player_pot_rnk ; i>=0;i++)
+        //win pot field
+        //players get main pot, side pot...etc
+        //if tie , split pot
+        //=========================not finished
+        int pots_taken = 0;
+        int rnkptr = -1;
+        do
         {
-            players[rnk.back().ID].chip += dealer.pots[i];
-        }
-    }while(dealer.total_pot != 0)
-     //=========================not finished^^^^^^^
+            int chips = 0;
+            for(pots_taken ;pots_taken <= players[rnk.back().ID].pot_ID;pots_taken++)
+            {
+                chips += dealer.pots[pots_taken];
+            }
+            int split = 1;
+            while(rnk.end()[rnkptr].hash_val == rnk.end()[rnkptr-1].hash_val)
+            {
+                split++;
+                if(rnkptr <= -rnk.size())
+                    break;
+            }
+            int final_chip = chips / split;
+            for(int i=0;i<split;i++)
+            {
+               players[rnk.back().ID].chip += final_chip;
+               rnk.pop_back();
+            }
+        }while(pots_taken != dealer.pots.size());
+         //=========================not finished^^^^^^^
+    }
+
 
     for(int i=0;i<PLAYERS;i++)
     {
