@@ -169,7 +169,7 @@ rank_t Dealer::judge(vector<card_t> c)
     else if(pairs.size() >= 2)
     {
         rank.type = 3;
-        sort(pairs.begin(),pairs.end(),int_Greater());
+        sort(pairs.begin(),pairs.end(),std::greater<int>());
         rank.kicker.push_back(pairs.end()[-1]);
         rank.kicker.push_back(pairs.end()[-2]);
         if(c.end()[-1].val == pairs.back())
@@ -249,14 +249,38 @@ int Dealer::check_straight(vector<card_t> c)
 }
 void Dealer::collect_bets(Player (&players)[PLAYERS])
 {
+    vector<pot_rank_t> ptrnks;
+    pot_rank_t ptrnk;
     for(int i=0;i<PLAYERS;i++)
     {
-        if(!players[i].isFold)
+        if(players[i].bet != 0)
         {
-            pot+=players[i].bet;
-            players[i].bet =0;
+//            if(players[i].isAll_in)
+//                players[i].pot_rank = (int)pots.size();
+           ptrnk.ID = players[i].ID ;
+           ptrnk.bet = players[i].bet;
+           ptrnks.push_back( ptrnk);
         }
     }
+    sort(ptrnks.begin(),ptrnks.end(),pot_Rank_Smaller());
+    do
+    {
+        int cur_pot_rank = 0;
+        int sum = 0;
+        sum = players[ptrnks.back().ID].bet * ptrnks.size();
+        for(int i=0;i<ptrnks.size();i++)
+        {
+            players[i].bet -= players[ptrnks.back().ID].bet;
+            ptrnks[i].bet -= ptrnks[i].bet;
+        }
+        pots.push_back(sum);
+        while(players[ptrnks.back().ID].bet != 0)
+        {
+            players[ptrnks.back().ID].pot_rank = cur_pot_rank;
+            ptrnks.pop_back();
+        }
+        cur_pot_rank++;
+    }while(ptrnks.size() != 0);
 }
 void Dealer::next_round(Player (&players)[PLAYERS])
 {
@@ -264,31 +288,6 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     cout<<"small blind = "<<sb_size<<endl;
     cout<<"big blind = "<<bb_size<<endl;
 
-    for(int i =1;i<=2;i++)
-    {
-        int blind;
-        cout<<"Player "<<(btn_player+i)%PLAYERS;
-        if(i == 1)
-        {
-            blind = sb_size;
-            cout<<"(SB)";
-        }
-        else
-        {
-            blind = bb_size;
-            cout<<"(BB)";
-        }
-
-        if(players[(btn_player+i)%PLAYERS].chip<blind)
-        {
-            cout<<players[(btn_player+i)%PLAYERS].chip;
-        }
-        else
-        {
-            cout<<blind;
-        }
-        cout<<"$"<<endl;
-    }
 
 
 //    if(players[(btn_player+1)%PLAYERS].chip<sb_size)
@@ -301,25 +300,34 @@ void Dealer::next_round(Player (&players)[PLAYERS])
 //        pot+=sb_size;
 //        players[(btn_player+1)%PLAYERS].chip-=sb_size;
 //    }
-    call_size = bb_size;
+    call_to_size = bb_size;
     remain_players = PLAYERS;
-    pot = 0;
+    pots.clear();
+    total_pot = 0;
     deck_ptr = 0;
     btn_player = (btn_player+1)%PLAYERS;
     act_player = (btn_player+3)%PLAYERS; //UTG
     bet_leader = act_player; //UTG
-    for(int i=0;i<PLAYERS;i++)
-        players[i].isFold = false;
+
     random_shuffle(deck.begin(),deck.end());
     cout<<"btn is player "<<btn_player<<endl;
     cout<<"player "<<act_player<<" is first to act"<<endl;
-
-
+    //reset player param
+    for(int i=0;i<PLAYERS;i++)
+    {
+        if(players[i].chip > 0 )
+        {
+            players[i].bet = 0;
+            players[i].rnk.kicker.clear();
+            players[i].isAll_in = false;
+            players[i].isFold = false;
+        }
+        else
+            players[i].isFold = true;
+    }
     //deal card
     for(int i=0;i<PLAYERS;i++)
     {
-        players[i].bet = 0;
-        players[i].rnk.kicker.clear();
         players[i].hole_card.push_back(deck[deck_ptr++]);
         players[i].hole_card.push_back(deck[deck_ptr++]);
         cout<<"Player "<<i<<" ";
@@ -327,17 +335,15 @@ void Dealer::next_round(Player (&players)[PLAYERS])
         print_card(players[i].hole_card[1]);
         cout<<players[i].chip<<"$"<<endl;
     }
-    players[(btn_player+1)%PLAYERS].bet = sb_size;
-    players[(btn_player+1)%PLAYERS].chip -= sb_size;
-    players[(btn_player+2)%PLAYERS].bet = bb_size;
-    players[(btn_player+2)%PLAYERS].chip -= bb_size;
+    //bet small blind
+    total_pot += players[(btn_player+1)%PLAYERS].blind_bet(sb_size);
+    total_pot += players[(btn_player+2)%PLAYERS].blind_bet(bb_size);
 }
 void Dealer::wake_up(Player &player)
 {
         cout<<"Player "<<player.ID<<" turn"<<endl;
-        cout<<"Pot:"<<pot<<" ,Your chip: "<<player.chip<<endl;
-
+        cout<<"Pot:"<<total_pot<<" ,Your chip: "<<player.chip<<endl;
         cout<<"Your action?"<<endl;
-        player.action(this);
+        total_pot += player.action(this);
 }
 

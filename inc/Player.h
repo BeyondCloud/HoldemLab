@@ -15,11 +15,15 @@ class Player
         int chip;
         int ID;
         int bet;
+        int pot_rank;
         void fold();
         void  call(int call_size);
-        void action(Dealer *dealer);
-        bool  raise(int raise_to,int call_size);
+        int  blind_bet(int blind);
+        int action(Dealer *dealer);
+        bool  raise(int raise_to,int call_to_size);
         bool isFold;
+        bool isAll_in;
+
 
         vector<int> pflop_bet;
         vector<int> flop_bet;

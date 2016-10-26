@@ -13,11 +13,12 @@ inline void betting(Dealer &dealer,Player (&players)[PLAYERS])
 {
     do
     {
-        if(!players[dealer.act_player].isFold && players[dealer.act_player].chip != 0)
+        if(!players[dealer.act_player].isFold && players[dealer.act_player].chip > 0)
             dealer.wake_up(players[dealer.act_player]);
         //next one act
         dealer.act_player = (dealer.act_player+1)%PLAYERS;
     }while(dealer.act_player != dealer.bet_leader);
+    dealer.collect_bets(players);
 }
 
 
@@ -72,10 +73,10 @@ int main ()
     cout<<"pre Flop"<<endl;
     dealer.act_player = (dealer.btn_player+3)%PLAYERS;
     betting(dealer,players);
-    dealer.collect_bets(players);
+
     do
     {
-        dealer.call_size = 0;
+        dealer.call_to_size = 0;
         dealer.act_player = (dealer.btn_player+1)%PLAYERS;
         dealer.bet_leader = dealer.act_player;
         if(dealer.shared_cards.empty())
@@ -103,14 +104,13 @@ int main ()
 
         }
         betting(dealer,players);
-        dealer.collect_bets(players);
 
     }while(dealer.remain_players >1 && dealer.shared_cards.size()!=5);
 
     if(dealer.remain_players == 1)
     {
-        players[dealer.bet_leader].chip += dealer.pot;
-        cout<<"Player"<<dealer.bet_leader<<"win the pot "<<dealer.pot<<"$\n";
+        players[dealer.bet_leader].chip += dealer.total_pot;
+        cout<<"Player"<<dealer.bet_leader<<"win the pot "<<dealer.total_pot<<"$\n";
     }
     else
     {
@@ -126,13 +126,18 @@ int main ()
             }
         }
         sort(rnk.begin(),rnk.end(),rank_Greater());
-        cout<<"hand rank from best to weakest\n";
-        for(int i = rnk.size()-1; i>=0 ; i--)
-        {
-            cout<<"player"<<rnk[i].ID<<"got"<<rnk[i].type<<"hs"<<rnk[i].hash_val<<endl;
-        }
-
     }
+    //=========================not finished
+    do
+    {
+        int player_pot_rnk = players[rnk.back().ID].pot_rank;
+        for(int i = player_pot_rnk ; i>=0;i++)
+        {
+            players[rnk.back().ID].chip += dealer.pots[i];
+        }
+    }while(dealer.total_pot != 0)
+     //=========================not finished^^^^^^^
+
     for(int i=0;i<PLAYERS;i++)
     {
         cout<<"Player "<<i<<" ";
