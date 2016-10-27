@@ -121,20 +121,18 @@ int main ()
             {
                 card_rnk.push_back(dealer.judge(players[i].hole_card));
                 card_rnk[i].hash_val  = hash_rank(card_rnk[i]);
-                cout<<"Player "<<i<<" "<<"hash "<<card_rnk[i].hash_val <<endl;
                 card_rnk[i].ID = players[i].ID;
+                cout<<"Player "<<i<<" "<<"hash "<<card_rnk[i].hash_val <<endl;
             }
         }
         sort(card_rnk.begin(),card_rnk.end(),rank_Greater());
         //win pot field
         //players get main pot, side pot...etc
         //if tie , split pot
-        int pots_taken = 0;
-        int rnkptr = -1;
-        bool is_pots_clean = false;
-        cout<<"best pot ID"<<players[card_rnk.back().ID].pot_ID<<endl;
+
         for(int i =0;i<dealer.pots.size();i++)
             cout<<"pot "<<i<<" "<<dealer.pots[i]<<endl;
+
         for(int i =0;i<card_rnk.size();i++)
         {
              cout<<"player"<<players[card_rnk[i].ID].ID
@@ -148,6 +146,7 @@ int main ()
         while(!dealer.pots.empty())
         {
             split_player.clear();
+            join_comp.clear();
             for(int i =0;i<card_rnk.size();i++)
             {
                 if(players[card_rnk[i].ID].pot_ID >= dealer.pots.size() -1)
@@ -173,7 +172,6 @@ int main ()
             dealer.pots.pop_back();
         }
     }
-
     for(int i=0;i<PLAYERS;i++)
     {
         cout<<"Player "<<i<<" ";
@@ -181,38 +179,6 @@ int main ()
         dealer.print_card(players[i].hole_card[1]);
         cout<<players[i].chip<<"$"<<endl;
     }
-//    for(int i=0;i<PLAYERS;i++)
-//    {
-//        cout<<players[i].prev->ID<<" ";
-//        cout<<players[i].next->ID<<endl;
-//
-//    }
-//    PositionMgr.out(players[2]);
-//    for(int i=0;i<PLAYERS;i++)
-//    {
-//        cout<<players[i].prev->ID<<" ";
-//        cout<<players[i].next->ID<<endl;
-//    }
-
-
-//    int record[10] = {0};
-//    for(int cnt =0;cnt<1000;cnt++)
-//    {
-//
-//        cards7.clear();
-//        for(int i=0;i<7;i++)
-//        {
-//            cards7.push_back(deck[i]);
-//        }
-//        rank=judge(cards7);
-//        record [rank.type]++;
-//    }
-//
-//    for(int i =1;i<=9;i++)
-//        cout<<"type"<<i<<" "<<record[i]<<endl;
-//
-
-
   return 0;
 }
 

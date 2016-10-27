@@ -372,5 +372,6 @@ void Dealer::wake_up(Player &player)
         cout<<"Pot:"<<total_pot<<" ,Your chip: "<<player.chip<<endl;
         cout<<"Your action?"<<endl;
         total_pot += player.action(this);
+        cout<<endl;
 }
 
