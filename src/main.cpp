@@ -147,6 +147,7 @@ int main ()
         vector<int> split_player;
         while(!dealer.pots.empty())
         {
+            split_player.clear();
             for(int i =0;i<card_rnk.size();i++)
             {
                 if(players[card_rnk[i].ID].pot_ID >= dealer.pots.size() -1)
