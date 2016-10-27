@@ -74,7 +74,7 @@ void Player::record_bet(int bet,int stage)
 }
 bool Player::raise(int raise_to,int call_to_size)
 {
-    if(chip+bet<=raise_to)
+    if(chip+bet<=raise_to || (chip+bet)<=call_to_size )
     {
         cout<<"You go all in "<<chip<<"$"<<endl;
         isAll_in = true;
