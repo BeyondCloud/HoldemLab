@@ -10,7 +10,6 @@ class Player
     public:
         Player();
         vector<card_t> hole_card;
-        rank_t rnk;
 
         int chip;
         int ID;

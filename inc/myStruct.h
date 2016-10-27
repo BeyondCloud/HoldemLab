@@ -39,5 +39,4 @@ struct pot_bet_smaller
         return l.bet > r.bet;
     }
 };
-
 #endif

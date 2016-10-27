@@ -247,52 +247,66 @@ int Dealer::check_straight(vector<card_t> c)
     }
     return 0;
 }
+//manage pots , build side pot if needed
 void Dealer::collect_bets(Player (&players)[PLAYERS])
 {
-    vector<pot_ID_t> potrnks;
-    pot_ID_t potrnk;
-
+    vector<pot_ID_t> remain_bets_chip;
+    pot_ID_t player_bet;
+    int orig_pot_ID =cur_pot_ID;
     for(int i=0;i<PLAYERS;i++)
     {
         if(players[i].bet != 0)
         {
-//            if(players[i].isAll_in)
-//                players[i].pot_ID = (int)pots.size();
-           potrnk.ID = players[i].ID ;
-           potrnk.bet = players[i].bet;
-           potrnks.push_back(potrnk);
+           player_bet.ID = players[i].ID ;
+           player_bet.bet = players[i].bet;
+           remain_bets_chip.push_back(player_bet);
         }
     }
-    //sort all player bet to create side pot
-    if(potrnks.size() != 0)
+    if(remain_bets_chip.size() == 0)
+        return;
+    sort(remain_bets_chip.begin(),remain_bets_chip.end(),pot_bet_smaller());
+
+    //if there are non equal bet (someone all in) , create side pot
+    int cur_scan_bet = remain_bets_chip.back().bet;
+
+    for(int i =remain_bets_chip.size()-1 ;i >=0; i--)
     {
-        sort(potrnks.begin(),potrnks.end(),pot_bet_smaller());
-        while(players[potrnks[0].ID].bet != 0)
+        if( players[remain_bets_chip[i].ID].bet == cur_scan_bet)
         {
-            int sum = 0;
-            int smallest_bet;
-            bool update_pot_ID = false;
-            sum = players[potrnks.back().ID].bet * potrnks.size();
-            cout<<"sum"<<sum<<endl;
-            smallest_bet = potrnks.back().bet;
-            for(int i=0;i<potrnks.size();i++)
-            {
-                players[potrnks[i].ID].bet -= smallest_bet;
-                if(players[potrnks[i].ID].chip == 0)
-                {
-                    players[potrnks[i].ID].pot_ID = cur_pot_ID;
-                    update_pot_ID = true;
-                }
-            }
-            if(update_pot_ID)
-                 cur_pot_ID++;
-            for(int i=0;i<potrnks.size();i++)
-            {
-                if(players[potrnks[i].ID].chip != 0)
-                    players[potrnks[i].ID].pot_ID = cur_pot_ID;
-            }
-            pots.back()+=sum;
-        };
+            players[remain_bets_chip[i].ID].pot_ID =cur_pot_ID;
+            cout<<"player"<<remain_bets_chip[i].ID<<" set to "<<cur_pot_ID;
+        }
+        else
+        {
+            cout<<"new pot create"<<endl;
+            cur_scan_bet = players[remain_bets_chip[i].ID].bet;
+            cur_pot_ID++;
+            players[remain_bets_chip[i].ID].pot_ID =cur_pot_ID;
+            cout<<"player"<<remain_bets_chip[i].ID<<" set to "<<cur_pot_ID;
+
+            pots.push_back(0);
+        }
+    }
+    // dealer take away the chip from smallest to biggest
+    // to build the side pot until no one have bet chips remain
+
+    while(!remain_bets_chip.empty())
+    {
+        int bets_cnt = remain_bets_chip.size();
+        int players_bet_clean_cnt = 0;
+        int smallest_bet = players[remain_bets_chip.back().ID].bet;
+        int sum = players[remain_bets_chip.back().ID].bet * bets_cnt;
+        cout<<"sum"<<sum<<endl;
+        pots[orig_pot_ID]+=sum;
+        for(int i = 0;i<bets_cnt;i++)
+        {
+            players[remain_bets_chip[i].ID].bet -= smallest_bet;
+            if(players[remain_bets_chip[i].ID].bet == 0)
+               players_bet_clean_cnt++;
+        }
+        for(int i =0 ;i <players_bet_clean_cnt; i++)
+            remain_bets_chip.pop_back();
+        orig_pot_ID++;
     }
 }
 void Dealer::next_round(Player (&players)[PLAYERS])
@@ -331,7 +345,7 @@ void Dealer::next_round(Player (&players)[PLAYERS])
         if(players[i].chip > 0 )
         {
             players[i].bet = 0;
-            players[i].rnk.kicker.clear();
+            players[i].pot_ID = -1;
             players[i].isAll_in = false;
             players[i].isFold = false;
         }
