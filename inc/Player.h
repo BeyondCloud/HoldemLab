@@ -11,6 +11,7 @@ class Player
         Player();
 
         static bool hash_val_greater(Player *l, Player *r) { return (l->hash_val <r->hash_val); }
+        static bool bet_smaller(Player *l, Player *r) { return (l->bet > r->bet); }
 
         vector<card_t> hole_card;
 
