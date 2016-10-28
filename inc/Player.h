@@ -35,4 +35,5 @@ class Player
     private:
         void record_bet(int bet,int stage);
 };
+
 #endif

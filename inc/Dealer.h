@@ -15,6 +15,7 @@ class Dealer
         rank_t judge(vector<card_t> c);
         void next_round(Player (&players)[PLAYERS]);
         void wake_up(Player &player);
+        void distribute_pot(Player (&players)[PLAYERS]);
         vector<card_t>::iterator deck_it;
 
         int sb_size;
@@ -33,10 +34,21 @@ class Dealer
         void print_card(card_t c){
             std::cout<<card_val[c.val];
             std::cout<<card_suit[c.suit]<<" ";};
+        int hash_rank(const rank_t &str);
 
    private:
-        int check_straight(vector<card_t> c);
+       int check_straight(vector<card_t> c);
         vector<card_t> cardsFlush;
 };
-
+inline int Dealer::hash_rank(const rank_t &str)
+{
+    int tmp = 0;
+    tmp += str.type * pow_13[5];
+    int kicker_size = str.kicker.size();
+    for(int i = 0;i <kicker_size ;i++)
+    {
+        tmp+= (str.kicker[i]-1)*pow_13[kicker_size -i-1];
+    }
+    return tmp;
+}
 #endif
