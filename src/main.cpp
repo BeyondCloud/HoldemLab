@@ -107,32 +107,30 @@ int main ()
     }while(dealer.remain_players >1 && dealer.shared_cards.size()!=5);
 
 
-    vector<rank_t> card_rnk;
+    vector<Player*> ply_ptr;
     vector<int> remain_playerID;
     for(int i =0;i<PLAYERS;i++)
     {
         if(!players[i].isFold)
         {
-
-            card_rnk.push_back(dealer.judge(players[i].hole_card));
-            card_rnk.back().hash_val  = hash_rank(card_rnk.back());
-            card_rnk.back().ID = players[i].ID;
-            cout<<"Player "<<card_rnk.back().ID<<" "<<"hash "<<card_rnk.back().hash_val <<endl;
+            players[i].hash_val = hash_rank(dealer.judge(players[i].hole_card));
+            ply_ptr.push_back(&players[i]);
+            cout<<"Player "<<ply_ptr.back()->ID<<" hash  "<<ply_ptr.back()->hash_val <<endl;
         }
     }
-    sort(card_rnk.begin(),card_rnk.end(),rank_Greater());
+    std::sort(ply_ptr.begin(), ply_ptr.end(), Player::hash_val_greater);
+
     //win pot field
     //players get main pot, side pot...etc
     //if tie , split pot
 
     for(unsigned int i =0;i<dealer.pots.size();i++)
         cout<<"pot "<<i<<" "<<dealer.pots[i]<<endl;
-
-    for(unsigned int i =0;i<card_rnk.size();i++)
+    for(unsigned int i =0;i<ply_ptr.size();i++)
     {
-         cout<<"player"<<players[card_rnk[i].ID].ID
-        <<" potID "<<players[card_rnk[i].ID].pot_ID<<endl;
+        cout<<"Player "<<ply_ptr[i]->ID<<" potID = "<<ply_ptr[i]->pot_ID<<endl;
     }
+
     //start from the highest pot ID
     //if players have pot ID >=current pot ID
     //he can join current pot competition
@@ -142,21 +140,27 @@ int main ()
     {
         split_player.clear();
         join_comp.clear();
-        for(unsigned int i =0;i<card_rnk.size();i++)
+        for(unsigned int i =0;i<ply_ptr.size();i++)
         {
-            if(players[card_rnk[i].ID].pot_ID >= (int)dealer.pots.size() -1)
+            if(ply_ptr[i]->pot_ID >= (int)dealer.pots.size() -1)
             {
-               join_comp.push_back(players[card_rnk[i].ID].ID );
+               join_comp.push_back(ply_ptr[i]->ID );
             }
         }
         for(unsigned int i= 0;i<join_comp.size();i++)
         {
-            if(card_rnk[join_comp[i]].hash_val ==card_rnk[join_comp.back()].hash_val)
+            if(players[join_comp[i]].hash_val==players[join_comp.back()].hash_val)
                 split_player.push_back(join_comp[i]);
         }
 
         if(split_player.size() > 1)
             cout<<"split the pot\n";
+        if(split_player.size() == 0)
+        {
+            cout<<" split_player.size() == 0\n";
+            cout<<"dealer.pots.back() / split_player.size() error"<<endl;
+            break;
+        }
         int final_chip = dealer.pots.back() / split_player.size();
         for(unsigned int i=0;i<split_player.size();i++)
         {

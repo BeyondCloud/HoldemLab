@@ -1,7 +1,6 @@
 #ifndef MYSTRUCT_H
 #define MYSTRUCT_H
 #include <vector>
-
 using namespace std;
 //struct position_t is in PositionMgr
 struct card_t
@@ -27,16 +26,13 @@ struct Greater
         return l.val < r.val;
     }
 };
-struct rank_Greater
-{
-    bool operator()( const rank_t& l, const rank_t& r ) const {
-        return l.hash_val < r.hash_val;
-    }
-};
+
 struct pot_bet_smaller
 {
     bool operator()( const pot_ID_t& l, const pot_ID_t& r ) const {
         return l.bet > r.bet;
     }
 };
+
+
 #endif

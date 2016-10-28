@@ -108,14 +108,16 @@ int Player::action(Dealer *dealer)
          switch(getch())
         {
             case 'f':
-                cout<<"remain"<<dealer->remain_players ;
                 if(dealer->remain_players > 1)
                 {
                     dealer->remain_players--;
                     fold();
                 }
                 else
+                {
                     cout<<"you are last player in the ring"<<endl;
+                    return 0;
+                }
             break;
             case 'c':
                 if(bet < dealer->call_to_size)

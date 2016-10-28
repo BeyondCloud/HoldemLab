@@ -9,6 +9,9 @@ class Player
 {
     public:
         Player();
+
+        static bool hash_val_greater(Player *l, Player *r) { return (l->hash_val <r->hash_val); }
+
         vector<card_t> hole_card;
 
         int chip;
@@ -22,7 +25,7 @@ class Player
         bool  raise(int raise_to,int call_to_size);
         bool isFold;
         bool isAll_in;
-
+        int hash_val;
 
         vector<int> pflop_bet;
         vector<int> flop_bet;
