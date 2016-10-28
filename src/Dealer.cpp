@@ -257,9 +257,17 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
     {
         if(players[i].bet != 0)
         {
-           player_bet.ID = players[i].ID ;
-           player_bet.bet = players[i].bet;
-           remain_bets_chip.push_back(player_bet);
+            if(players[i].isFold)
+            {
+                pots.back()+=players[i].bet;
+                players[i].bet = 0;
+            }
+            else
+            {
+                player_bet.ID = players[i].ID ;
+                player_bet.bet = players[i].bet;
+                remain_bets_chip.push_back(player_bet);
+            }
         }
     }
     if(remain_bets_chip.size() == 0)

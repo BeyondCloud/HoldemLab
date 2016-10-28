@@ -106,6 +106,7 @@ int main ()
 
     }while(dealer.remain_players >1 && dealer.shared_cards.size()!=5);
 
+
     if(dealer.remain_players == 1)
     {
         players[dealer.bet_leader].chip += dealer.total_pot;
@@ -119,10 +120,11 @@ int main ()
         {
             if(!players[i].isFold)
             {
+
                 card_rnk.push_back(dealer.judge(players[i].hole_card));
-                card_rnk[i].hash_val  = hash_rank(card_rnk[i]);
-                card_rnk[i].ID = players[i].ID;
-                cout<<"Player "<<i<<" "<<"hash "<<card_rnk[i].hash_val <<endl;
+                card_rnk.back().hash_val  = hash_rank(card_rnk.back());
+                card_rnk.back().ID = players[i].ID;
+                cout<<"Player "<<card_rnk.back().ID<<" "<<"hash "<<card_rnk.back().hash_val <<endl;
             }
         }
         sort(card_rnk.begin(),card_rnk.end(),rank_Greater());

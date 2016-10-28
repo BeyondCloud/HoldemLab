@@ -53,6 +53,31 @@ int  Player::blind_bet(int blind)
     }
     return bet;
 }
+bool Player::raise(int raise_to,int call_to_size)
+{
+    if(chip+bet<=raise_to || (chip+bet)<=call_to_size )
+    {
+        cout<<"You go all in "<<chip<<"$"<<endl;
+        isAll_in = true;
+        bet += chip;
+        chip = 0;
+        return true;
+    }
+    if(raise_to < call_to_size*2)
+    {
+        cout<<"Your raise is smaller than min raise size(";
+        cout<<  call_to_size * 2 <<")"<<endl;
+        cout<<"please try other action"<<endl;
+        return false;
+    }
+    else
+    {
+        cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
+        chip-=raise_to - bet;
+        bet = raise_to;
+        return true;
+    }
+}
 void Player::record_bet(int bet,int stage)
 {
 
@@ -70,31 +95,6 @@ void Player::record_bet(int bet,int stage)
         case 5:
             river_bet.push_back(bet);
         break;
-    }
-}
-bool Player::raise(int raise_to,int call_to_size)
-{
-    if(chip+bet<=raise_to || (chip+bet)<=call_to_size )
-    {
-        cout<<"You go all in "<<chip<<"$"<<endl;
-        isAll_in = true;
-        bet += chip;
-        chip = 0;
-        return true;
-    }
-    if(raise_to<=call_to_size*2)
-    {
-        cout<<"Your raise is smaller than min raise size(";
-        cout<<  call_to_size * 2 <<")"<<endl;
-        cout<<"please try other action"<<endl;
-        return false;
-    }
-    else
-    {
-        cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
-        chip-=raise_to - bet;
-        bet = raise_to;
-        return true;
     }
 }
 //return delta bet
