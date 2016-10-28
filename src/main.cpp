@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>    // std::sort
 #include <iostream>
+#include <iterator>
 #include "myStruct.h"
 #include "myDefine.h"
 #include "Dealer.h"
@@ -74,7 +75,6 @@ int main ()
     cout<<"pre Flop"<<endl;
     dealer.act_player = (dealer.btn_player+3)%PLAYERS;
     betting(dealer,players);
-
     do
     {
         dealer.call_to_size = 0;
@@ -86,8 +86,8 @@ int main ()
 
            for(int i=0;i<3;i++)
             {
-                dealer.print_card(dealer.deck[dealer.deck_ptr]);
-                dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
+                dealer.print_card(*dealer.deck_it);
+                dealer.shared_cards.push_back(*(dealer.deck_it++));
             }
         }
         else
@@ -97,8 +97,8 @@ int main ()
                 cout<<"Turn"<<endl;
             else
                 cout<<"River"<<endl;
-            dealer.shared_cards.push_back(dealer.deck[dealer.deck_ptr++]);
-            for(unsigned int i=0;i<dealer.shared_cards.size();i++)
+            dealer.shared_cards.push_back(*(dealer.deck_it++));
+            for(unsigned int i=0;i < dealer.shared_cards.size();i++)
                 dealer.print_card(dealer.shared_cards[i]);
         }
         cout<<endl;

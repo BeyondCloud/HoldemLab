@@ -252,7 +252,6 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
 {
 
     vector<Player*> ply_bets_smaller;
-
     pot_ID_t player_bet;
     int orig_pot_ID =cur_pot_ID;
     for(int i=0;i<PLAYERS;i++)
@@ -325,13 +324,13 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     call_to_size = bb_size;
     remain_players = PLAYERS;
     total_pot = 0;
-    deck_ptr = 0;
     cur_pot_ID = 0;
     btn_player = (btn_player+1)%PLAYERS;
     act_player = (btn_player+3)%PLAYERS; //UTG
     bet_leader = act_player; //UTG
     pots.push_back(0);
     random_shuffle(deck.begin(),deck.end());
+    deck_it = deck.begin();
     cout<<"btn is player "<<btn_player<<endl;
     cout<<"player "<<act_player<<" is first to act"<<endl;
     //reset player param
@@ -350,8 +349,8 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     //deal card
     for(int i=0;i<PLAYERS;i++)
     {
-        players[i].hole_card.push_back(deck[deck_ptr++]);
-        players[i].hole_card.push_back(deck[deck_ptr++]);
+        players[i].hole_card.push_back(*(deck_it++));
+        players[i].hole_card.push_back(*(deck_it++));
         cout<<"Player "<<i<<" ";
         print_card(players[i].hole_card[0]);
         print_card(players[i].hole_card[1]);

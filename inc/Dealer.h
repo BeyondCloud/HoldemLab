@@ -15,7 +15,8 @@ class Dealer
         rank_t judge(vector<card_t> c);
         void next_round(Player (&players)[PLAYERS]);
         void wake_up(Player &player);
-        int deck_ptr;
+        vector<card_t>::iterator deck_it;
+
         int sb_size;
         int bb_size;
         int call_to_size;
