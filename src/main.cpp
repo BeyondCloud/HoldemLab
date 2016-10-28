@@ -10,17 +10,6 @@
 #include "Dealer.h"
 #include "Player.h"
 using namespace std;
-inline void betting(Dealer &dealer,Player (&players)[PLAYERS])
-{
-    do
-    {
-        if(!players[dealer.act_player].isFold && players[dealer.act_player].chip > 0)
-            dealer.wake_up(players[dealer.act_player]);
-        //next one act
-        dealer.act_player = (dealer.act_player+1)%PLAYERS;
-    }while(dealer.act_player != dealer.bet_leader);
-    dealer.collect_bets(players);
-}
 
 
 
@@ -43,40 +32,7 @@ int main ()
 
     //game cycle start here
     dealer.next_round(players); //init player ring,shuffle and set deck ptr to 0
-
-    cout<<"pre Flop"<<endl;
-    dealer.act_player = (dealer.btn_player+3)%PLAYERS;
-    betting(dealer,players);
-    do
-    {
-        dealer.call_to_size = 0;
-        dealer.act_player = (dealer.btn_player+1)%PLAYERS;
-        dealer.bet_leader = dealer.act_player;
-        if(dealer.shared_cards.empty())
-        {
-           cout<<"Flop"<<endl;
-
-           for(int i=0;i<3;i++)
-            {
-                dealer.print_card(*dealer.deck_it);
-                dealer.shared_cards.push_back(*(dealer.deck_it++));
-            }
-        }
-        else
-        {
-
-            if(dealer.shared_cards.size() == 3)
-                cout<<"Turn"<<endl;
-            else
-                cout<<"River"<<endl;
-            dealer.shared_cards.push_back(*(dealer.deck_it++));
-            for(unsigned int i=0;i < dealer.shared_cards.size();i++)
-                dealer.print_card(dealer.shared_cards[i]);
-        }
-        cout<<endl;
-        betting(dealer,players);
-
-    }while(dealer.remain_players >1 && dealer.shared_cards.size()!=5);
+    dealer.start_betting(players);
 
     dealer.distribute_pot(players);
 

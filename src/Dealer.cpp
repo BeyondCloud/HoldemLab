@@ -428,3 +428,39 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
         pots.pop_back();
     }
 }
+void Dealer::start_betting(Player (&players)[PLAYERS])
+{
+    cout<<"pre Flop"<<endl;
+    betting(players);
+    do
+    {
+        call_to_size = 0;
+        act_player = (btn_player+1)%PLAYERS;
+        bet_leader = act_player;
+        if(shared_cards.empty())
+        {
+           cout<<"Flop"<<endl;
+
+           for(int i=0;i<3;i++)
+            {
+                print_card(*deck_it);
+                shared_cards.push_back(*(deck_it++));
+            }
+        }
+        else
+        {
+
+            if(shared_cards.size() == 3)
+                cout<<"Turn"<<endl;
+            else
+                cout<<"River"<<endl;
+            shared_cards.push_back(*(deck_it++));
+            for(unsigned int i=0;i < shared_cards.size();i++)
+                print_card(shared_cards[i]);
+        }
+        cout<<endl;
+        betting(players);
+
+    }while(remain_players >1 && shared_cards.size()!=5);
+
+}

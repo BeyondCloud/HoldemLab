@@ -29,12 +29,13 @@ class Dealer
         vector<int> pots;
         int cur_pot_ID;
 
-
         void collect_bets(Player (&players)[PLAYERS]);
+        void start_betting(Player (&players)[PLAYERS]);
         void print_card(card_t c){
             std::cout<<card_val[c.val];
             std::cout<<card_suit[c.suit]<<" ";};
         int hash_rank(const rank_t &str);
+        void betting(Player (&players)[PLAYERS]);
 
    private:
        int check_straight(vector<card_t> c);
@@ -51,4 +52,16 @@ inline int Dealer::hash_rank(const rank_t &str)
     }
     return tmp;
 }
+inline void Dealer::betting(Player (&players)[PLAYERS])
+{
+    do
+    {
+        if(!players[act_player].isFold && players[act_player].chip > 0)
+            wake_up(players[act_player]);
+        //next one act
+        act_player = (act_player+1)%PLAYERS;
+    }while(act_player != bet_leader);
+    collect_bets(players);
+}
+
 #endif
