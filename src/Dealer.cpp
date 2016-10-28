@@ -59,7 +59,7 @@ rank_t Dealer::judge(vector<card_t> c)
     int straight = 0;
     int suit[4] = {0};
     int flush = 0;
-    for(int i=0;i<c.size();i++)
+    for(unsigned int i=0;i<c.size();i++)
     {
         suit[c[i].suit]++;
     }
@@ -73,7 +73,7 @@ rank_t Dealer::judge(vector<card_t> c)
                 flush = hole[0].val;
             if(hole[1].suit == i && hole[1].val > flush)
                 flush = hole[1].val;
-            for(int j=0;j<c.size();j++)
+            for(unsigned int j=0;j<c.size();j++)
             {
                 if(c[j].suit == i)
                 cardsFlush.push_back(c[i]);
@@ -92,9 +92,9 @@ rank_t Dealer::judge(vector<card_t> c)
     }
 
     //check pair,set,quad
-     for(int i=0;i<c.size();i++)
+     for(unsigned int i=0;i<c.size();i++)
     {
-        while(c[i].val == prev_val && i<c.size())
+        while(c[i].val == prev_val && i<(c.size()))
         {
             same++;
             i++;
@@ -322,19 +322,7 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     cout<<"new round start..."<<endl;
     cout<<"small blind = "<<sb_size<<endl;
     cout<<"big blind = "<<bb_size<<endl;
-
-
-
-//    if(players[(btn_player+1)%PLAYERS].chip<sb_size)
-//    {
-//        pot+=players[(btn_player+1)%PLAYERS].chip;
-//        players[(btn_player+1)%PLAYERS].chip=0;
-//    }
-//    else
-//    {
-//        pot+=sb_size;
-//        players[(btn_player+1)%PLAYERS].chip-=sb_size;
-//    }
+    //init dealer
     call_to_size = bb_size;
     remain_players = PLAYERS;
     total_pot = 0;

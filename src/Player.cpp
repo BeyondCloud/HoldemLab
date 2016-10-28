@@ -108,6 +108,7 @@ int Player::action(Dealer *dealer)
          switch(getch())
         {
             case 'f':
+                cout<<"remain"<<dealer->remain_players ;
                 if(dealer->remain_players > 1)
                 {
                     dealer->remain_players--;
