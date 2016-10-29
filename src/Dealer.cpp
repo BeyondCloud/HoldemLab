@@ -252,7 +252,6 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
 {
 
     vector<Player*> ply_bets_smaller;
-    pot_ID_t player_bet;
     int orig_pot_ID =cur_pot_ID;
     for(int i=0;i<PLAYERS;i++)
     {
@@ -322,7 +321,7 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     cout<<"big blind = "<<bb_size<<endl;
     //init dealer
     call_to_size = bb_size;
-    remain_players = PLAYERS;
+    remain_players = 0;
     total_pot = 0;
     cur_pot_ID = 0;
     btn_player = (btn_player+1)%PLAYERS;
@@ -342,6 +341,12 @@ void Dealer::next_round(Player (&players)[PLAYERS])
             players[i].pot_ID = -1;
             players[i].isAll_in = false;
             players[i].isFold = false;
+            players[i].pflop_bet.clear();
+            players[i].flop_bet.clear();
+            players[i].turn_bet.clear();
+            players[i].river_bet.clear();
+
+            remain_players++;
         }
         else
             players[i].isFold = true;
@@ -464,3 +469,12 @@ void Dealer::start_betting(Player (&players)[PLAYERS])
     }while(remain_players >1 && shared_cards.size()!=5);
 
 }
+void Dealer::print_help()
+{
+    cout<<"How to play: "<<endl;
+    cout<<"c(space)any positive int=check"<<endl;
+    cout<<"c = call"<<endl;
+    cout<<"f = fold,"<<endl;
+    cout<<"r(space)raise amount)=raise"<<endl;
+}
+

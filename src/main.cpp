@@ -11,19 +11,12 @@
 #include "Player.h"
 using namespace std;
 
-
-
-
 int main ()
 {
     Dealer dealer;
     Player players[PLAYERS];
-    cout<<"How to play: "<<endl;
-    cout<<"c(space)any positive int=check"<<endl;
-    cout<<"c = call"<<endl;
-    cout<<"f = fold,"<<endl;
-    cout<<"r(space)raise amount)=raise"<<endl;
 
+    cout<<"press h to see help window\n";
     for(int i=0;i<PLAYERS;i++)
     {
         players[i].ID=i;
@@ -33,7 +26,6 @@ int main ()
     //game cycle start here
     dealer.next_round(players); //init player ring,shuffle and set deck ptr to 0
     dealer.start_betting(players);
-
     dealer.distribute_pot(players);
 
     for(int i=0;i<PLAYERS;i++)

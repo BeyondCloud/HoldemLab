@@ -10,13 +10,34 @@
 using namespace std;
 Player::Player()
 {
-    bet = 0;
-    isAll_in = false;
 }
-void Player::fold()
+void Player::fold(Dealer *dealer)
 {
+    if(dealer->remain_players > 1)
+    {
+        dealer->remain_players--;
         isFold = true;
         cout<<"player "<<ID<<" fold"<<endl;
+    }
+    else
+    {
+        cout<<"you are last player in the ring"<<endl;
+    }
+}
+
+bool Player::check(int call_to_size)
+{
+    if( bet==call_to_size)
+    {
+        cout<<"you check\n";
+        return true;
+    }
+    else
+    {
+        cout<<"you can't check\n";
+        return false;
+    }
+
 }
 void Player::call(int call_to_size)
 {
@@ -53,30 +74,35 @@ int  Player::blind_bet(int blind)
     }
     return bet;
 }
-bool Player::raise(int raise_to,int call_to_size)
+bool Player::raise(int raise_to,Dealer *d)
 {
+    int call_to_size = d->call_to_size;
     if(chip+bet<=raise_to || (chip+bet)<=call_to_size )
     {
         cout<<"You go all in "<<chip<<"$"<<endl;
         isAll_in = true;
         bet += chip;
         chip = 0;
-        return true;
-    }
-    if(raise_to < call_to_size*2)
-    {
-        cout<<"Your raise is smaller than min raise size(";
-        cout<<  call_to_size * 2 <<")"<<endl;
-        cout<<"please try other action"<<endl;
-        return false;
     }
     else
     {
-        cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
-        chip-=raise_to - bet;
-        bet = raise_to;
-        return true;
+        if(raise_to < call_to_size*2)
+        {
+            cout<<"Your raise is smaller than min raise size(";
+            cout<<  call_to_size * 2 <<")"<<endl;
+            cout<<"please try other action"<<endl;
+            return false;
+        }
+        else
+        {
+            cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
+            chip-=raise_to - bet;
+            bet = raise_to;
+        }
     }
+    d->bet_leader = ID;
+    d->call_to_size = bet;
+    return true;
 }
 void Player::record_bet(int bet,int stage)
 {
@@ -98,7 +124,7 @@ void Player::record_bet(int bet,int stage)
     }
 }
 //return delta bet
-int Player::action(Dealer *dealer)
+int Player::action(Dealer *d)
 {
     bool valid_act ;
     int orig_bet = bet;
@@ -108,27 +134,18 @@ int Player::action(Dealer *dealer)
          switch(getch())
         {
             case 'f':
-                if(dealer->remain_players > 1)
-                {
-                    dealer->remain_players--;
-                    fold();
-                }
-                else
-                {
-                    cout<<"you are last player in the ring"<<endl;
-                    return 0;
-                }
+                fold(d);
             break;
             case 'c':
-                if(bet < dealer->call_to_size)
-                    call(dealer->call_to_size-bet);
+                if(bet < d->call_to_size)
+                    call(d->call_to_size-bet);
                 else
-                    cout<<"you check"<<endl;
+                    valid_act = check(d->call_to_size-bet);
             break;
             case 'r':
                 char bet_char[16];
                 int raise_to;
-                if(bet + chip > dealer->call_to_size)
+                if(bet + chip > d->call_to_size)
                 {
                     cout<<"amount?"<<endl;
                     cin >>bet_char;
@@ -141,21 +158,18 @@ int Player::action(Dealer *dealer)
                 }
                 else
                     raise_to = bet + chip;
-                valid_act = raise(raise_to,dealer->call_to_size);
-                if(!valid_act)
-                    break;
-                dealer->bet_leader = ID;
-                dealer->call_to_size = bet;
+                valid_act = raise(raise_to,d);
 
             break;
             default:
+                d->print_help();
                 valid_act = false;
             break;
         }
     }while(!valid_act);
     if(bet != 0)
     {
-        record_bet(bet,dealer->shared_cards.size());
+        record_bet(bet,d->shared_cards.size());
     }
     return  bet-orig_bet;
 

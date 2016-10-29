@@ -36,9 +36,12 @@ class Dealer
             std::cout<<card_suit[c.suit]<<" ";};
         int hash_rank(const rank_t &str);
         void betting(Player (&players)[PLAYERS]);
+        void print_help();
+
+
 
    private:
-       int check_straight(vector<card_t> c);
+        int check_straight(vector<card_t> c);
         vector<card_t> cardsFlush;
 };
 inline int Dealer::hash_rank(const rank_t &str)

@@ -1,7 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "myStruct.h"
-
 #include <vector>
 using namespace std;
 class Dealer;
@@ -19,14 +18,16 @@ class Player
         int ID;
         int bet;
         int pot_ID;
-        void fold();
+        void fold(Dealer *dealer);
         void  call(int call_size);
+        bool check(int call_size);
+        bool  raise(int raise_to,Dealer *dealer);
         int  blind_bet(int blind);
         int action(Dealer *dealer);
-        bool  raise(int raise_to,int call_to_size);
         bool isFold;
         bool isAll_in;
         int hash_val;
+
 
         vector<int> pflop_bet;
         vector<int> flop_bet;
