@@ -17,7 +17,7 @@ void Player::fold(Dealer *dealer)
     {
         dealer->remain_players--;
         isFold = true;
-        cout<<"player "<<ID<<" fold"<<endl;
+        cout<<"player "<<name<<" fold"<<endl;
     }
     else
     {
@@ -66,7 +66,7 @@ int  Player::blind_bet(int blind)
 {
     if(chip <= blind)
     {
-        cout<<"Player "<<ID<<" all in\n";
+        cout<<"Player "<<name<<" all in\n";
         bet = chip;
         chip = 0;
         isAll_in = true;
@@ -75,7 +75,7 @@ int  Player::blind_bet(int blind)
     {
         bet = blind;
         chip -= bet;
-        cout<<"Player "<<ID<<" (blind)" << blind <<"$\n";
+        cout<<"Player "<<name<<" (blind)" << blind <<"$\n";
     }
     return bet;
 }
@@ -105,7 +105,7 @@ bool Player::raise(int raise_to,Dealer *d)
             bet = raise_to;
         }
     }
-    d->bet_leader = ID;
+    d->bet_leader = d->act_player;
     d->call_to_size = bet;
     return true;
 }

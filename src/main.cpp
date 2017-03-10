@@ -3,6 +3,7 @@
 #include <algorithm>    // std::sort
 #include <iostream>
 #include <iterator>
+
 #include "myStruct.h"
 #include "myDefine.h"
 #include "Dealer.h"
@@ -15,9 +16,11 @@ int main ()
     Player players[PLAYERS];
 
     cout<<"press h to see help window\n";
+
+
     for(int i=0;i<PLAYERS;i++)
     {
-        players[i].ID=i;
+        players[i].name=to_string(i);
         players[i].chip=500*(i+1);
     }
 

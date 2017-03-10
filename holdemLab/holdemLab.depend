@@ -15,7 +15,7 @@
 	<iostream>
 	<algorithm>
 
-1489151880 source:c:\users\a1989\desktop\holdemlab\src\main.cpp
+1489156213 source:c:\users\a1989\desktop\holdemlab\src\main.cpp
 	<stdio.h>
 	<vector>
 	<algorithm>
@@ -38,11 +38,12 @@
 	"Player.h"
 	"iostream"
 
-1489153891 c:\users\a1989\desktop\holdemlab\inc\player.h
+1489156459 c:\users\a1989\desktop\holdemlab\inc\player.h
 	"myStruct.h"
 	<vector>
+	<string>
 
-1489153891 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
+1489154808 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
 	"Player.h"
 	"Dealer.h"
 	"myStruct.h"
@@ -56,7 +57,7 @@
 	<ctype.h>
 	<stdio.h>
 
-1489154569 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
+1489156034 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
 	"Dealer.h"
 	<iostream>
 	<time.h>

@@ -287,7 +287,7 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
             cur_scan_bet = ply_bets_smaller[i]->bet;
             cur_pot_ID++;
             ply_bets_smaller[i]->pot_ID =cur_pot_ID;
-            cout<<"player"<<ply_bets_smaller[i]->ID<<" set to "<<cur_pot_ID;
+            cout<<"player"<<ply_bets_smaller[i]->name<<" set to "<<cur_pot_ID;
             pots.push_back(0);
         }
     }
@@ -371,7 +371,7 @@ void Dealer::next_round(Player (&players)[PLAYERS])
 }
 void Dealer::wake_up(Player &player)
 {
-        cout<<"Player "<<player.ID<<" turn"<<endl;
+        cout<<"Player "<<player.name<<" turn"<<endl;
         cout<<"Pot:"<<total_pot<<" ,Your chip: "<<player.chip<<endl;
         cout<<"Your action?"<<endl;
         total_pot += player.action(this);
@@ -388,7 +388,7 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
         {
             players[i].hash_val = hash_rank(judge(players[i].hole_card));
             ply_hash_greater.push_back(&players[i]);
-            cout<<"Player "<<ply_hash_greater.back()->ID<<" hash  "<<ply_hash_greater.back()->hash_val <<endl;
+            cout<<"Player "<<ply_hash_greater.back()->name<<" hash  "<<ply_hash_greater.back()->hash_val <<endl;
         }
     }
     sort(ply_hash_greater.begin(), ply_hash_greater.end(), Player::hash_val_greater);
@@ -400,7 +400,7 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
     for(unsigned int i =0;i<pots.size();i++)
         cout<<"pot "<<i<<" "<<pots[i]<<endl;
     for(unsigned int i =0;i<ply_hash_greater.size();i++)
-        cout<<"Player "<<ply_hash_greater[i]->ID<<" potID = "<<ply_hash_greater[i]->pot_ID<<endl;
+        cout<<"Player "<<ply_hash_greater[i]->name<<" potID = "<<ply_hash_greater[i]->pot_ID<<endl;
 
     //start from the highest pot ID
     //if players have pot ID >=current pot ID

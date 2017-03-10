@@ -2,6 +2,7 @@
 #define PLAYER_H
 #include "myStruct.h"
 #include <vector>
+#include <string>
 using namespace std;
 class Dealer;
 class Player
@@ -13,9 +14,8 @@ class Player
         static bool bet_smaller(Player *l, Player *r) { return (l->bet > r->bet); }
 
         vector<card_t> hole_card;
-
+        string name;
         int chip;
-        int ID;
         int bet;
         int pot_ID;
         void fold(Dealer *dealer);
