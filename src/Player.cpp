@@ -45,11 +45,11 @@ void Player::fold(Dealer *dealer)
 //}
 void Player::check_call(int call_to_size)
 {
-    if(chip<call_to_size)
+    if(bet+chip<call_to_size)
     {
         cout<<"you go all in"<<endl;
         isAll_in = true;
-        bet = chip;
+        bet += chip;
         chip = 0;
     }
     else if (bet == call_to_size)
@@ -57,8 +57,8 @@ void Player::check_call(int call_to_size)
     else
     {
         cout<<"you call "<<call_to_size<<"$"<<endl;
-        chip -= call_to_size;
-        bet += call_to_size;
+        chip -= (call_to_size-bet);
+        bet = call_to_size;
 
     }
 }

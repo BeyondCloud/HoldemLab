@@ -42,7 +42,7 @@
 	"myStruct.h"
 	<vector>
 
-1477703125 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
+1489153891 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
 	"Player.h"
 	"Dealer.h"
 	"myStruct.h"
@@ -56,7 +56,7 @@
 	<ctype.h>
 	<stdio.h>
 
-1477703095 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
+1489154569 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
 	"Dealer.h"
 	<iostream>
 	<time.h>

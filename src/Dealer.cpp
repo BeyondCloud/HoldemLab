@@ -280,7 +280,6 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
         if( ply_bets_smaller[i]->bet == cur_scan_bet)
         {
             ply_bets_smaller[i]->pot_ID =cur_pot_ID;
-            cout<<"player"<<ply_bets_smaller[i]->ID<<" set to "<<cur_pot_ID;
         }
         else
         {
@@ -453,7 +452,7 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
 }
 void Dealer::start_betting(Player (&players)[PLAYERS])
 {
-    cout<<"pre Flop"<<endl;
+    cout<<"pFlop"<<endl;
     betting(players);
     do
     {
