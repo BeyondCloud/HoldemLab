@@ -345,12 +345,17 @@ void Dealer::next_round(Player (&players)[PLAYERS])
             players[i].flop_bet.clear();
             players[i].turn_bet.clear();
             players[i].river_bet.clear();
-
             remain_players++;
         }
         else
             players[i].isFold = true;
     }
+    //set position
+    for(int position=1;position<=PLAYERS;position++)
+    {
+        players[(btn_player+position)%PLAYERS].position = position;
+    }
+
     //deal card
     for(int i=0;i<PLAYERS;i++)
     {
@@ -428,8 +433,21 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
             break;
         }
         int final_chip = pots.back() / split_player.size();
+        int remain_chip = pots.back()-final_chip*split_player.size();
+        int earliest_player = 100;
+        int tmp_i;
         for(unsigned int i=0;i<split_player.size();i++)
+        {
            split_player[i]->chip += final_chip;
+
+            if(split_player[i]->position<earliest_player)
+            {
+                earliest_player = split_player[i]->position;
+                tmp_i = i;
+            }
+        }
+        split_player[tmp_i]->chip += final_chip;
+
         pots.pop_back();
     }
 }
@@ -472,8 +490,7 @@ void Dealer::start_betting(Player (&players)[PLAYERS])
 void Dealer::print_help()
 {
     cout<<"How to play: "<<endl;
-    cout<<"c(space)any positive int=check"<<endl;
-    cout<<"c = call"<<endl;
+    cout<<"c = check/call"<<endl;
     cout<<"f = fold,"<<endl;
     cout<<"r(space)raise amount)=raise"<<endl;
 }

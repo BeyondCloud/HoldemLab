@@ -25,30 +25,35 @@ void Player::fold(Dealer *dealer)
     }
 }
 
-bool Player::check(int call_to_size)
-{
-    if( bet==call_to_size)
-    {
-        cout<<"you check\n";
-        return true;
-    }
-    else
-    {
-        cout<<"you can't check\n";
-        return false;
-    }
-
-}
-void Player::call(int call_to_size)
+//bool Player::check(int call_to_size)
+//{
+//    if( bet==call_to_size)
+//    {
+//        cout<<"you check\n";
+//        return true;
+//    }
+//    else
+//    {
+//
+//        cout<<"you can't check\n";
+//        cout<<"your bet = "<<bet<<"\n";
+//        cout<<"call to size = "<<call_to_size<<"\n";
+//
+//        return false;
+//    }
+//
+//}
+void Player::check_call(int call_to_size)
 {
     if(chip<call_to_size)
     {
-        cout<<"you don't have that much money"<<endl;
-        cout<<"assume you all in"<<endl;
+        cout<<"you go all in"<<endl;
         isAll_in = true;
         bet = chip;
         chip = 0;
     }
+    else if (bet == call_to_size)
+        cout<<"you check "<<call_to_size<<"$"<<endl;
     else
     {
         cout<<"you call "<<call_to_size<<"$"<<endl;
@@ -137,10 +142,7 @@ int Player::action(Dealer *d)
                 fold(d);
             break;
             case 'c':
-                if(bet < d->call_to_size)
-                    call(d->call_to_size-bet);
-                else
-                    valid_act = check(d->call_to_size-bet);
+                check_call(d->call_to_size);
             break;
             case 'r':
                 char bet_char[16];
@@ -161,7 +163,7 @@ int Player::action(Dealer *d)
                 valid_act = raise(raise_to,d);
 
             break;
-            default:
+            case 'h':
                 d->print_help();
                 valid_act = false;
             break;

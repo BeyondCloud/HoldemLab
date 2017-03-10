@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="../inc" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -31,8 +32,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../inc/gameIngine.h" />
-		<Unit filename="../src/gameEngine.cpp" />
+		<Unit filename="../inc/Dealer.h" />
+		<Unit filename="../inc/Player.h" />
+		<Unit filename="../inc/myDefine.h" />
+		<Unit filename="../inc/myStruct.h" />
+		<Unit filename="../inc/useful_func.h" />
+		<Unit filename="../src/Dealer.cpp" />
+		<Unit filename="../src/Player.cpp" />
+		<Unit filename="../src/main.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

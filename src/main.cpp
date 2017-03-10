@@ -1,6 +1,4 @@
 #include <stdio.h>      /* printf, scanf, puts, NULL */
-
-
 #include <vector>
 #include <algorithm>    // std::sort
 #include <iostream>
