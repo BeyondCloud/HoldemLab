@@ -378,28 +378,45 @@ void Dealer::wake_up(Player &player)
 }
 void Dealer::distribute_pot(Player (&players)[PLAYERS])
 {
-//judge players card , create hash strength
     vector<Player*> ply_hash_greater;
-    ply_hash_greater.clear();
-    for(int i =0;i<PLAYERS;i++)
+        ply_hash_greater.clear();
+
+    if(remain_players == 1)
     {
-        if(!players[i].isFold)
+        cout<<"Everyone folded\n";
+        for(int i =0;i<PLAYERS;i++)
         {
-            players[i].hash_val = hash_rank(judge(players[i].hole_card));
-            ply_hash_greater.push_back(&players[i]);
+            if(!players[i].isFold)
+            {
+                cout<<"Player"<<players[i].name<<" take all "<<endl;
+                ply_hash_greater.push_back(&players[i]);
+            }
         }
     }
-    sort(ply_hash_greater.begin(), ply_hash_greater.end(), Player::hash_val_greater);
+    else
+    {
+        //judge players card , create hash strength
+        for(int i =0;i<PLAYERS;i++)
+        {
+            if(!players[i].isFold)
+            {
+                rank_t rnk = judge(players[i].hole_card);
+                cout<<"Player"<<players[i].name<<" got "<<card5_name[rnk.type]<<endl;
+                players[i].hash_val = hash_rank(rnk);
+                ply_hash_greater.push_back(&players[i]);
+            }
+        }
+        sort(ply_hash_greater.begin(), ply_hash_greater.end(), Player::hash_val_greater);
 
-    //win pot field
-    //players get main pot, side pot...etc
-    //if tie , split pot
+        //win pot field
+        //players get main pot, side pot...etc
+        //if tie , split pot
 
-    for(unsigned int i =0;i<pots.size();i++)
-        cout<<"pot "<<i<<" "<<pots[i]<<endl;
-    for(unsigned int i =0;i<ply_hash_greater.size();i++)
-        cout<<"Player "<<ply_hash_greater[i]->name<<" potID = "<<ply_hash_greater[i]->pot_ID<<endl;
-
+        for(unsigned int i =0;i<pots.size();i++)
+            cout<<"pot "<<i<<" "<<pots[i]<<endl;
+        for(unsigned int i =0;i<ply_hash_greater.size();i++)
+            cout<<"Player "<<ply_hash_greater[i]->name<<" potID = "<<ply_hash_greater[i]->pot_ID<<endl;
+    }
     //start from the highest pot ID
     //if players have pot ID >=current pot ID
     //he can join competition
@@ -455,7 +472,7 @@ void Dealer::start_betting(Player (&players)[PLAYERS])
 {
     cout<<"pFlop"<<endl;
     betting(players);
-    do
+    while(remain_players >1 && shared_cards.size()!=5)
     {
         call_to_size = 0;
         act_player = (btn_player+1)%PLAYERS;
@@ -484,7 +501,7 @@ void Dealer::start_betting(Player (&players)[PLAYERS])
         cout<<endl;
         betting(players);
 
-    }while(remain_players >1 && shared_cards.size()!=5);
+    }
 
 }
 void Dealer::print_help()
