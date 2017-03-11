@@ -10,15 +10,16 @@ using namespace std;
 
 Dealer::Dealer()
 {
-    srand(time(0));
-    //new deck
-    card_t c;
     sb_size = 15;
     bb_size = 30;
-
     cout<<"btn set to 0"<<endl;
     btn_player = 0;
 
+    //random shuffle,without this will create same value
+    srand(time(0));
+
+    //create a deck
+    card_t c;
     for(int i = 2;i<=14;i++)
     {
         for(int j = 0;j<4;j++)
@@ -42,13 +43,11 @@ Dealer::Dealer()
 rank_t Dealer::judge(vector<card_t> c)
 {
     rank_t rank;
-    c.insert( c.end(), shared_cards.begin(), shared_cards.end() );
     const card_t hole[2] = {c[0],c[1]};
-    if(c.size() < 5)
-    {
-        cout<<"invalid card size,except at least 5 card"<<endl;
-        return rank;
-    }
+    c.insert( c.end(), shared_cards.begin(), shared_cards.end() );
+
+    ASSERT(c.size() > 4, "judge fail,except >4 card,card size = " << c.size());
+
     sort(c.begin(),c.end(),Greater());
 
     //pair , set, quad
@@ -388,7 +387,6 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
         {
             players[i].hash_val = hash_rank(judge(players[i].hole_card));
             ply_hash_greater.push_back(&players[i]);
-            cout<<"Player "<<ply_hash_greater.back()->name<<" hash  "<<ply_hash_greater.back()->hash_val <<endl;
         }
     }
     sort(ply_hash_greater.begin(), ply_hash_greater.end(), Player::hash_val_greater);
@@ -404,7 +402,7 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
 
     //start from the highest pot ID
     //if players have pot ID >=current pot ID
-    //he can join current pot competition
+    //he can join competition
     vector<Player*> join_comp;
     vector<Player*> split_player;
     while(!pots.empty())
@@ -431,8 +429,11 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
             cout<<"dealer.pots.back() / split_player.size() error"<<endl;
             break;
         }
+
         int final_chip = pots.back() / split_player.size();
-        int remain_chip = pots.back()-final_chip*split_player.size();
+        //handling odd chip split
+        //int this case ,the earliest player got odd chip
+        int odd_chip = pots.back()-final_chip*split_player.size();
         int earliest_player = 100;
         int tmp_i;
         for(unsigned int i=0;i<split_player.size();i++)
@@ -445,7 +446,7 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
                 tmp_i = i;
             }
         }
-        split_player[tmp_i]->chip += final_chip;
+        split_player[tmp_i]->chip += odd_chip;
 
         pots.pop_back();
     }

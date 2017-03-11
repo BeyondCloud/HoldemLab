@@ -10,7 +10,6 @@ struct card_t
 };
 struct rank_t
 {
-    int ID;
     int type;
     int hash_val;
     vector<int> kicker;

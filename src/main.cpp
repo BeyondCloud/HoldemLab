@@ -8,12 +8,15 @@
 #include "myDefine.h"
 #include "Dealer.h"
 #include "Player.h"
+
+
 using namespace std;
 
 int main ()
 {
     Dealer dealer;
-    Player players[PLAYERS];
+    Player players[PLAYERS];//this means players sit around poker table
+                            //player with 0 chip wasn't able to join the game
 
     cout<<"press h to see help window\n";
 
