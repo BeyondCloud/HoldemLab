@@ -299,7 +299,6 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
         int players_bet_clean_cnt = 0;
         int smallest_bet = ply_bets_smaller.back()->bet;
         int sum = ply_bets_smaller.back()->bet * bets_cnt;
-        cout<<"sum"<<sum<<endl;
         pots[orig_pot_ID]+=sum;
         for(int i = 0;i<bets_cnt;i++)
         {
@@ -372,7 +371,6 @@ void Dealer::wake_up(Player &player)
 {
         cout<<"Player "<<player.name<<" turn"<<endl;
         cout<<"Pot:"<<total_pot<<" ,Your chip: "<<player.chip<<endl;
-        cout<<"Your action?"<<endl;
         total_pot += player.action(this);
         cout<<endl;
 }

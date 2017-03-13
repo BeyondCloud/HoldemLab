@@ -63,7 +63,7 @@ inline void Dealer::betting(Player (&players)[PLAYERS])
             wake_up(players[act_player]);
         //next one act
         act_player = (act_player+1)%PLAYERS;
-    }while(act_player != bet_leader);
+    }while(act_player != bet_leader && remain_players != 1);
     collect_bets(players);
 }
 

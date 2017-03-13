@@ -12,3 +12,5 @@
 #   define ASSERT(condition, message) do { } while (false)
 #endif
 //example: ASSERT((0 < x) && (x < 10), "x was " << x);
+// do { } while (false) means empty code
+// you can use it whenever you want by add a semicolon

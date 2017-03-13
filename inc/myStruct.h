@@ -14,11 +14,6 @@ struct rank_t
     int hash_val;
     vector<int> kicker;
 };
-struct pot_ID_t
-{
-    int ID;
-    int bet;
-};
 struct Greater
 {
     bool operator()( const card_t& l, const card_t& r ) const {

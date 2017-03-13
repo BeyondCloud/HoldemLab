@@ -34,6 +34,7 @@
 			<Add option="-std=c++11" />
 		</Compiler>
 		<Unit filename="../inc/Dealer.h" />
+		<Unit filename="../inc/Ndebug.h" />
 		<Unit filename="../inc/Player.h" />
 		<Unit filename="../inc/myDefine.h" />
 		<Unit filename="../inc/myStruct.h" />
