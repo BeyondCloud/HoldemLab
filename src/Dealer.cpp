@@ -313,7 +313,7 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
 }
 void Dealer::next_round(Player (&players)[PLAYERS])
 {
-    cout<<"new round start..."<<endl;
+    cout<<"====new round start====="<<endl;
     cout<<"small blind = "<<sb_size<<endl;
     cout<<"big blind = "<<bb_size<<endl;
     //init dealer
@@ -327,21 +327,13 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     pots.push_back(0);
     random_shuffle(deck.begin(),deck.end());
     deck_it = deck.begin();
-    cout<<"btn is player "<<btn_player<<endl;
-    cout<<"player "<<act_player<<" is first to act"<<endl;
+    cout<<"Dealer Button:"<<btn_player<<endl;
     //reset player param
     for(int i=0;i<PLAYERS;i++)
     {
         if(players[i].chip > 0 )
         {
-            players[i].bet = 0;
-            players[i].pot_ID = -1;
-            players[i].isAll_in = false;
-            players[i].isFold = false;
-            players[i].pflop_bet.clear();
-            players[i].flop_bet.clear();
-            players[i].turn_bet.clear();
-            players[i].river_bet.clear();
+            players[i].init();
             remain_players++;
         }
         else
@@ -349,9 +341,7 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     }
     //set position
     for(int position=1;position<=PLAYERS;position++)
-    {
         players[(btn_player+position)%PLAYERS].position = position;
-    }
 
     //deal card
     for(int i=0;i<PLAYERS;i++)

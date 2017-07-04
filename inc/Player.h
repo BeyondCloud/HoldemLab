@@ -9,7 +9,16 @@ class Player
 {
     public:
         Player();
-
+        void init(){
+            bet = 0;
+            pot_ID = -1;
+            isAll_in = false;
+            isFold = false;
+            pflop_bet.clear();
+            flop_bet.clear();
+            turn_bet.clear();
+            river_bet.clear();
+        };
         static bool hash_val_greater(Player *l, Player *r) { return (l->hash_val <r->hash_val); }
         static bool bet_smaller(Player *l, Player *r) { return (l->bet > r->bet); }
 

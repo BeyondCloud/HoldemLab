@@ -11,6 +11,7 @@ using namespace std;
 Player::Player()
 {
 }
+
 bool Player::fold(Dealer *dealer)
 {
     if(dealer->remain_players > 1)
@@ -129,16 +130,18 @@ void Player::record_bet(int bet,int stage)
         break;
     }
 }
-//return push out chip,not total bet
-//EX: A bet 5 ,B raise to 10,A call,in this case playerA action() return 10-5
+//return number of chips pushed out,not total bet
+//EX: A bet 5 ,B raise to 10,A call,in this case return 10-5=5
 int Player::action(Dealer *d)
 {
     bool done_act ;
     int orig_bet = bet;
+    char act;
     do
     {
         cout<<"Your action?"<<endl;
-         switch(getch())
+        cin>>act;
+         switch(act)
         {
             case 'f':
                 done_act = fold(d);
@@ -165,7 +168,7 @@ int Player::action(Dealer *d)
                     raise_to = bet + chip;
                 done_act = raise(raise_to,d);
             break;
-            case 'h':
+            default:
                 d->print_help();
                 done_act = false;
             break;

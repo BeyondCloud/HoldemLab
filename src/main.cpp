@@ -20,11 +20,11 @@ int main ()
 
     cout<<"press h to see help window\n";
 
-
+    //initialize player's name and chips
     for(int i=0;i<PLAYERS;i++)
     {
         players[i].name=to_string(i);
-        players[i].chip=500*(i+1);
+        players[i].chip=500;
     }
 
     //game cycle start here

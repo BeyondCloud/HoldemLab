@@ -2,7 +2,7 @@
 #define MYDEFINE_H
 
 #define ROUND 10
-#define PLAYERS 3
+#define PLAYERS 2
 #include "Ndebug.h"
 #include <string>
 const int pow_13[6] = {1,13,169,2197,28561,371293};
