@@ -19,6 +19,7 @@ class Player
             turn_bet.clear();
             river_bet.clear();
         };
+        void print_hole_cards();
         static bool hash_val_greater(Player *l, Player *r) { return (l->hash_val <r->hash_val); }
         static bool bet_smaller(Player *l, Player *r) { return (l->bet > r->bet); }
 

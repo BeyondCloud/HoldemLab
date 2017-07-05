@@ -30,6 +30,20 @@ Dealer::Dealer()
         }
     }
 }
+void Dealer::init()
+{
+    stage = PFLOP;
+    call_to_size = bb_size;
+    remain_players = 0;
+    total_pot = 0;
+    cur_pot_ID = 0;
+    btn_player = (btn_player+1)%PLAYERS;
+    act_player = (btn_player+3)%PLAYERS; //UTG
+    bet_leader = act_player; //UTG
+    pots.push_back(0);
+    random_shuffle(deck.begin(),deck.end());
+    deck_it = deck.begin();
+}
 //input 2 hole card
 //type 1 high card
 //type 2 pair
@@ -317,16 +331,7 @@ void Dealer::next_round(Player (&players)[PLAYERS])
     cout<<"small blind = "<<sb_size<<endl;
     cout<<"big blind = "<<bb_size<<endl;
     //init dealer
-    call_to_size = bb_size;
-    remain_players = 0;
-    total_pot = 0;
-    cur_pot_ID = 0;
-    btn_player = (btn_player+1)%PLAYERS;
-    act_player = (btn_player+3)%PLAYERS; //UTG
-    bet_leader = act_player; //UTG
-    pots.push_back(0);
-    random_shuffle(deck.begin(),deck.end());
-    deck_it = deck.begin();
+    init();
     cout<<"Dealer Button:"<<btn_player<<endl;
     //reset player param
     for(int i=0;i<PLAYERS;i++)
@@ -349,21 +354,14 @@ void Dealer::next_round(Player (&players)[PLAYERS])
         players[i].hole_card.push_back(*(deck_it++));
         players[i].hole_card.push_back(*(deck_it++));
         cout<<"Player "<<i<<" ";
-        print_card(players[i].hole_card[0]);
-        print_card(players[i].hole_card[1]);
+        players[i].print_hole_cards();
         cout<<players[i].chip<<"$"<<endl;
     }
     //bet small blind
     total_pot += players[(btn_player+1)%PLAYERS].blind_bet(sb_size);
     total_pot += players[(btn_player+2)%PLAYERS].blind_bet(bb_size);
 }
-void Dealer::wake_up(Player &player)
-{
-        cout<<"Player "<<player.name<<" turn"<<endl;
-        cout<<"Pot:"<<total_pot<<" ,Your chip: "<<player.chip<<endl;
-        total_pot += player.action(this);
-        cout<<endl;
-}
+
 void Dealer::distribute_pot(Player (&players)[PLAYERS])
 {
     vector<Player*> ply_hash_greater;
@@ -371,7 +369,6 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
 
     if(remain_players == 1)
     {
-        cout<<"Everyone folded\n";
         for(int i =0;i<PLAYERS;i++)
         {
             if(!players[i].isFold)
@@ -456,40 +453,60 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
         pots.pop_back();
     }
 }
+void Dealer::wake_up(Player &player)
+{
+        cout<<"Player "<<player.name<<" turn"<<endl;
+        cout<<"Pot:"<<total_pot<<" ,Your chip: "<<player.chip<<endl;
+        total_pot += player.action(this);
+        cout<<endl;
+}
 void Dealer::start_betting(Player (&players)[PLAYERS])
 {
-    cout<<"pFlop"<<endl;
-    betting(players);
-    while(remain_players >1 && shared_cards.size()!=5)
+    do
     {
-        call_to_size = 0;
-        act_player = (btn_player+1)%PLAYERS;
-        bet_leader = act_player;
-        if(shared_cards.empty())
+        if(stage==PFLOP)
         {
-           cout<<"Flop"<<endl;
-
-           for(int i=0;i<3;i++)
-            {
-                print_card(*deck_it);
+            cout<<"pFlop"<<endl;
+        }
+        else if(stage == FLOP)
+        {
+            cout<<"Flop"<<endl;
+            for(int i=0;i<3;i++)
                 shared_cards.push_back(*(deck_it++));
-            }
+        }
+        else if(stage == TURN)
+        {
+            cout<<"Turn"<<endl;
+            shared_cards.push_back(*(deck_it++));
         }
         else
         {
-
-            if(shared_cards.size() == 3)
-                cout<<"Turn"<<endl;
-            else
-                cout<<"River"<<endl;
+            cout<<"River"<<endl;
             shared_cards.push_back(*(deck_it++));
-            for(unsigned int i=0;i < shared_cards.size();i++)
-                print_card(shared_cards[i]);
         }
+        print_public_cards();
         cout<<endl;
-        betting(players);
+        do
+        {
+            if(!players[act_player].isFold && players[act_player].chip > 0)
+                wake_up(players[act_player]);
+            //next one act
+            act_player = (act_player+1)%PLAYERS;
+        }while(act_player != bet_leader && remain_players != 1);
 
-    }
+        collect_bets(players);
+        call_to_size = 0;
+        act_player = (btn_player+1)%PLAYERS;
+        bet_leader = act_player;
+        stage++;
+        cout<<endl;
+    } while(remain_players >1 && shared_cards.size()!=5);
+
+}
+void Dealer::print_public_cards()
+{
+    for(unsigned int i=0;i < shared_cards.size();i++)
+        print_card(shared_cards[i]);
 
 }
 void Dealer::print_help()

@@ -35,8 +35,7 @@ int main ()
     for(int i=0;i<PLAYERS;i++)
     {
         cout<<"Player "<<i<<" ";
-        dealer.print_card(players[i].hole_card[0]);
-        dealer.print_card(players[i].hole_card[1]);
+        players[i].print_hole_cards();
         cout<<players[i].chip<<"$"<<endl;
     }
   return 0;

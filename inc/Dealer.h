@@ -9,6 +9,7 @@ class Dealer
 {
     public:
         Dealer();
+        void init();
         vector<card_t> deck;
         vector<card_t> shared_cards;
         rank_t rank;
@@ -28,6 +29,7 @@ class Dealer
         int total_pot;
         vector<int> pots;
         int cur_pot_ID;
+        int stage;
 
         void collect_bets(Player (&players)[PLAYERS]);
         void start_betting(Player (&players)[PLAYERS]);
@@ -37,9 +39,7 @@ class Dealer
         int hash_rank(const rank_t &str);
         void betting(Player (&players)[PLAYERS]);
         void print_help();
-
-
-
+        void print_public_cards();
    private:
         int check_straight(vector<card_t> c);
         vector<card_t> cardsFlush;
@@ -55,16 +55,6 @@ inline int Dealer::hash_rank(const rank_t &str)
     }
     return tmp;
 }
-inline void Dealer::betting(Player (&players)[PLAYERS])
-{
-    do
-    {
-        if(!players[act_player].isFold && players[act_player].chip > 0)
-            wake_up(players[act_player]);
-        //next one act
-        act_player = (act_player+1)%PLAYERS;
-    }while(act_player != bet_leader && remain_players != 1);
-    collect_bets(players);
-}
+
 
 #endif

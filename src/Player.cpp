@@ -11,7 +11,11 @@ using namespace std;
 Player::Player()
 {
 }
-
+void Player::print_hole_cards()
+{
+    cout<<card_val[hole_card[0].val]<<card_suit[hole_card[0].suit]<<" ";
+    cout<<card_val[hole_card[1].val]<<card_suit[hole_card[1].suit];
+}
 bool Player::fold(Dealer *dealer)
 {
     if(dealer->remain_players > 1)
