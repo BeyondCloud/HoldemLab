@@ -14,10 +14,10 @@ class Dealer
         vector<card_t> shared_cards;
         rank_t rank;
         rank_t judge(vector<card_t> c);
-        void next_round(Player (&players)[PLAYERS]);
-        void wake_up(Player &player);
-        void distribute_pot(Player (&players)[PLAYERS]);
         vector<card_t>::iterator deck_it;
+        vector<player_t> ply_ring; //dealer manage all ply_ring
+        vector<player_t>::iterator act_ply;
+
 
         int sb_size;
         int bb_size;
@@ -30,6 +30,10 @@ class Dealer
         vector<int> pots;
         int cur_pot_ID;
         int stage;
+
+        void new_round(Player (&players)[PLAYERS]);
+        void wake_up(Player &player);
+        void distribute_pot(Player (&players)[PLAYERS]);
 
         void collect_bets(Player (&players)[PLAYERS]);
         void start_betting(Player (&players)[PLAYERS]);

@@ -30,20 +30,7 @@ Dealer::Dealer()
         }
     }
 }
-void Dealer::init()
-{
-    stage = PFLOP;
-    call_to_size = bb_size;
-    remain_players = 0;
-    total_pot = 0;
-    cur_pot_ID = 0;
-    btn_player = (btn_player+1)%PLAYERS;
-    act_player = (btn_player+3)%PLAYERS; //UTG
-    bet_leader = act_player; //UTG
-    pots.push_back(0);
-    random_shuffle(deck.begin(),deck.end());
-    deck_it = deck.begin();
-}
+
 //input 2 hole card
 //type 1 high card
 //type 2 pair
@@ -304,7 +291,7 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
             pots.push_back(0);
         }
     }
-    // dealer take away the chip from smallest to biggest
+    // dealer take away the chip from the smallest to biggest
     // to build the side pot until no one have bet chips remain
 
     while(!ply_bets_smaller.empty())
@@ -325,7 +312,21 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
         orig_pot_ID++;
     }
 }
-void Dealer::next_round(Player (&players)[PLAYERS])
+void Dealer::init()
+{
+    stage = PFLOP;
+    call_to_size = bb_size;
+    remain_players = 0;
+    total_pot = 0;
+    cur_pot_ID = 0;
+    btn_player = (btn_player+1)%PLAYERS;
+    act_player = (btn_player+3)%PLAYERS; //UTG
+    bet_leader = act_player; //UTG
+    pots.push_back(0);
+    random_shuffle(deck.begin(),deck.end());
+    deck_it = deck.begin();
+}
+void Dealer::new_round(Player (&players)[PLAYERS])
 {
     cout<<"====new round start====="<<endl;
     cout<<"small blind = "<<sb_size<<endl;
@@ -493,7 +494,7 @@ void Dealer::start_betting(Player (&players)[PLAYERS])
         collect_bets(players);
 
         call_to_size = 0;
-        act_player = (btn_player+1)%PLAYERS;
+        act_player = (btn_player+1)%PLAYERS; //small blind act first
         bet_leader = act_player;
         stage++;
         cout<<endl;

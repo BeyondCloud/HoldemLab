@@ -28,16 +28,16 @@ int main ()
     }
 
     //game cycle start here
-    dealer.next_round(players); //init player ring,shuffle and set deck ptr to 0
+    dealer.new_round(players); //init player ring,shuffle and set deck ptr to 0
     dealer.start_betting(players);
     dealer.distribute_pot(players);
-
     for(int i=0;i<PLAYERS;i++)
     {
         cout<<"Player "<<i<<" ";
         players[i].print_hole_cards();
         cout<<players[i].chip<<"$"<<endl;
     }
+
   return 0;
 }
 
