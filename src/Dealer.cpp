@@ -474,14 +474,12 @@ void Dealer::start_betting(Player (&players)[PLAYERS])
             for(int i=0;i<3;i++)
                 shared_cards.push_back(*(deck_it++));
         }
-        else if(stage == TURN)
-        {
-            cout<<"Turn"<<endl;
-            shared_cards.push_back(*(deck_it++));
-        }
         else
         {
-            cout<<"River"<<endl;
+            if(stage == TURN)
+                cout<<"Turn"<<endl;
+            else
+                cout<<"River"<<endl;
             shared_cards.push_back(*(deck_it++));
         }
         print_public_cards();
@@ -490,11 +488,10 @@ void Dealer::start_betting(Player (&players)[PLAYERS])
         {
             if(!players[act_player].isFold && players[act_player].chip > 0)
                 wake_up(players[act_player]);
-            //next one act
             act_player = (act_player+1)%PLAYERS;
         }while(act_player != bet_leader && remain_players != 1);
-
         collect_bets(players);
+
         call_to_size = 0;
         act_player = (btn_player+1)%PLAYERS;
         bet_leader = act_player;
