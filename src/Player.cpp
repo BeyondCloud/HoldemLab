@@ -121,7 +121,7 @@ bool Player::raise(int raise_to,Dealer *d)
         }
     }
 
-    d->bet_leader = d->act_ply;
+    d->bet_leader = *(d->act_ply);
     d->call_to_size = bet;
     return true;
 }

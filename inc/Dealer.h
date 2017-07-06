@@ -17,7 +17,7 @@ class Dealer
         vector<Player*>::iterator ply_it;
         vector<Player*>::iterator act_it;
 
-        vector<Player*>::iterator bet_leader;
+        Player* bet_leader;
         vector<Player*>::iterator act_ply;
 
 

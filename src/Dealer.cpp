@@ -343,8 +343,8 @@ void Dealer::new_round()
     total_pot = 0;
     cur_pot_ID = 0;
 
-    bet_leader = (ply_pos.size()<=3)?ply_pos.begin():ply_pos.begin()+2;
-    act_ply = bet_leader;
+    act_ply = (ply_pos.size()<=3)?ply_pos.begin():ply_pos.begin()+2;
+    bet_leader = *act_ply;
 
     pots.push_back(0);
     random_shuffle(deck.begin(),deck.end());
@@ -496,18 +496,25 @@ void Dealer::start_betting()
             wake_up(act_ply);
             if((*act_ply)->isFold)
             {
+                if(*act_ply == bet_leader)
+                {
+                    if((act_ply+1) != ply_pos.end())
+                        bet_leader = *(act_ply+1);
+                    else
+                        bet_leader = ply_pos.front();
+                }
                 //if vector_it erase last element,
                 //iterator will auto point to the first element
                 ply_pos.erase(act_ply);
+                wake_up(act_ply);
             }
-            else
                 next_ply();
-        }while(act_ply != bet_leader && ply_pos.size() != 1);
+        }while(*act_ply != bet_leader && ply_pos.size() != 1);
         collect_bets();
 
         call_to_size = 0;
         act_ply = ply_pos.begin();
-        bet_leader = act_ply;
+        bet_leader = *act_ply;
         stage++;
         cout<<endl;
     } while(plys.size() >1 && shared_cards.size()!=5);
