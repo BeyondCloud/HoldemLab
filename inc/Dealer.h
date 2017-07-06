@@ -14,11 +14,11 @@ class Dealer
         rank_t rank;
         rank_t judge(vector<card_t> c);
         vector<card_t>::iterator deck_it;
-        vector<Player*>::iterator ply_it;
-        vector<Player*>::iterator act_it;
+
+        vector<Player*>::iterator ply_it;//for general purpose
 
         Player* bet_leader;
-        vector<Player*>::iterator act_ply;
+        vector<Player*>::iterator act_ply;//this point to
 
 
         //vector<Player> *p;//won't use this , since we need to delete

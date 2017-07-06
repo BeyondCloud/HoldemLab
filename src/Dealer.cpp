@@ -255,7 +255,9 @@ void Dealer::collect_bets()
 {
 
     vector<Player*> ply_bets_smaller;
+
     int orig_pot_ID =cur_pot_ID;
+
     for(uint8_t i=0;i<plys.size();i++)
     {
         if(plys[i]->bet != 0)
@@ -273,6 +275,7 @@ void Dealer::collect_bets()
     }
     if(ply_bets_smaller.size() == 0)
         return;
+
     sort(ply_bets_smaller.begin(),ply_bets_smaller.end(),Player::bet_smaller);
 
     //if there are non equal bet (someone all in) , create side pot
@@ -362,7 +365,6 @@ void Dealer::new_round()
     //bet small blind
     total_pot += ply_pos[0]->blind_bet(sb);
     total_pot += ply_pos[1]->blind_bet(bb);
-
     start_betting();
     distribute_pot();
     passdown_button();
@@ -419,6 +421,12 @@ void Dealer::distribute_pot()
         join_comp.clear();
         for(unsigned int i =0;i<ply_hash_greater.size();i++)
         {
+            /*
+            cout<<"==========\n";
+            cout<<pots.size()<<" ";
+            cout<<ply_hash_greater[i]->pot_ID;
+            cout<<"\n==========\n";
+            */
             if(ply_hash_greater[i]->pot_ID >= (int)pots.size() -1)
             {
                join_comp.push_back(ply_hash_greater[i] );
@@ -491,9 +499,10 @@ void Dealer::start_betting()
         }
         print_public_cards();
         cout<<endl;
-        do
+        while(ply_pos.size() > 1)
         {
-            wake_up(act_ply);
+            if((*act_ply)->chip!=0)
+                wake_up(act_ply);
             if((*act_ply)->isFold)
             {
                 if(*act_ply == bet_leader)
@@ -506,18 +515,31 @@ void Dealer::start_betting()
                 //if vector_it erase last element,
                 //iterator will auto point to the first element
                 ply_pos.erase(act_ply);
-                wake_up(act_ply);
             }
+            else
+            {
                 next_ply();
-        }while(*act_ply != bet_leader && ply_pos.size() != 1);
+                if(*act_ply == bet_leader )
+                    break;
+            }
+
+        }
         collect_bets();
 
         call_to_size = 0;
         act_ply = ply_pos.begin();
         bet_leader = *act_ply;
         stage++;
+
+        for(ply_it = ply_pos.begin();ply_it!=ply_pos.end();)
+        {
+            if((*ply_it)->chip ==0)
+               ply_pos.erase(ply_it);
+            else
+                ply_it++;
+        }
         cout<<endl;
-    } while(plys.size() >1 && shared_cards.size()!=5);
+    } while( shared_cards.size()!=5);
 
 }
 void Dealer::print_public_cards()
