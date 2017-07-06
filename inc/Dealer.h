@@ -8,42 +8,57 @@
 class Dealer
 {
     public:
-        Dealer();
-        void init();
+        Dealer(vector<Player> &players);
         vector<card_t> deck;
         vector<card_t> shared_cards;
         rank_t rank;
         rank_t judge(vector<card_t> c);
         vector<card_t>::iterator deck_it;
-        vector<player_t> ply_ring; //dealer manage all ply_ring
-        vector<player_t>::iterator act_ply;
+        vector<Player*>::iterator ply_it;
+        vector<Player*>::iterator act_it;
+
+        vector<Player*>::iterator bet_leader;
+        vector<Player*>::iterator act_ply;
 
 
-        int sb_size;
-        int bb_size;
+        //vector<Player> *p;//won't use this , since we need to delete
+                            //player when it's chip = 0
+                            //we only want to kill pointer
+        vector<Player*> plys;   //pointer to players send into table
+                                //erase player if chip<0
+
+        vector<Player*> ply_pos; //remain player in each game
+                                 //[0]=SB,[1]=BB...,[N]=BTN
+                                 //erase if fold
+
+        int sb;
+        int bb;
         int call_to_size;
-        int btn_player;
-        int act_player;
-        int bet_leader;
-        int remain_players;
+        //int btn_player; //won't use player pointer
+                        //since player will be remove at any time
+                        //this will record the index of ply pos
         int total_pot;
         vector<int> pots;
         int cur_pot_ID;
         int stage;
 
-        void new_round(Player (&players)[PLAYERS]);
-        void wake_up(Player &player);
-        void distribute_pot(Player (&players)[PLAYERS]);
+        void new_round();
+        void wake_up(vector<Player*>::iterator);
+        void distribute_pot();
 
-        void collect_bets(Player (&players)[PLAYERS]);
-        void start_betting(Player (&players)[PLAYERS]);
+        void collect_bets();
+        void start_betting();
         void print_card(card_t c){
             std::cout<<card_val[c.val];
             std::cout<<card_suit[c.suit]<<" ";};
         int hash_rank(const rank_t &str);
-        void betting(Player (&players)[PLAYERS]);
+        void betting();
         void print_help();
         void print_public_cards();
+        void remove_0chip_players();
+        void set_blind(int sb_val,int bb_val);
+        void passdown_button();
+        void next_ply();
    private:
         int check_straight(vector<card_t> c);
         vector<card_t> cardsFlush;
@@ -58,6 +73,35 @@ inline int Dealer::hash_rank(const rank_t &str)
         tmp+= (str.kicker[i]-1)*pow_13[kicker_size -i-1];
     }
     return tmp;
+}
+inline void Dealer::remove_0chip_players()
+{
+    for(ply_it = plys.begin();ply_it!=plys.end();)
+    {
+        if((*ply_it)->chip == 0 )
+            plys.erase(ply_it);
+        else
+            ply_it++;
+    }
+}
+inline void Dealer::passdown_button()
+{
+    plys.push_back(plys.front());
+    plys.erase(plys.begin());
+}
+
+inline void Dealer::set_blind(int sb_val,int bb_val)
+{
+    sb = sb_val;
+    bb = bb_val;
+}
+inline void Dealer::next_ply()
+{
+
+    if(act_ply+1 ==ply_pos.end())
+        act_ply =ply_pos.begin();
+    else
+        act_ply++;
 }
 
 

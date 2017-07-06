@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iterator>
 
+
 #include "myStruct.h"
 #include "myDefine.h"
 #include "Dealer.h"
@@ -11,27 +12,25 @@
 
 
 using namespace std;
-
+string namelist[TBL_SEATS] = {"A","B","C"};
 int main ()
 {
-    Dealer dealer;
-    Player players[PLAYERS];//this means players sit around poker table
+    vector<Player> players;
+
+   // Player players[TBL_SEATS];//this means players sit around poker table
                             //player with 0 chip wasn't able to join the game
 
     cout<<"press h to see help window\n";
 
     //initialize player's name and chips
-    for(int i=0;i<PLAYERS;i++)
-    {
-        players[i].name=to_string(i);
-        players[i].chip=500;
-    }
+    for(int i=0;i<TBL_SEATS;i++)
+        players.push_back(Player(namelist[i],500));
 
     //game cycle start here
-    dealer.new_round(players); //init player ring,shuffle and set deck ptr to 0
-    dealer.start_betting(players);
-    dealer.distribute_pot(players);
-    for(int i=0;i<PLAYERS;i++)
+    Dealer dealer(players);
+    dealer.new_round(); //init player ring,shuffle and set deck ptr to 0
+
+    for(int i=0;i<TBL_SEATS;i++)
     {
         cout<<"Player "<<i<<" ";
         players[i].print_hole_cards();

@@ -8,7 +8,7 @@ class Dealer;
 class Player
 {
     public:
-        Player();
+        Player(string n,int c);
         void init(){
             bet = 0;
             pot_ID = -1;
@@ -35,9 +35,11 @@ class Player
         int  blind_bet(int blind);
         int action(Dealer *dealer); //return push out chip,not total bet
         bool isFold;
+        bool isRaise;
+
         bool isAll_in;
         int hash_val;
-        int position; //SB = 1,BB = 2,UTG = 3....
+        int position;
 
         vector<int> pflop_bet;
         vector<int> flop_bet;

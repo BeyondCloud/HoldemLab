@@ -8,8 +8,11 @@
 #include <iostream>
 
 using namespace std;
-Player::Player()
+Player::Player(string n,int c)
 {
+    name = n;
+    chip = c;
+
 }
 void Player::print_hole_cards()
 {
@@ -18,10 +21,16 @@ void Player::print_hole_cards()
 }
 bool Player::fold(Dealer *dealer)
 {
-    if(dealer->remain_players > 1)
+    if(dealer->ply_pos.size() > 1)
     {
-        dealer->remain_players--;
         isFold = true;
+        /*
+        if(dealer->act_ply!= dealer->ply_pos.begin())
+            (dealer->act_ply)--;
+        else
+            (dealer->act_ply)
+        dealer->ply_pos.erase(dealer->act_ply);
+        */
         cout<<"player "<<name<<" fold"<<endl;
     }
     else
@@ -111,7 +120,8 @@ bool Player::raise(int raise_to,Dealer *d)
             bet = raise_to;
         }
     }
-    d->bet_leader = d->act_player;
+
+    d->bet_leader = d->act_ply;
     d->call_to_size = bet;
     return true;
 }

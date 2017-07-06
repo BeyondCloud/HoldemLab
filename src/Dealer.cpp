@@ -1,4 +1,5 @@
 #include "Dealer.h"
+#include "myDefine.h"
 
 #include <iostream>
 #include <time.h>       /* time */
@@ -8,21 +9,23 @@
 
 using namespace std;
 
-Dealer::Dealer()
+Dealer::Dealer(vector<Player> &players)
 {
-    sb_size = 15;
-    bb_size = 30;
-    cout<<"btn set to 0"<<endl;
-    btn_player = 0;
+    ASSERT(((players).size()>0), "players size = 0");
 
-    //random shuffle,without this will create same value
+    for(uint8_t i=0;i<players.size();i++)
+        plys.push_back(&players[i]);
+
+    set_blind(15,30);
+
+    //random seed,without this will create same value
     srand(time(0));
 
-    //create a deck
+    //create deck
     card_t c;
-    for(int i = 2;i<=14;i++)
+    for(uint8_t i = 2;i<=14;i++)
     {
-        for(int j = 0;j<4;j++)
+        for(uint8_t j = 0;j<4;j++)
         {
             c.val  = i;
             c.suit = j;
@@ -59,12 +62,12 @@ rank_t Dealer::judge(vector<card_t> c)
     int straight = 0;
     int suit[4] = {0};
     int flush = 0;
-    for(unsigned int i=0;i<c.size();i++)
+    for(uint8_t i=0;i<c.size();i++)
     {
         suit[c[i].suit]++;
     }
     //flush checker
-    for(int i= 0;i<4;i++)
+    for(uint8_t i= 0;i<4;i++)
     {
         if(suit[i] >=5 )
         {
@@ -73,7 +76,7 @@ rank_t Dealer::judge(vector<card_t> c)
                 flush = hole[0].val;
             if(hole[1].suit == i && hole[1].val > flush)
                 flush = hole[1].val;
-            for(unsigned int j=0;j<c.size();j++)
+            for(uint8_t j=0;j<c.size();j++)
             {
                 if(c[j].suit == i)
                 cardsFlush.push_back(c[i]);
@@ -92,7 +95,7 @@ rank_t Dealer::judge(vector<card_t> c)
     }
 
     //check pair,set,quad
-     for(unsigned int i=0;i<c.size();i++)
+     for(uint8_t i=0;i<c.size();i++)
     {
         while(c[i].val == prev_val && i<(c.size()))
         {
@@ -232,7 +235,7 @@ int Dealer::check_straight(vector<card_t> c)
     if(c.back().val == 14)
         prev_val = 1;
 
-    for(unsigned int i=0;i<c.size();i++)
+    for(uint8_t i=0;i<c.size();i++)
     {
         if(c[i].val-prev_val == 1)
             straight_cnt++;
@@ -248,23 +251,23 @@ int Dealer::check_straight(vector<card_t> c)
     return 0;
 }
 //manage pots , build side pot if needed
-void Dealer::collect_bets(Player (&players)[PLAYERS])
+void Dealer::collect_bets()
 {
 
     vector<Player*> ply_bets_smaller;
     int orig_pot_ID =cur_pot_ID;
-    for(int i=0;i<PLAYERS;i++)
+    for(uint8_t i=0;i<plys.size();i++)
     {
-        if(players[i].bet != 0)
+        if(plys[i]->bet != 0)
         {
-            if(players[i].isFold)
+            if(plys[i]->isFold)
             {
-                pots.back()+=players[i].bet;
-                players[i].bet = 0;
+                pots.back()+=plys[i]->bet;
+                plys[i]->bet = 0;
             }
             else
             {
-                ply_bets_smaller.push_back(&players[i]);
+                ply_bets_smaller.push_back(plys[i]);
             }
         }
     }
@@ -312,84 +315,86 @@ void Dealer::collect_bets(Player (&players)[PLAYERS])
         orig_pot_ID++;
     }
 }
-void Dealer::init()
+
+void Dealer::new_round()
 {
+    remove_0chip_players();
+    if(plys.size() <= 1)
+    {
+        cout<<"player<=1 , table closed";
+        return;
+    }
+    cout<<"====new round start====="<<endl;
+    cout<<"small blind = "<<sb<<endl;
+    cout<<"big blind = "<<bb<<endl;
+
+    //init players position,0=SB,1=BB...
+    ply_pos.clear();
+    ply_pos = plys;
+    for(uint8_t i=0;i<ply_pos.size();i++)
+    {
+        ply_pos[i]->position = i;
+        ply_pos[i]->isFold = false;
+        ply_pos[i]->init();
+    }
+
     stage = PFLOP;
-    call_to_size = bb_size;
-    remain_players = 0;
+    call_to_size = bb;
     total_pot = 0;
     cur_pot_ID = 0;
-    btn_player = (btn_player+1)%PLAYERS;
-    act_player = (btn_player+3)%PLAYERS; //UTG
-    bet_leader = act_player; //UTG
+
+    bet_leader = (ply_pos.size()<=3)?ply_pos.begin():ply_pos.begin()+2;
+    act_ply = bet_leader;
+
     pots.push_back(0);
     random_shuffle(deck.begin(),deck.end());
     deck_it = deck.begin();
-}
-void Dealer::new_round(Player (&players)[PLAYERS])
-{
-    cout<<"====new round start====="<<endl;
-    cout<<"small blind = "<<sb_size<<endl;
-    cout<<"big blind = "<<bb_size<<endl;
-    //init dealer
-    init();
-    cout<<"Dealer Button:"<<btn_player<<endl;
-    //reset player param
-    for(int i=0;i<PLAYERS;i++)
-    {
-        if(players[i].chip > 0 )
-        {
-            players[i].init();
-            remain_players++;
-        }
-        else
-            players[i].isFold = true;
-    }
-    //set position
-    for(int position=1;position<=PLAYERS;position++)
-        players[(btn_player+position)%PLAYERS].position = position;
 
     //deal card
-    for(int i=0;i<PLAYERS;i++)
+    for(ply_it =ply_pos.begin();ply_it!=ply_pos.end();ply_it++)
     {
-        players[i].hole_card.push_back(*(deck_it++));
-        players[i].hole_card.push_back(*(deck_it++));
-        cout<<"Player "<<i<<" ";
-        players[i].print_hole_cards();
-        cout<<players[i].chip<<"$"<<endl;
+        (*ply_it)->hole_card.push_back(*(deck_it++));
+        (*ply_it)->hole_card.push_back(*(deck_it++));
+        cout<<"Player "<<(*ply_it)->name<<" ";
+        (*ply_it)->print_hole_cards();
+        cout<<(*ply_it)->chip<<"$"<<endl;
     }
     //bet small blind
-    total_pot += players[(btn_player+1)%PLAYERS].blind_bet(sb_size);
-    total_pot += players[(btn_player+2)%PLAYERS].blind_bet(bb_size);
+    total_pot += ply_pos[0]->blind_bet(sb);
+    total_pot += ply_pos[1]->blind_bet(bb);
+
+    start_betting();
+    distribute_pot();
+    passdown_button();
 }
 
-void Dealer::distribute_pot(Player (&players)[PLAYERS])
+void Dealer::distribute_pot()
 {
     vector<Player*> ply_hash_greater;
         ply_hash_greater.clear();
 
-    if(remain_players == 1)
+    if(ply_pos.size() == 1)
     {
-        for(int i =0;i<PLAYERS;i++)
+        for(uint8_t i =0;i<plys.size();i++)
         {
-            if(!players[i].isFold)
+            if(!plys[i]->isFold)
             {
-                cout<<"Player"<<players[i].name<<" take all "<<endl;
-                ply_hash_greater.push_back(&players[i]);
+                cout<<"Player"<<plys[i]->name<<" take all "<<endl;
+                ply_hash_greater.push_back(plys[i]);
             }
         }
     }
     else
     {
         //judge players card , create hash strength
-        for(int i =0;i<PLAYERS;i++)
+        for(uint8_t i =0;i<plys.size();i++)
         {
-            if(!players[i].isFold)
+            if(!plys[i]->isFold)
             {
-                rank_t rnk = judge(players[i].hole_card);
-                cout<<"Player"<<players[i].name<<" got "<<card5_name[rnk.type]<<endl;
-                players[i].hash_val = hash_rank(rnk);
-                ply_hash_greater.push_back(&players[i]);
+                rank_t rnk = judge(plys[i]->hole_card);
+                cout<<"Player"<<plys[i]->name<<" got "<<card5_name[rnk.type]<<endl;
+                plys[i]->hash_val = hash_rank(rnk);
+                ply_hash_greater.push_back(plys[i]);
             }
         }
         sort(ply_hash_greater.begin(), ply_hash_greater.end(), Player::hash_val_greater);
@@ -435,15 +440,15 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
 
         int final_chip = pots.back() / split_player.size();
         //handling odd chip split
-        //int this case ,the earliest player got odd chip
+        //in this case ,the earliest player got odd chip
         int odd_chip = pots.back()-final_chip*split_player.size();
         int earliest_player = 100;
         int tmp_i;
-        for(unsigned int i=0;i<split_player.size();i++)
+        for(uint8_t i=0;i<split_player.size();i++)
         {
            split_player[i]->chip += final_chip;
 
-            if(split_player[i]->position<earliest_player)
+            if(split_player[i]->position < earliest_player)
             {
                 earliest_player = split_player[i]->position;
                 tmp_i = i;
@@ -454,14 +459,15 @@ void Dealer::distribute_pot(Player (&players)[PLAYERS])
         pots.pop_back();
     }
 }
-void Dealer::wake_up(Player &player)
+void Dealer::wake_up(vector<Player*>::iterator act)
 {
-        cout<<"Player "<<player.name<<" turn"<<endl;
-        cout<<"Pot:"<<total_pot<<" ,Your chip: "<<player.chip<<endl;
-        total_pot += player.action(this);
+        cout<<"Player "<<(*act)->name<<" turn"<<endl;
+        cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
+        total_pot += (*act)->action(this);
+
         cout<<endl;
 }
-void Dealer::start_betting(Player (&players)[PLAYERS])
+void Dealer::start_betting()
 {
     do
     {
@@ -487,23 +493,29 @@ void Dealer::start_betting(Player (&players)[PLAYERS])
         cout<<endl;
         do
         {
-            if(!players[act_player].isFold && players[act_player].chip > 0)
-                wake_up(players[act_player]);
-            act_player = (act_player+1)%PLAYERS;
-        }while(act_player != bet_leader && remain_players != 1);
-        collect_bets(players);
+            wake_up(act_ply);
+            if((*act_ply)->isFold)
+            {
+                //if vector_it erase last element,
+                //iterator will auto point to the first element
+                ply_pos.erase(act_ply);
+            }
+            else
+                next_ply();
+        }while(act_ply != bet_leader && ply_pos.size() != 1);
+        collect_bets();
 
         call_to_size = 0;
-        act_player = (btn_player+1)%PLAYERS; //small blind act first
-        bet_leader = act_player;
+        act_ply = ply_pos.begin();
+        bet_leader = act_ply;
         stage++;
         cout<<endl;
-    } while(remain_players >1 && shared_cards.size()!=5);
+    } while(plys.size() >1 && shared_cards.size()!=5);
 
 }
 void Dealer::print_public_cards()
 {
-    for(unsigned int i=0;i < shared_cards.size();i++)
+    for(uint8_t i=0;i < shared_cards.size();i++)
         print_card(shared_cards[i]);
 
 }
@@ -514,4 +526,3 @@ void Dealer::print_help()
     cout<<"f = fold,"<<endl;
     cout<<"r(space)raise amount)=raise"<<endl;
 }
-
