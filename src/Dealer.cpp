@@ -250,7 +250,9 @@ int Dealer::check_straight(vector<card_t> c)
     }
     return 0;
 }
-//manage pots , build side pot if needed
+//if there are non equal bet (someone all in) , create side pot.
+// dealer take away the chip from the smallest to biggest
+// to build the side pot until no one have bet chips remain
 void Dealer::collect_bets()
 {
 
@@ -258,19 +260,11 @@ void Dealer::collect_bets()
 
     int orig_pot_ID =cur_pot_ID;
 
-    for(uint8_t i=0;i<plys.size();i++)
+    for(ply_it = ply_pos.begin();ply_it!=ply_pos.end();ply_it++)
     {
-        if(plys[i]->bet != 0)
+        if((*ply_it)->bet != 0)
         {
-            if(plys[i]->isFold)
-            {
-                pots.back()+=plys[i]->bet;
-                plys[i]->bet = 0;
-            }
-            else
-            {
-                ply_bets_smaller.push_back(plys[i]);
-            }
+            ply_bets_smaller.push_back(*ply_it);
         }
     }
     if(ply_bets_smaller.size() == 0)
@@ -472,7 +466,6 @@ void Dealer::wake_up(vector<Player*>::iterator act)
         cout<<"Player "<<(*act)->name<<" turn"<<endl;
         cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
         total_pot += (*act)->action(this);
-
         cout<<endl;
 }
 void Dealer::start_betting()
@@ -514,6 +507,8 @@ void Dealer::start_betting()
                 }
                 //if vector_it erase last element,
                 //iterator will auto point to the first element
+                pots.back()+=(*act_ply)->bet;
+                (*act_ply)->bet = 0;
                 ply_pos.erase(act_ply);
             }
             else
