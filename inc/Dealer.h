@@ -44,7 +44,7 @@ class Dealer
         int stage;
         int all_in_plys_cnt;
 
-        void new_round();
+        bool new_round(); //return false is player <=1
         void wake_up(vector<Player*>::iterator);
         void distribute_pot();
 

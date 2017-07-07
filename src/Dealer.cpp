@@ -264,7 +264,8 @@ void Dealer::collect_bets()
         if((*ply_it)->bet != 0)
         {
             ply_bets_smaller.push_back(*ply_it);
-            (*ply_it)->bet =0;
+           // (*ply_it)->bet =0; //don't write this
+                                //dealer will take away bet below
         }
 
     }
@@ -314,13 +315,13 @@ void Dealer::collect_bets()
     }
 }
 
-void Dealer::new_round()
+bool Dealer::new_round()
 {
     remove_0chip_players();
     if(plys.size() <= 1)
     {
-        cout<<"player<=1 , table closed";
-        return;
+        cout<<"player<=1 , table closed\n";
+        return false;
     }
     cout<<"====new round start====="<<endl;
     cout<<"small blind = "<<sb<<endl;
@@ -497,38 +498,38 @@ void Dealer::start_betting()
         }
         print_public_cards();
         cout<<endl;
-        while(ply_nf.size() > 1)
+        if(ply_nf.size()-all_in_plys_cnt != 1)
         {
-            cout<<"=========="<<all_in_plys_cnt<<" "<<ply_nf.size()<<endl;
-            if((*act_ply)->chip!=0 &&all_in_plys_cnt != ply_nf.size()-1)
-                wake_up(act_ply);
-            if((*act_ply)->isFold)
+            while(ply_nf.size() > 1)
             {
-                if(*act_ply == bet_leader)
+                if((*act_ply)->chip!=0 )
+                    wake_up(act_ply);
+                if((*act_ply)->isFold)
                 {
-                    if((act_ply+1) != ply_nf.end())
-                        bet_leader = *(act_ply+1);
-                    else
-                        bet_leader = ply_nf.front();
+                    if(*act_ply == bet_leader)
+                    {
+                        if((act_ply+1) != ply_nf.end())
+                            bet_leader = *(act_ply+1);
+                        else
+                            bet_leader = ply_nf.front();
+                    }
+                    //add dead money to the pot
+                    pots.back()+=(*act_ply)->bet;
+                    (*act_ply)->bet = 0;
+                    //if vector_it erase last element,
+                    //iterator will auto point to the first element
+                    ply_nf.erase(act_ply);
                 }
-                //add dead money to the pot
-                pots.back()+=(*act_ply)->bet;
-                (*act_ply)->bet = 0;
-                //if vector_it erase last element,
-                //iterator will auto point to the first element
-                ply_nf.erase(act_ply);
-            }
-            else
-            {
+                else
+                {
+                    next_ply();
+                    if(*act_ply == bet_leader )
+                        break;
+                }
 
-                next_ply();
-                if(*act_ply == bet_leader )
-                    break;
             }
-
         }
         collect_bets();
-
         call_to_size = 0;
         act_ply = ply_nf.begin();
         bet_leader = *act_ply;
