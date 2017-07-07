@@ -380,10 +380,14 @@ void Dealer::distribute_pot()
         //judge players card , create hash strength
         for(ply_it = ply_nf.begin();ply_it != ply_nf.end();ply_it++)
         {
-                rank_t rnk = judge((*ply_it)->hole_card);
-                cout<<"Player"<<(*ply_it)->name<<" got "<<card5_name[rnk.type]<<endl;
-                (*ply_it)->hash_val = hash_rank(rnk);
-                ply_hash_greater.push_back((*ply_it));
+            rank_t rnk = judge((*ply_it)->hole_card);
+
+            cout<<"Player"<<"[";
+            (*ply_it)->print_hole_cards();
+            cout<<"]"<<(*ply_it)->name<<" got "<<card5_name[rnk.type]<<endl;
+
+            (*ply_it)->hash_val = hash_rank(rnk);
+            ply_hash_greater.push_back((*ply_it));
         }
         sort(ply_hash_greater.begin(), ply_hash_greater.end(), Player::hash_val_greater);
 
@@ -393,6 +397,7 @@ void Dealer::distribute_pot()
         for(uint8_t i =0;i<ply_hash_greater.size();i++)
             cout<<"Player "<<ply_hash_greater[i]->name<<" potID = "<<ply_hash_greater[i]->pot_ID<<endl;
     }
+    //uint8_t is not able to print by cout
     for(uint16_t i =0;i<pots.size();i++)
         cout<<"pot "<<i<<":"<<pots[i]<<endl;
 
@@ -415,11 +420,18 @@ void Dealer::distribute_pot()
             if(join_comp[i]->hash_val==join_comp.back()->hash_val)
                 split_player.push_back(join_comp[i]);
         }
-        if(split_player.size() > 1)
+        if(split_player.size() ==1)
+        {
+            split_player.front()->chip+=pots.back();
+            pots.pop_back();
+            continue;
+        }
+        else if(split_player.size() > 1)
             cout<<"split the pot\n";
-        if(split_player.size() == 0)
+        else if(split_player.size() == 0)
         {
             cout<<" split_player.size() == 0\n";
+            cout<<" this should be at least 1\n";
             cout<<"dealer.pots.back() / split_player.size() error"<<endl;
             break;
         }

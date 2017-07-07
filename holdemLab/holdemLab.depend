@@ -33,7 +33,7 @@
 	"Ndebug.h"
 	<string>
 
-1499445865 c:\users\a1989\desktop\holdemlab\inc\dealer.h
+1499445960 c:\users\a1989\desktop\holdemlab\inc\dealer.h
 	"myStruct.h"
 	"myDefine.h"
 	"Player.h"
@@ -44,7 +44,7 @@
 	<vector>
 	<string>
 
-1499355029 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
+1499445915 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
 	"Player.h"
 	"Dealer.h"
 	"myStruct.h"
