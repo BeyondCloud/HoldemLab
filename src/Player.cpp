@@ -21,16 +21,9 @@ void Player::print_hole_cards()
 }
 bool Player::fold(Dealer *dealer)
 {
-    if(dealer->ply_pos.size() > 1)
+    if(dealer->ply_nf.size() > 1)
     {
         isFold = true;
-        /*
-        if(dealer->act_ply!= dealer->ply_pos.begin())
-            (dealer->act_ply)--;
-        else
-            (dealer->act_ply)
-        dealer->ply_pos.erase(dealer->act_ply);
-        */
         cout<<"player "<<name<<" fold"<<endl;
     }
     else

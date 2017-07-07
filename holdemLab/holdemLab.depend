@@ -33,13 +33,13 @@
 	"Ndebug.h"
 	<string>
 
-1499358441 c:\users\a1989\desktop\holdemlab\inc\dealer.h
+1499445865 c:\users\a1989\desktop\holdemlab\inc\dealer.h
 	"myStruct.h"
 	"myDefine.h"
 	"Player.h"
 	"iostream"
 
-1499352639 c:\users\a1989\desktop\holdemlab\inc\player.h
+1499444039 c:\users\a1989\desktop\holdemlab\inc\player.h
 	"myStruct.h"
 	<vector>
 	<string>
@@ -58,7 +58,7 @@
 	<ctype.h>
 	<stdio.h>
 
-1499359083 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
+1499445853 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
 	"Dealer.h"
 	"myDefine.h"
 	<iostream>

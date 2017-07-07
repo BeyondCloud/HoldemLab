@@ -16,6 +16,7 @@ class Dealer
         vector<card_t>::iterator deck_it;
 
         vector<Player*>::iterator ply_it;//for general purpose
+        vector<Player*>::reverse_iterator ply_rit;//for general purpose
 
         Player* bet_leader;
         vector<Player*>::iterator act_ply;//this point to
@@ -27,7 +28,7 @@ class Dealer
         vector<Player*> plys;   //pointer to players send into table
                                 //erase player if chip<0
 
-        vector<Player*> ply_pos; //remain player in each game
+        vector<Player*> ply_nf; //players not fold yet
                                  //[0]=SB,[1]=BB...,[N]=BTN
                                  //erase if fold
 
@@ -98,8 +99,8 @@ inline void Dealer::set_blind(int sb_val,int bb_val)
 inline void Dealer::next_ply()
 {
 
-    if(act_ply+1 ==ply_pos.end())
-        act_ply =ply_pos.begin();
+    if(act_ply+1 ==ply_nf.end())
+        act_ply =ply_nf.begin();
     else
         act_ply++;
 }
