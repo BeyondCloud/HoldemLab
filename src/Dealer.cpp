@@ -18,7 +18,7 @@ Dealer::Dealer(vector<Player> &players)
 
     set_blind(15,30);
 
-    //random seed,without this will create same value
+ //random seed,without this will create same value
     srand(time(0));
 
     //create deck
@@ -262,7 +262,11 @@ void Dealer::collect_bets()
     for(ply_it = ply_nf.begin();ply_it!=ply_nf.end();ply_it++)
     {
         if((*ply_it)->bet != 0)
+        {
             ply_bets_smaller.push_back(*ply_it);
+            (*ply_it)->bet =0;
+        }
+
     }
     if(ply_bets_smaller.size() == 0)
         return;
@@ -281,11 +285,10 @@ void Dealer::collect_bets()
         }
         else
         {
-            cout<<"new pot create"<<endl;
             cur_scan_bet = (*ply_rit)->bet;
             cur_pot_ID++;
             (*ply_rit)->pot_ID =cur_pot_ID;
-            cout<<"player"<<(*ply_rit)->name<<" set to "<<cur_pot_ID;
+            cout<<"player"<<(*ply_rit)->name<<" Pot ID="<<cur_pot_ID<<endl;
             pots.push_back(0);
         }
     }
@@ -337,17 +340,22 @@ void Dealer::new_round()
     call_to_size = bb;
     total_pot = 0;
     cur_pot_ID = 0;
+    all_in_plys_cnt=0;
 
     act_ply = (ply_nf.size()<=3)?ply_nf.begin():ply_nf.begin()+2;
     bet_leader = *act_ply;
 
+    pots.clear();
     pots.push_back(0);
+
     random_shuffle(deck.begin(),deck.end());
     deck_it = deck.begin();
 
+    shared_cards.clear();
     //deal card
-    for(ply_it =ply_nf.begin();ply_it!=ply_nf.end();ply_it++)
+    for(ply_it =plys.begin();ply_it!=plys.end();ply_it++)
     {
+        (*ply_it)->hole_card.clear();
         (*ply_it)->hole_card.push_back(*(deck_it++));
         (*ply_it)->hole_card.push_back(*(deck_it++));
         cout<<"Player "<<(*ply_it)->name<<" ";
@@ -355,8 +363,8 @@ void Dealer::new_round()
         cout<<(*ply_it)->chip<<"$"<<endl;
     }
     //bet small blind
-    total_pot += ply_nf[0]->blind_bet(sb);
-    total_pot += ply_nf[1]->blind_bet(bb);
+    total_pot += ply_nf[0]->blind_bet(this,sb);
+    total_pot += ply_nf[1]->blind_bet(this,bb);
     start_betting();
     distribute_pot();
     passdown_button();
@@ -382,9 +390,9 @@ void Dealer::distribute_pot()
         {
             rank_t rnk = judge((*ply_it)->hole_card);
 
-            cout<<"Player"<<"[";
+            cout<<"Player "<<(*ply_it)->name<<" [";
             (*ply_it)->print_hole_cards();
-            cout<<"]"<<(*ply_it)->name<<" got "<<card5_name[rnk.type]<<endl;
+            cout<<"]"<<" got "<<card5_name[rnk.type]<<endl;
 
             (*ply_it)->hash_val = hash_rank(rnk);
             ply_hash_greater.push_back((*ply_it));
@@ -435,6 +443,7 @@ void Dealer::distribute_pot()
             cout<<"dealer.pots.back() / split_player.size() error"<<endl;
             break;
         }
+        //=========code below will deal with split pot case======
 
         int final_chip = pots.back() / split_player.size();
         //handling odd chip split
@@ -459,10 +468,10 @@ void Dealer::distribute_pot()
 }
 void Dealer::wake_up(vector<Player*>::iterator act)
 {
-        cout<<"Player "<<(*act)->name<<" turn"<<endl;
-        cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
-        total_pot += (*act)->action(this);
-        cout<<endl;
+    cout<<"Player "<<(*act)->name<<" turn"<<endl;
+    cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
+    total_pot += (*act)->action(this);
+    cout<<endl;
 }
 void Dealer::start_betting()
 {
@@ -490,7 +499,8 @@ void Dealer::start_betting()
         cout<<endl;
         while(ply_nf.size() > 1)
         {
-            if((*act_ply)->chip!=0)
+            cout<<"=========="<<all_in_plys_cnt<<" "<<ply_nf.size()<<endl;
+            if((*act_ply)->chip!=0 &&all_in_plys_cnt != ply_nf.size()-1)
                 wake_up(act_ply);
             if((*act_ply)->isFold)
             {
@@ -510,6 +520,7 @@ void Dealer::start_betting()
             }
             else
             {
+
                 next_ply();
                 if(*act_ply == bet_leader )
                     break;
@@ -523,7 +534,7 @@ void Dealer::start_betting()
         bet_leader = *act_ply;
         stage++;
         cout<<endl;
-    } while( shared_cards.size()!=5);
+    } while(shared_cards.size()!=5);
 
 }
 void Dealer::print_public_cards()

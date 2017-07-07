@@ -50,15 +50,10 @@ bool Player::fold(Dealer *dealer)
 //    }
 //
 //}
-bool Player::check_call(int call_to_size)
+bool Player::check_call(Dealer *d,int call_to_size)
 {
-    if(bet+chip<call_to_size)
-    {
-        cout<<"you go all in"<<endl;
-        isAll_in = true;
-        bet += chip;
-        chip = 0;
-    }
+    if(bet+chip<=call_to_size)
+        all_in(d);
     else if (bet == call_to_size)
         cout<<"you check "<<call_to_size<<"$"<<endl;
     else
@@ -70,15 +65,10 @@ bool Player::check_call(int call_to_size)
     }
     return true;
 }
-int  Player::blind_bet(int blind)
+int  Player::blind_bet(Dealer *d,int blind)
 {
     if(chip <= blind)
-    {
-        cout<<"Player "<<name<<" all in\n";
-        bet = chip;
-        chip = 0;
-        isAll_in = true;
-    }
+        all_in(d);
     else
     {
         bet = blind;
@@ -87,16 +77,11 @@ int  Player::blind_bet(int blind)
     }
     return bet;
 }
-bool Player::raise(int raise_to,Dealer *d)
+bool Player::raise(Dealer *d,int raise_to)
 {
     int call_to_size = d->call_to_size;
     if(chip+bet<=raise_to || (chip+bet)<=call_to_size )
-    {
-        cout<<"You go all in "<<chip<<"$"<<endl;
-        isAll_in = true;
-        bet += chip;
-        chip = 0;
-    }
+        all_in(d);
     else
     {
         if(raise_to < call_to_size*2)
@@ -116,6 +101,15 @@ bool Player::raise(int raise_to,Dealer *d)
 
     d->bet_leader = *(d->act_ply);
     d->call_to_size = bet;
+    return true;
+}
+bool Player::all_in(Dealer *d)
+{
+    cout<<"Player "<<name<<" all in\n";
+    bet +=chip;
+    chip = 0;
+    isAll_in = true;
+    d->all_in_plys_cnt++;
     return true;
 }
 void Player::record_bet(int bet,int stage)
@@ -143,18 +137,18 @@ int Player::action(Dealer *d)
 {
     bool done_act ;
     int orig_bet = bet;
-    char act;
+    string act;
     do
     {
         cout<<"Your action?"<<endl;
         cin>>act;
-         switch(act)
+        switch(act[0])
         {
             case 'f':
                 done_act = fold(d);
             break;
             case 'c':
-                done_act = check_call(d->call_to_size);
+                done_act = check_call(d,d->call_to_size);
             break;
             case 'r':
                 char bet_char[16];
@@ -173,7 +167,7 @@ int Player::action(Dealer *d)
                 }
                 else    //ALL IN
                     raise_to = bet + chip;
-                done_act = raise(raise_to,d);
+                done_act = raise(d,raise_to);
             break;
             default:
                 d->print_help();

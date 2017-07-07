@@ -28,7 +28,9 @@ int main ()
 
     //game cycle start here
     Dealer dealer(players);
-    dealer.new_round(); //init player ring,shuffle and set deck ptr to 0
+
+    while(dealer.plys.size()!= 1)
+        dealer.new_round(); //init player ring,shuffle and set deck ptr to 0
 
     for(int i=0;i<TBL_SEATS;i++)
     {

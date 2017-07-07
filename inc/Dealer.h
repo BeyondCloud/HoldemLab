@@ -42,6 +42,7 @@ class Dealer
         vector<int> pots;
         int cur_pot_ID;
         int stage;
+        int all_in_plys_cnt;
 
         void new_round();
         void wake_up(vector<Player*>::iterator);
@@ -98,7 +99,6 @@ inline void Dealer::set_blind(int sb_val,int bb_val)
 }
 inline void Dealer::next_ply()
 {
-
     if(act_ply+1 ==ply_nf.end())
         act_ply =ply_nf.begin();
     else

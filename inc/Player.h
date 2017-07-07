@@ -29,10 +29,11 @@ class Player
         int bet;
         int pot_ID;
         bool fold(Dealer *dealer);
-        bool  check_call(int call_size);
+        bool  check_call(Dealer *dealer,int call_size);
+        bool all_in(Dealer *dealer);
        // bool check(int call_size);
-        bool  raise(int raise_to,Dealer *dealer);
-        int  blind_bet(int blind);
+        bool  raise(Dealer *dealer,int raise_to);
+        int  blind_bet(Dealer *dealer,int blind);
         int action(Dealer *dealer); //return push out chip,not total bet
         bool isFold;
         bool isRaise;
