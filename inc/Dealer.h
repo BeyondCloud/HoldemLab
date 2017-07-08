@@ -9,19 +9,15 @@ class Dealer
 {
     public:
         Dealer(vector<Player> &players);
-        vector<card_t> deck;
-        vector<card_t> shared_cards;
         rank_t rank;
         rank_t judge(vector<card_t> c);
+        Player* bet_leader;
+        vector<card_t> deck;
+        vector<card_t> shared_cards;
         vector<card_t>::iterator deck_it;
-
         vector<Player*>::iterator ply_it;//for general purpose
         vector<Player*>::reverse_iterator ply_rit;//for general purpose
-
-        Player* bet_leader;
         vector<Player*>::iterator act_ply;//this point to
-
-
         //vector<Player> *p;//won't use this , since we need to delete
                             //player when it's chip = 0
                             //we only want to kill pointer
@@ -31,7 +27,6 @@ class Dealer
         vector<Player*> ply_nf; //players not fold yet
                                  //[0]=SB,[1]=BB...,[N]=BTN
                                  //erase if fold
-
         int sb;
         int bb;
         uint16_t round_cnt;
@@ -46,24 +41,25 @@ class Dealer
         int all_in_plys_cnt;
 
         bool new_round(); //return false is player <=1
-        void wake_up(vector<Player*>::iterator);
-        void distribute_pot();
-
         void collect_bets();
         void start_betting();
         void print_card(card_t c){
             std::cout<<card_val[c.val];
             std::cout<<card_suit[c.suit]<<" ";};
-        int hash_rank(const rank_t &str);
-        void betting();
         void print_help();
         void print_public_cards();
         void print_round_info();
-        void remove_0chip_players();
         void set_blind(int sb_val,int bb_val);
-        void passdown_button();
         void next_ply();
+
    private:
+        int hash_rank(const rank_t &str);
+        void remove_0chip_players();
+        void wake_up(vector<Player*>::iterator);
+        void split_pot(vector<Player*> &split_player);
+        void distribute_pot();
+        void passdown_button();
+
         int check_straight(vector<card_t> c);
         vector<card_t> cardsFlush;
 };
@@ -106,6 +102,30 @@ inline void Dealer::next_ply()
     else
         act_ply++;
 }
+inline void Dealer::split_pot(vector<Player*> &split_player)
+{
+    cout<<"split the pot\n";
+    int final_chip = pots.back() / split_player.size();
+    //handling odd chip split
+    //in this case ,the earliest player got odd chip
+    int odd_chip = pots.back()-final_chip*split_player.size();
+    int earliest_player = 100;
+    int tmp_i;
+    for(uint8_t i=0;i<split_player.size();i++)
+    {
+        cout<<"Player"<<split_player[i]->name<<" takes "<< final_chip<<"$"<<endl;
 
+       split_player[i]->chip += final_chip;
+
+        if(split_player[i]->position < earliest_player)
+        {
+            earliest_player = split_player[i]->position;
+            tmp_i = i;
+        }
+    }
+    split_player[tmp_i]->chip += odd_chip;
+
+    pots.pop_back();
+}
 
 #endif

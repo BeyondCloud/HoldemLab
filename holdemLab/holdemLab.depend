@@ -29,11 +29,11 @@
 1489384697 c:\users\a1989\desktop\holdemlab\inc\mystruct.h
 	<vector>
 
-1499501853 c:\users\a1989\desktop\holdemlab\inc\mydefine.h
+1499507302 c:\users\a1989\desktop\holdemlab\inc\mydefine.h
 	"Ndebug.h"
 	<string>
 
-1499499285 c:\users\a1989\desktop\holdemlab\inc\dealer.h
+1499520729 c:\users\a1989\desktop\holdemlab\inc\dealer.h
 	"myStruct.h"
 	"myDefine.h"
 	"Player.h"
@@ -44,7 +44,7 @@
 	<vector>
 	<string>
 
-1499505545 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
+1499507126 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
 	"Player.h"
 	"Dealer.h"
 	"myStruct.h"
@@ -58,7 +58,7 @@
 	<ctype.h>
 	<stdio.h>
 
-1499506459 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
+1499520303 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
 	"Dealer.h"
 	"myDefine.h"
 	<iostream>

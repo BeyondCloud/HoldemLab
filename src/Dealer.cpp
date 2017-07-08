@@ -325,8 +325,6 @@ bool Dealer::new_round()
         return false;
     }
     round_cnt++;
-
-
     //init players position,0=SB,1=BB...
     ply_nf.clear();
     ply_nf = plys;
@@ -336,7 +334,6 @@ bool Dealer::new_round()
         ply_nf[i]->isFold = false;
         ply_nf[i]->init();
     }
-
     stage = PFLOP;
     call_to_size = bb;
     total_pot = 0;
@@ -365,9 +362,9 @@ bool Dealer::new_round()
     total_pot += ply_nf[0]->blind_bet(this,sb);
     total_pot += ply_nf[1]->blind_bet(this,bb);
     start_betting();
-    //system("cls");
-    //print_round_info();
+    system("cls");
     distribute_pot();
+    print_round_info();
     cout<<"press any key to continue...\n";
     getch();
     passdown_button();
@@ -440,8 +437,6 @@ void Dealer::distribute_pot()
             pots.pop_back();
             continue;
         }
-        else if(split_player.size() > 1)
-            cout<<"split the pot\n";
         else if(split_player.size() == 0)
         {
             cout<<" split_player.size() == 0\n";
@@ -449,33 +444,15 @@ void Dealer::distribute_pot()
             cout<<"dealer.pots.back() / split_player.size() error"<<endl;
             break;
         }
-        //=========code below will deal with split pot case======
+        else
+            split_pot(split_player);
 
-        int final_chip = pots.back() / split_player.size();
-        //handling odd chip split
-        //in this case ,the earliest player got odd chip
-        int odd_chip = pots.back()-final_chip*split_player.size();
-        int earliest_player = 100;
-        int tmp_i;
-        for(uint8_t i=0;i<split_player.size();i++)
-        {
-            cout<<"Player"<<split_player[i]->name<<" takes "<< final_chip<<"$"<<endl;
-
-           split_player[i]->chip += final_chip;
-
-            if(split_player[i]->position < earliest_player)
-            {
-                earliest_player = split_player[i]->position;
-                tmp_i = i;
-            }
-        }
-        split_player[tmp_i]->chip += odd_chip;
-
-        pots.pop_back();
     }
 }
+
 void Dealer::wake_up(vector<Player*>::iterator act)
 {
+    system("cls");
     print_round_info();
     cout<<"Player "<<(*act)->name<<"'s turn"<<endl;
     cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
@@ -529,14 +506,13 @@ void Dealer::start_betting()
         call_to_size = 0;
         act_ply = ply_nf.begin();
         bet_leader = *act_ply;
-        stage = (stage<4)?stage+1:stage;
+        stage = (stage<3)?stage+1:stage;
         cout<<endl;
     } while(shared_cards.size()!=5);
 
 }
 void Dealer::print_round_info()
 {
-    system("cls");
     cout<<"====round "<<round_cnt<<"====="<<endl;
     cout<<STAGE_STR[stage];
     print_public_cards();

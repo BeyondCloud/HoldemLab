@@ -12,7 +12,6 @@ Player::Player(string n,int c)
 {
     name = n;
     chip = c;
-
 }
 void Player::print_hole_cards()
 {
@@ -27,7 +26,6 @@ void Player::print_info()
         cout<<"(BB)\t";
     else
             cout<<"\t";
-
     if(isFold)
         cout<<"<FOLD>\t\t";
     else
@@ -37,6 +35,17 @@ void Player::print_info()
     if(bet != 0)
         cout<<"bet "<<bet<<"$";
     cout<<endl;
+}
+int  Player::blind_bet(Dealer *d,int blind)
+{
+    if(chip <= blind)
+        all_in(d);
+    else
+    {
+        bet = blind;
+        chip -= bet;
+    }
+    return bet;
 }
 bool Player::fold(Dealer *dealer)
 {
@@ -50,25 +59,6 @@ bool Player::fold(Dealer *dealer)
     return true;
 
 }
-
-//bool Player::check(int call_to_size)
-//{
-//    if( bet==call_to_size)
-//    {
-//        cout<<"you check\n";
-//        return true;
-//    }
-//    else
-//    {
-//
-//        cout<<"you can't check\n";
-//        cout<<"your bet = "<<bet<<"\n";
-//        cout<<"call to size = "<<call_to_size<<"\n";
-//
-//        return false;
-//    }
-//
-//}
 bool Player::check_call(Dealer *d,int call_to_size)
 {
     if(bet+chip<=call_to_size)
@@ -80,21 +70,10 @@ bool Player::check_call(Dealer *d,int call_to_size)
         cout<<"you call "<<call_to_size<<"$"<<endl;
         chip -= (call_to_size-bet);
         bet = call_to_size;
-
     }
     return true;
 }
-int  Player::blind_bet(Dealer *d,int blind)
-{
-    if(chip <= blind)
-        all_in(d);
-    else
-    {
-        bet = blind;
-        chip -= bet;
-    }
-    return bet;
-}
+
 bool Player::raise(Dealer *d,int raise_to)
 {
     int call_to_size = d->call_to_size;
@@ -135,21 +114,22 @@ bool Player::all_in(Dealer *d)
     d->all_in_plys_cnt++;
     return true;
 }
+//this has nothing to do with game logic
+//You can use it to browse betting history
 void Player::record_bet(int bet,int stage)
 {
-
     switch(stage)
     {
-        case 0:
+        case PFLOP:
             pflop_bet.push_back(bet);
         break;
-        case 3:
+        case FLOP:
             flop_bet.push_back(bet);
         break;
-        case 4:
+        case TURN:
             turn_bet.push_back(bet);
         break;
-        case 5:
+        case RIVER:
             river_bet.push_back(bet);
         break;
     }
@@ -203,7 +183,7 @@ int Player::action(Dealer *d)
     }while(!done_act);
 
     if(bet != 0)
-        record_bet(bet,d->shared_cards.size());
+        record_bet(bet,d->stage);
 
     return  bet-orig_bet;
 
