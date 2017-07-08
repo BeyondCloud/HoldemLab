@@ -10,11 +10,22 @@
 #include "Dealer.h"
 #include "Player.h"
 
-
 using namespace std;
 string namelist[TBL_SEATS] = {"A","B","C"};
 int main ()
 {
+
+/*
+    string test = "a100";
+    char A;
+    string B;
+    A = test[0];
+    B = test.substr(1,test.size()-1);
+    cout<<A;
+    cout<<B;
+    return 0;
+    */
+
     vector<Player> players;
 
    //initialize player's name and chips

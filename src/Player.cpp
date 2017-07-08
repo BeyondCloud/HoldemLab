@@ -3,6 +3,8 @@
 #include "myStruct.h"
 #include "myDefine.h"
 #include "useful_func.h"
+
+
 #include <conio.h>
 #include <cstdlib>
 #include <iostream>
@@ -141,6 +143,8 @@ int Player::action(Dealer *d)
     bool done_act ;
     int orig_bet = bet;
     string act;
+    string bet_str;
+    int raise_to;
     do
     {
         cout<<"Your action? (enter h to see help)"<<endl;
@@ -157,19 +161,17 @@ int Player::action(Dealer *d)
                 done_act = check_call(d,d->call_to_size);
             break;
             case 'r':
-                char bet_char[16];
-                int raise_to;
                 if(bet + chip > d->call_to_size)
                 {
                     cout<<"amount?"<<endl;
-                    cin >>bet_char;
-                    if(!isNumber(bet_char))
+                    cin >>bet_str;
+                    if(!isNumber(bet_str))
                     {
                         cout<<"invalid input\n";
                         done_act = false;
                         break;
                     }
-                    raise_to = atoi(bet_char);
+                    raise_to=stoi( bet_str );
                 }
                 else    //ALL IN
                     raise_to = bet + chip;
@@ -187,4 +189,35 @@ int Player::action(Dealer *d)
 
     return  bet-orig_bet;
 
+}
+int Player::action(Dealer *d,act_t a)
+{
+    bool done_act;
+    int orig_bet = bet;
+    switch(a.act)
+    {
+        case 'a':
+            done_act = all_in(d);
+        break;
+        case 'f':
+            done_act = fold(d);
+        break;
+        case 'c':
+            done_act = check_call(d,d->call_to_size);
+        break;
+        case 'r':
+            if(bet + chip > d->call_to_size)
+                done_act = raise(d,a.raise_to);
+            else    //ALL IN
+                done_act = raise(d,bet + chip);
+        break;
+        default:
+            done_act = false;
+        break;
+    }
+    if(!done_act)
+        cerr<<"illegal act:"<<a.act<<",raise to:"<<a.raise_to<<endl;
+    if(bet != 0)
+        record_bet(bet,d->stage);
+    return  bet-orig_bet;
 }

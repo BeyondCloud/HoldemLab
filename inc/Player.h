@@ -3,6 +3,7 @@
 #include "myStruct.h"
 #include <vector>
 #include <string>
+
 using namespace std;
 class Dealer;
 class Player
@@ -37,6 +38,8 @@ class Player
         bool  raise(Dealer *dealer,int raise_to);
         int  blind_bet(Dealer *dealer,int blind);
         int action(Dealer *dealer); //return push out chip,not total bet
+        int action(Dealer *dealer,act_t act); //auto input
+
         bool isFold;
         bool isRaise;
 
@@ -44,11 +47,13 @@ class Player
         int hash_val;
         int position;
 
+
         vector<int> pflop_bet;
         vector<int> flop_bet;
         vector<int> turn_bet;
         vector<int> river_bet;
     private:
+
         void record_bet(int bet,int stage);
 };
 

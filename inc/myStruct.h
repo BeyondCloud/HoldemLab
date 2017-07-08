@@ -8,6 +8,11 @@ struct card_t
     int val;
     int suit;
 };
+struct act_t
+{
+    char act;
+    int raise_to;
+};
 struct rank_t
 {
     int type;
