@@ -6,13 +6,14 @@
 #include <stdlib.h>     /* srand, rand */
 #include <algorithm>
 #include <vector>
+#include <conio.h>
 
 using namespace std;
 
 Dealer::Dealer(vector<Player> &players)
 {
     ASSERT(((players).size()>0), "players size = 0");
-
+    round_cnt = 0;
     for(uint8_t i=0;i<players.size();i++)
         plys.push_back(&players[i]);
 
@@ -323,9 +324,8 @@ bool Dealer::new_round()
         cout<<"player<=1 , table closed\n";
         return false;
     }
-    cout<<"====new round start====="<<endl;
-    cout<<"small blind = "<<sb<<endl;
-    cout<<"big blind = "<<bb<<endl;
+    round_cnt++;
+
 
     //init players position,0=SB,1=BB...
     ply_nf.clear();
@@ -359,28 +359,29 @@ bool Dealer::new_round()
         (*ply_it)->hole_card.clear();
         (*ply_it)->hole_card.push_back(*(deck_it++));
         (*ply_it)->hole_card.push_back(*(deck_it++));
-        cout<<"Player "<<(*ply_it)->name<<" ";
-        (*ply_it)->print_hole_cards();
-        cout<<(*ply_it)->chip<<"$"<<endl;
     }
+
     //bet small blind
     total_pot += ply_nf[0]->blind_bet(this,sb);
     total_pot += ply_nf[1]->blind_bet(this,bb);
     start_betting();
+    //system("cls");
+    //print_round_info();
     distribute_pot();
+    cout<<"press any key to continue...\n";
+    getch();
     passdown_button();
 }
 
 void Dealer::distribute_pot()
 {
     vector<Player*> ply_hash_greater;
-        ply_hash_greater.clear();
+    ply_hash_greater.clear();
 
     //if one ply remain , don't need judge
     if(ply_nf.size() == 1)
     {
-            cout<<"Player"<<ply_nf.front()->name<<" take all "<<endl;
-            ply_hash_greater.push_back(ply_nf.front());
+            cout<<"Player"<<ply_nf.front()->name<<" takes "<< pots.back()<<"$"<<endl;
             ply_nf.front()->chip += pots.back();
             return;
     }
@@ -391,9 +392,9 @@ void Dealer::distribute_pot()
         {
             rank_t rnk = judge((*ply_it)->hole_card);
 
-            cout<<"Player "<<(*ply_it)->name<<" [";
+            cout<<"Player "<<(*ply_it)->name<<" ";
             (*ply_it)->print_hole_cards();
-            cout<<"]"<<" got "<<card5_name[rnk.type]<<endl;
+            cout<<" got "<<card5_name[rnk.type]<<endl;
 
             (*ply_it)->hash_val = hash_rank(rnk);
             ply_hash_greater.push_back((*ply_it));
@@ -403,13 +404,16 @@ void Dealer::distribute_pot()
         //win pot field
         //players get main pot, side pot...etc
         //if tie , split pot
+        /*
         for(uint8_t i =0;i<ply_hash_greater.size();i++)
             cout<<"Player "<<ply_hash_greater[i]->name<<" potID = "<<ply_hash_greater[i]->pot_ID<<endl;
+        */
     }
     //uint8_t is not able to print by cout
+    /*
     for(uint16_t i =0;i<pots.size();i++)
         cout<<"pot "<<i<<":"<<pots[i]<<endl;
-
+    */
     //start from the highest pot ID
     //if players have pot ID >=current pot ID
     //he can join competition
@@ -431,6 +435,7 @@ void Dealer::distribute_pot()
         }
         if(split_player.size() ==1)
         {
+            cout<<"Player"<<split_player.front()->name<<" takes "<<pots.back()<<"$"<<endl;
             split_player.front()->chip+=pots.back();
             pots.pop_back();
             continue;
@@ -454,6 +459,8 @@ void Dealer::distribute_pot()
         int tmp_i;
         for(uint8_t i=0;i<split_player.size();i++)
         {
+            cout<<"Player"<<split_player[i]->name<<" takes "<< final_chip<<"$"<<endl;
+
            split_player[i]->chip += final_chip;
 
             if(split_player[i]->position < earliest_player)
@@ -469,7 +476,8 @@ void Dealer::distribute_pot()
 }
 void Dealer::wake_up(vector<Player*>::iterator act)
 {
-    cout<<"Player "<<(*act)->name<<" turn"<<endl;
+    print_round_info();
+    cout<<"Player "<<(*act)->name<<"'s turn"<<endl;
     cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
     total_pot += (*act)->action(this);
     cout<<endl;
@@ -478,76 +486,80 @@ void Dealer::start_betting()
 {
     do
     {
-        if(stage==PFLOP)
+        if(ply_nf.size()-all_in_plys_cnt == 1)
+            break;
+        if(stage == FLOP)
         {
-            cout<<"pFlop"<<endl;
-        }
-        else if(stage == FLOP)
-        {
-            cout<<"Flop"<<endl;
             for(int i=0;i<3;i++)
                 shared_cards.push_back(*(deck_it++));
         }
-        else
-        {
-            if(stage == TURN)
-                cout<<"Turn"<<endl;
-            else
-                cout<<"River"<<endl;
+        else if(stage == TURN || stage ==RIVER)
             shared_cards.push_back(*(deck_it++));
-        }
-        print_public_cards();
-        cout<<endl;
-        if(ply_nf.size()-all_in_plys_cnt != 1)
-        {
-            while(ply_nf.size() > 1)
-            {
-                if((*act_ply)->chip!=0 )
-                    wake_up(act_ply);
-                if((*act_ply)->isFold)
-                {
-                    if(*act_ply == bet_leader)
-                    {
-                        if((act_ply+1) != ply_nf.end())
-                            bet_leader = *(act_ply+1);
-                        else
-                            bet_leader = ply_nf.front();
-                    }
-                    //add dead money to the pot
-                    pots.back()+=(*act_ply)->bet;
-                    (*act_ply)->bet = 0;
-                    //if vector_it erase last element,
-                    //iterator will auto point to the first element
-                    ply_nf.erase(act_ply);
-                }
-                else
-                {
-                    next_ply();
-                    if(*act_ply == bet_leader )
-                        break;
-                }
 
+        while(ply_nf.size() > 1)
+        {
+            if((*act_ply)->chip!=0 )
+                wake_up(act_ply);
+            if((*act_ply)->isFold)
+            {
+                if(*act_ply == bet_leader)
+                {
+                    if((act_ply+1) != ply_nf.end())
+                        bet_leader = *(act_ply+1);
+                    else
+                        bet_leader = ply_nf.front();
+                }
+                //add dead money to the pot
+                pots.back()+=(*act_ply)->bet;
+                (*act_ply)->bet = 0;
+                //if vector_it erase last element,
+                //iterator will auto point to the first element
+                ply_nf.erase(act_ply);
             }
+            else
+            {
+                next_ply();
+                if(*act_ply == bet_leader )
+                    break;
+            }
+
         }
+
         collect_bets();
         call_to_size = 0;
         act_ply = ply_nf.begin();
         bet_leader = *act_ply;
-        stage++;
+        stage = (stage<4)?stage+1:stage;
         cout<<endl;
     } while(shared_cards.size()!=5);
 
 }
+void Dealer::print_round_info()
+{
+    system("cls");
+    cout<<"====round "<<round_cnt<<"====="<<endl;
+    cout<<STAGE_STR[stage];
+    print_public_cards();
+    cout<<endl;
+    cout<<"SB/BB :"<<sb<<"/"<<bb<<endl;
+    for(ply_it =plys.begin();ply_it!=plys.end();ply_it++)
+        (*ply_it)->print_info();
+}
 void Dealer::print_public_cards()
 {
+    if(shared_cards.size() == 0)
+        return;
+    cout<<" [ ";
     for(uint8_t i=0;i < shared_cards.size();i++)
         print_card(shared_cards[i]);
-
+    cout<<"]";
 }
 void Dealer::print_help()
 {
     cout<<"How to play: "<<endl;
-    cout<<"c = check/call"<<endl;
     cout<<"f = fold,"<<endl;
+    cout<<"c = check/call"<<endl;
     cout<<"r(space)raise amount)=raise"<<endl;
+    cout<<"a = all in"<<endl;
+
 }

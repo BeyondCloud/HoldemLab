@@ -11,4 +11,5 @@ const char card_suit[4] = {'c','d','h','s'};
 const string card5_name[10] = {"","high card","pair","two pair","set",
                             "straight","flush","full house","quad","straight flush"};
 enum STAGE{PFLOP = 0,FLOP ,TURN, RIVER};
+const string STAGE_STR[4]={"PFLOP","FLOP","TURN","RIVER"};
 #endif

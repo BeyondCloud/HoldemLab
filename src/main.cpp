@@ -20,7 +20,6 @@ int main ()
    // Player players[TBL_SEATS];//this means players sit around poker table
                             //player with 0 chip wasn't able to join the game
 
-    cout<<"press h to see help window\n";
 
     //initialize player's name and chips
     for(int i=0;i<TBL_SEATS;i++)

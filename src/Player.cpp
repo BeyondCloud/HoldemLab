@@ -16,8 +16,27 @@ Player::Player(string n,int c)
 }
 void Player::print_hole_cards()
 {
-    cout<<card_val[hole_card[0].val]<<card_suit[hole_card[0].suit]<<" ";
-    cout<<card_val[hole_card[1].val]<<card_suit[hole_card[1].suit];
+    cout<<"["<<card_val[hole_card[0].val]<<card_suit[hole_card[0].suit]<<" ";
+    cout<<card_val[hole_card[1].val]<<card_suit[hole_card[1].suit]<<"]";
+}
+void Player::print_info()
+{
+    if(position ==0)
+        cout<<"(SB)\t";
+    else if(position ==1)
+        cout<<"(BB)\t";
+    else
+            cout<<"\t";
+
+    if(isFold)
+        cout<<"<FOLD>\t\t";
+    else
+        cout<<"Player "<<name<<"\t";
+    print_hole_cards();
+    cout<<chip<<"$\t";
+    if(bet != 0)
+        cout<<"bet "<<bet<<"$";
+    cout<<endl;
 }
 bool Player::fold(Dealer *dealer)
 {
@@ -53,9 +72,9 @@ bool Player::fold(Dealer *dealer)
 bool Player::check_call(Dealer *d,int call_to_size)
 {
     if(bet+chip<=call_to_size)
-        all_in(d);
+        return all_in(d);
     else if (bet == call_to_size)
-        cout<<"you check "<<call_to_size<<"$"<<endl;
+        cout<<"you check "<<endl;
     else
     {
         cout<<"you call "<<call_to_size<<"$"<<endl;
@@ -73,7 +92,6 @@ int  Player::blind_bet(Dealer *d,int blind)
     {
         bet = blind;
         chip -= bet;
-        cout<<"Player "<<name<<" (blind)" << blind <<"$\n";
     }
     return bet;
 }
@@ -81,7 +99,7 @@ bool Player::raise(Dealer *d,int raise_to)
 {
     int call_to_size = d->call_to_size;
     if(chip+bet<=raise_to || (chip+bet)<=call_to_size )
-        all_in(d);
+        return all_in(d);
     else
     {
         if(raise_to < call_to_size*2)
@@ -96,17 +114,22 @@ bool Player::raise(Dealer *d,int raise_to)
             cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
             chip-=raise_to - bet;
             bet = raise_to;
+            d->call_to_size = bet;
+            d->bet_leader = *(d->act_ply);
+            return true;
         }
     }
 
-    d->bet_leader = *(d->act_ply);
-    d->call_to_size = bet;
-    return true;
 }
 bool Player::all_in(Dealer *d)
 {
-    cout<<"Player "<<name<<" all in\n";
+    cout<<"You go all in";
     bet +=chip;
+    if(bet > d->call_to_size)
+    {
+        d->call_to_size = bet;
+        d->bet_leader = *(d->act_ply);
+    }
     chip = 0;
     isAll_in = true;
     d->all_in_plys_cnt++;
@@ -140,10 +163,13 @@ int Player::action(Dealer *d)
     string act;
     do
     {
-        cout<<"Your action?"<<endl;
+        cout<<"Your action? (enter h to see help)"<<endl;
         cin>>act;
         switch(act[0])
         {
+            case 'a':
+                done_act = all_in(d);
+            break;
             case 'f':
                 done_act = fold(d);
             break;

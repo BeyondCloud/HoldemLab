@@ -34,6 +34,7 @@ class Dealer
 
         int sb;
         int bb;
+        uint16_t round_cnt;
         int call_to_size;
         //int btn_player; //won't use player pointer
                         //since player will be remove at any time
@@ -57,6 +58,7 @@ class Dealer
         void betting();
         void print_help();
         void print_public_cards();
+        void print_round_info();
         void remove_0chip_players();
         void set_blind(int sb_val,int bb_val);
         void passdown_button();
