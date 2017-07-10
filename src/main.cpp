@@ -30,7 +30,7 @@ int main ()
 
    //initialize player's name and chips
     for(int i=0;i<TBL_SEATS;i++)
-        players.push_back(Player(namelist[i],(i+1)*500));
+        players.push_back(Player(namelist[i],1000));
 
     //game cycle start here
     Dealer dealer(players);

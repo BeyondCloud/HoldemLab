@@ -1,7 +1,9 @@
 #include "Dealer.h"
 #include "myDefine.h"
+#include "Useful_func.h"
 
 #include <iostream>
+
 #include <time.h>       /* time */
 #include <stdlib.h>     /* srand, rand */
 #include <algorithm>
@@ -464,6 +466,8 @@ void Dealer::wake_up(vector<Player*>::iterator act)
     print_round_info();
     cout<<"Player "<<(*act)->name<<"'s turn"<<endl;
     cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
+    (*act)->print_hole_cards();
+    cout<<endl;
     total_pot += (*act)->action(this);
     cout<<endl;
 }
@@ -523,11 +527,22 @@ void Dealer::print_round_info()
 {
     cout<<"====round "<<round_cnt<<"====="<<endl;
     cout<<STAGE_STR[stage];
-    print_public_cards();
-    cout<<endl;
+   // print_public_cards();
+    //cout<<endl;
     cout<<"SB/BB :"<<sb<<"/"<<bb<<endl;
     for(ply_it =plys.begin();ply_it!=plys.end();ply_it++)
-        (*ply_it)->print_info();
+    {
+        if((*ply_it)==(*act_ply))
+        {
+            SetColor(YELLOW);
+            (*ply_it)->print_info();
+            SetColor(WHITE);
+        }
+        else
+            (*ply_it)->print_info();
+
+    }
+
 }
 void Dealer::print_public_cards()
 {

@@ -1,27 +1,26 @@
 #ifndef USEFUL_FUNC_H
 #define USEFUL_FUNC_H
-#include <ctype.h>
-#include <stdio.h>
 
-bool isNumber(char number[])
-{
-    int i = 0;
-    //checking for negative numbers
-    for (; number[i] != 0; i++)
-    {
-        //if (number[i] > '9' || number[i] < '0')
-        if (!isdigit(number[i]))
-		{
-			printf("invalid input , except positive int \n");
-            return false;
-		}
-    }
-    return true;
-}
-bool isNumber(const std::string& s)
-{
-    std::string::const_iterator it = s.begin();
-    while (it != s.end() && std::isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
-}
+void SetColor(int ForgC);
+
+#define    BLACK            0
+#define    BLUE             1
+#define    GREEN            2
+#define    CYAN             3
+#define    RED              4
+#define    MAGENTA          5
+#define    BROWN            6
+#define    LIGHTGRAY        7
+#define    DARKGRAY         8
+#define    LIGHTBLUE        9
+#define    LIGHTGREEN       10
+#define    LIGHTCYAN        11
+#define    LIGHTRED         12
+#define    LIGHTMAGENTA     13
+#define    YELLOW           14
+#define    WHITE             15
+
+bool isNumber(char number[]);
+bool isNumber(const std::string& s);
+
 #endif

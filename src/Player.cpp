@@ -2,8 +2,7 @@
 #include "Dealer.h"
 #include "myStruct.h"
 #include "myDefine.h"
-#include "useful_func.h"
-
+#include "Useful_func.h"
 
 #include <conio.h>
 #include <cstdlib>
