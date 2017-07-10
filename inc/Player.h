@@ -10,7 +10,8 @@ class Player
 {
     public:
         Player(string n,int c);
-        void init(){
+        void init(int pos){
+            position = pos;
             bet = 0;
             pot_ID = -1;
             isAll_in = false;
@@ -45,7 +46,8 @@ class Player
 
         bool isAll_in;
         int hash_val;
-        int position;
+        int position; //players>3 :0=SB ,1=BB...N=BTN
+                      //players=2 :0=BTN,1=BB
 
 
         vector<int> pflop_bet;

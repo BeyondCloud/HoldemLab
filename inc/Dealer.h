@@ -17,15 +17,18 @@ class Dealer
         vector<card_t>::iterator deck_it;
         vector<Player*>::iterator ply_it;//for general purpose
         vector<Player*>::reverse_iterator ply_rit;//for general purpose
-        vector<Player*>::iterator act_ply;//this point to
+        vector<Player*>::iterator act_ply;
         //vector<Player> *p;//won't use this , since we need to delete
                             //player when it's chip = 0
                             //we only want to kill pointer
         vector<Player*> plys;   //pointer to players send into table
                                 //erase player if chip<0
 
-        vector<Player*> ply_nf; //players not fold yet
-                                 //[0]=SB,[1]=BB...,[N]=BTN
+        vector<Player*> ply_nf_seq;
+                                //players not fold action sequence
+                                //former player act earlier.
+                                 // players>3 case:[0]=SB,[1]=BB...,[N]=BTN
+                                 // players=2 case:[0]=BB,[1]=SB
                                  //erase if fold
         int sb;
         int bb;
@@ -97,8 +100,8 @@ inline void Dealer::set_blind(int sb_val,int bb_val)
 }
 inline void Dealer::next_ply()
 {
-    if(act_ply+1 ==ply_nf.end())
-        act_ply =ply_nf.begin();
+    if(act_ply+1 ==ply_nf_seq.end())
+        act_ply =ply_nf_seq.begin();
     else
         act_ply++;
 }

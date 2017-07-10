@@ -27,7 +27,7 @@ void Player::print_info()
     else if(position ==1)
         cout<<"(BB)\t";
     else
-            cout<<"\t";
+        cout<<"\t";
     if(isFold)
         cout<<"<FOLD>\t\t";
     else
@@ -51,7 +51,7 @@ int  Player::blind_bet(Dealer *d,int blind)
 }
 bool Player::fold(Dealer *dealer)
 {
-    if(dealer->ply_nf.size() > 1)
+    if(dealer->ply_nf_seq.size() > 1)
     {
         isFold = true;
         cout<<"player "<<name<<" fold"<<endl;
