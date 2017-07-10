@@ -35,7 +35,7 @@ int main ()
     //game cycle start here
     Dealer dealer(players);
 
-    while(dealer.new_round()){}
+    while(dealer.game_cycle()){}
     /*
     for(int i=0;i<TBL_SEATS;i++)
     {

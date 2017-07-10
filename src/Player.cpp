@@ -216,7 +216,10 @@ int Player::action(Dealer *d,act_t a)
         break;
     }
     if(!done_act)
+    {
         cerr<<"illegal act:"<<a.act<<",raise to:"<<a.raise_to<<endl;
+        system("pause");
+    }
     if(bet != 0)
         record_bet(bet,d->stage);
     return  bet-orig_bet;

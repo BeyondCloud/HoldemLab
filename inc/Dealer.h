@@ -43,7 +43,7 @@ class Dealer
         int stage;
         int all_in_plys_cnt;
 
-        bool new_round(); //return false is player <=1
+        bool game_cycle(); //return false is player <=1
         void collect_bets();
         void start_betting();
         void print_card(card_t c){
@@ -61,7 +61,7 @@ class Dealer
         void wake_up(vector<Player*>::iterator);
         void split_pot(vector<Player*> &split_player);
         void distribute_pot();
-        void passdown_button();
+        void position_shift();  //means pass down button to next player
 
         int check_straight(vector<card_t> c);
         vector<card_t> cardsFlush;
@@ -87,7 +87,7 @@ inline void Dealer::remove_0chip_players()
             ply_it++;
     }
 }
-inline void Dealer::passdown_button()
+inline void Dealer::position_shift()
 {
     plys.push_back(plys.front());
     plys.erase(plys.begin());
@@ -112,21 +112,16 @@ inline void Dealer::split_pot(vector<Player*> &split_player)
     //handling odd chip split
     //in this case ,the earliest player got odd chip
     int odd_chip = pots.back()-final_chip*split_player.size();
-    int earliest_player = 100;
-    int tmp_i;
     for(uint8_t i=0;i<split_player.size();i++)
     {
         cout<<"Player"<<split_player[i]->name<<" takes "<< final_chip<<"$"<<endl;
 
-       split_player[i]->chip += final_chip;
+        split_player[i]->chip += final_chip;
 
-        if(split_player[i]->position < earliest_player)
-        {
-            earliest_player = split_player[i]->position;
-            tmp_i = i;
-        }
+        if(split_player[i] == ply_nf_seq.front())
+             split_player[i]+= odd_chip;
     }
-    split_player[tmp_i]->chip += odd_chip;
+
 
     pots.pop_back();
 }

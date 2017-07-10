@@ -13,7 +13,7 @@ using namespace std;
 Dealer::Dealer(vector<Player> &players)
 {
     ASSERT(((players).size()>0), "players size = 0");
-    round_cnt = 0;
+    round_cnt = 1;
     for(uint8_t i=0;i<players.size();i++)
         plys.push_back(&players[i]);
 
@@ -316,15 +316,15 @@ void Dealer::collect_bets()
     }
 }
 
-bool Dealer::new_round()
+bool Dealer::game_cycle()
 {
+    //ensure valid players >=2
     remove_0chip_players();
     if(plys.size() <= 1)
     {
         cout<<"player<=1 , table closed\n";
         return false;
     }
-    round_cnt++;
     //Dealer init
     stage = PFLOP;
     call_to_size = bb;
@@ -335,7 +335,7 @@ bool Dealer::new_round()
     pots.push_back(0);
     shared_cards.clear();
 
-    //init players position,0=SB,1=BB...
+    //init players position,ply_nf_seq[x] x0=SB,x1=BB...
     //blind bet
     ply_nf_seq.clear();
     ply_nf_seq = plys;
@@ -372,10 +372,10 @@ bool Dealer::new_round()
     system("cls");
     distribute_pot();
     print_round_info();
-
-    cout<<"press any key to continue...\n";
-    getch();
-    passdown_button();
+    system("pause");
+    //pass down button to next player
+    position_shift();
+    round_cnt++;
 }
 
 void Dealer::distribute_pot()
@@ -500,8 +500,6 @@ void Dealer::start_betting()
                 ply_nf_seq.erase(act_ply);
                 if(act_ply==ply_nf_seq.end())
                     act_ply = ply_nf_seq.begin();
-
-
             }
             else
             {
