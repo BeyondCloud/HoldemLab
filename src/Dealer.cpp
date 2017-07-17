@@ -52,20 +52,13 @@ Dealer::Dealer(vector<Player> &players)
 rank_t Dealer::judge(vector<card_t> c)
 {
     rank_t rank;
-    const card_t hole[2] = {c[0],c[1]};
     c.insert( c.end(), shared_cards.begin(), shared_cards.end() );
 
     ASSERT(c.size() >= 5, "judge fail,except at least 5 cards but card size = " << c.size());
 
     sort(c.begin(),c.end(),Greater());
 
-    //pair , set, quad
-    int same = 0;
-    int prev_val = 0;
-    vector<int> pairs;
-    int SET = 0;
     int suit_cnt[4] = {0};
-
     //(straight)flush checker
     //it's impossible for seven card to form flush and full house at the same time
 
@@ -104,7 +97,12 @@ rank_t Dealer::judge(vector<card_t> c)
     }
 
     //check pair,set,quad
-     for(uint8_t i=0;i<c.size();i++)
+    int same = 0;
+    vector<int> pairs;
+    int SET = 0;
+    int prev_val = c[0].val;
+
+     for(uint8_t i=1;i<c.size();i++)
     {
         while(c[i].val == prev_val && i<(c.size()))
         {
