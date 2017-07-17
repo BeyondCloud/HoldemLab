@@ -36,11 +36,12 @@
 		<Unit filename="../inc/Dealer.h" />
 		<Unit filename="../inc/Ndebug.h" />
 		<Unit filename="../inc/Player.h" />
+		<Unit filename="../inc/Useful_func.h" />
 		<Unit filename="../inc/myDefine.h" />
 		<Unit filename="../inc/myStruct.h" />
-		<Unit filename="../inc/useful_func.h" />
 		<Unit filename="../src/Dealer.cpp" />
 		<Unit filename="../src/Player.cpp" />
+		<Unit filename="../src/Useful_func.cpp" />
 		<Unit filename="../src/main.cpp" />
 		<Extensions>
 			<code_completion />

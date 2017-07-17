@@ -6,12 +6,16 @@ using namespace std;
 struct card_t
 {
     int val;
-    int suit;
+    int suit; //c,d,h,s
 };
 struct act_t
 {
-    char act;
+    char type;
     int raise_to;
+    act_t()
+    {
+        raise_to = 0;
+    }
 };
 struct rank_t
 {

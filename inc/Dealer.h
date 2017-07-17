@@ -55,9 +55,8 @@ class Dealer
         void print_round_info();
         void set_blind(int sb_val,int bb_val);
         void next_ply();
-
-   private:
         int hash_rank(const rank_t &str);
+   private:
         void remove_0chip_players();
         void wake_up(vector<Player*>::iterator);
         void split_pot(vector<Player*> &split_player);
@@ -67,14 +66,14 @@ class Dealer
         int check_straight(vector<card_t> c);
         vector<card_t> cardsFlush;
 };
-inline int Dealer::hash_rank(const rank_t &str)
+inline int Dealer::hash_rank(const rank_t &rnk)
 {
     int tmp = 0;
-    tmp += str.type * pow_13[5];
-    int kicker_size = str.kicker.size();
+    tmp += rnk.type * pow_13[5];
+    int kicker_size = rnk.kicker.size();
     for(int i = 0;i <kicker_size ;i++)
     {
-        tmp+= (str.kicker[i]-1)*pow_13[kicker_size -i-1];
+        tmp+= (rnk.kicker[i]-1)*pow_13[kicker_size -i-1];
     }
     return tmp;
 }
@@ -122,7 +121,6 @@ inline void Dealer::split_pot(vector<Player*> &split_player)
         if(split_player[i] == ply_nf_seq.front())
              split_player[i]+= odd_chip;
     }
-
 
     pots.pop_back();
 }

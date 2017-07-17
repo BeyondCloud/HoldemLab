@@ -11,6 +11,7 @@
 using namespace std;
 Player::Player(string n,int c)
 {
+    is_AI = true;
     name = n;
     chip = c;
 }
@@ -36,6 +37,14 @@ void Player::print_info()
     if(bet != 0)
         cout<<"bet "<<bet<<"$";
     cout<<endl;
+}
+act_t Player::thinking()
+{
+    act_t act;
+    int val[2];
+    act.type = 'a';
+    return act;
+
 }
 int  Player::blind_bet(Dealer *d,int blind)
 {
@@ -193,7 +202,7 @@ int Player::action(Dealer *d,act_t a)
 {
     bool done_act;
     int orig_bet = bet;
-    switch(a.act)
+    switch(a.type)
     {
         case 'a':
             done_act = all_in(d);
@@ -216,7 +225,7 @@ int Player::action(Dealer *d,act_t a)
     }
     if(!done_act)
     {
-        cerr<<"illegal act:"<<a.act<<",raise to:"<<a.raise_to<<endl;
+        cerr<<"illegal act:"<<a.type<<",raise to:"<<a.raise_to<<endl;
         system("pause");
     }
     if(bet != 0)

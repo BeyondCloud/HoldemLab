@@ -3,6 +3,8 @@
 #include "Useful_func.h"
 
 #include <iostream>
+#include <algorithm> //swap
+
 
 #include <time.h>       /* time */
 #include <stdlib.h>     /* srand, rand */
@@ -367,6 +369,8 @@ bool Dealer::game_cycle()
         (*ply_it)->hole_card.clear();
         (*ply_it)->hole_card.push_back(*(deck_it++));
         (*ply_it)->hole_card.push_back(*(deck_it++));
+        if((*ply_it)->hole_card[0].val<(*ply_it)->hole_card[1].val)
+            swap((*ply_it)->hole_card[0],(*ply_it)->hole_card[1]);
     }
     start_betting();
 
@@ -394,16 +398,16 @@ void Dealer::distribute_pot()
     }
     else
     {
-        //judge players card , create hash strength
+        //judgejudge players card , create hash strength
         for(ply_it = ply_nf_seq.begin();ply_it != ply_nf_seq.end();ply_it++)
         {
             rank_t rnk = judge((*ply_it)->hole_card);
+            (*ply_it)->hash_val = hash_rank(rnk);
 
             cout<<"Player "<<(*ply_it)->name<<" ";
             (*ply_it)->print_hole_cards();
-            cout<<" got "<<card5_name[rnk.type]<<endl;
+            cout<<" got "<<card5_name[rnk.type]<<"\t"<<(*ply_it)->hash_val<<endl;
 
-            (*ply_it)->hash_val = hash_rank(rnk);
             ply_hash_greater.push_back((*ply_it));
         }
         sort(ply_hash_greater.begin(), ply_hash_greater.end(), Player::hash_val_greater);
@@ -468,7 +472,13 @@ void Dealer::wake_up(vector<Player*>::iterator act)
     cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
     (*act)->print_hole_cards();
     cout<<endl;
-    total_pot += (*act)->action(this);
+    if((*act)->is_AI)
+    {
+        act_t a = (*act)->thinking();
+        total_pot += (*act)->action(this,a);
+    }
+    else
+        total_pot += (*act)->action(this);
     cout<<endl;
 }
 void Dealer::start_betting()
@@ -476,7 +486,11 @@ void Dealer::start_betting()
     do
     {
         if(ply_nf_seq.size()-all_in_plys_cnt == 1)
+        {
+            while(shared_cards.size()!=5)
+                shared_cards.push_back(*(deck_it++));
             break;
+        }
         if(stage == FLOP)
         {
             for(int i=0;i<3;i++)
@@ -527,8 +541,8 @@ void Dealer::print_round_info()
 {
     cout<<"====round "<<round_cnt<<"====="<<endl;
     cout<<STAGE_STR[stage];
-   // print_public_cards();
-    //cout<<endl;
+    print_public_cards();
+    cout<<endl;
     cout<<"SB/BB :"<<sb<<"/"<<bb<<endl;
     for(ply_it =plys.begin();ply_it!=plys.end();ply_it++)
     {

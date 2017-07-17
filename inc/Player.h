@@ -21,6 +21,8 @@ class Player
             turn_bet.clear();
             river_bet.clear();
         };
+        act_t thinking(); //auto input
+
         void print_hole_cards();
         void print_info();
 
@@ -43,8 +45,8 @@ class Player
 
         bool isFold;
         bool isRaise;
-
         bool isAll_in;
+        bool is_AI;
         int hash_val;
         int position; //players>3 :0=SB ,1=BB...N=BTN
                       //players=2 :0=BTN,1=BB

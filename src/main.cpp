@@ -31,10 +31,9 @@ int main ()
    //initialize player's name and chips
     for(int i=0;i<TBL_SEATS;i++)
         players.push_back(Player(namelist[i],1000));
-
-    //game cycle start here
+    players[0].is_AI = false;
     Dealer dealer(players);
-
+    //game cycle start here
     while(dealer.game_cycle()){}
     /*
     for(int i=0;i<TBL_SEATS;i++)
