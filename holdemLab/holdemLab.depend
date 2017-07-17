@@ -15,7 +15,7 @@
 	<iostream>
 	<algorithm>
 
-1500282578 source:c:\users\a1989\desktop\holdemlab\src\main.cpp
+1500298061 source:c:\users\a1989\desktop\holdemlab\src\main.cpp
 	<stdio.h>
 	<vector>
 	<algorithm>
@@ -33,7 +33,7 @@
 	"Ndebug.h"
 	<string>
 
-1500282067 c:\users\a1989\desktop\holdemlab\inc\dealer.h
+1500299547 c:\users\a1989\desktop\holdemlab\inc\dealer.h
 	"myStruct.h"
 	"myDefine.h"
 	"Player.h"

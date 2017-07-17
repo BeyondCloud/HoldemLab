@@ -64,7 +64,7 @@ class Dealer
         void position_shift();  //means pass down button to next player
 
         int check_straight(vector<card_t> c);
-        vector<card_t> cardsFlush;
+
 };
 inline int Dealer::hash_rank(const rank_t &rnk)
 {

@@ -55,7 +55,7 @@ rank_t Dealer::judge(vector<card_t> c)
     const card_t hole[2] = {c[0],c[1]};
     c.insert( c.end(), shared_cards.begin(), shared_cards.end() );
 
-    ASSERT(c.size() > 4, "judge fail,except >4 card,card size = " << c.size());
+    ASSERT(c.size() >= 5, "judge fail,except at least 5 cards but card size = " << c.size());
 
     sort(c.begin(),c.end(),Greater());
 
@@ -64,38 +64,42 @@ rank_t Dealer::judge(vector<card_t> c)
     int prev_val = 0;
     vector<int> pairs;
     int SET = 0;
-    int straight = 0;
-    int suit[4] = {0};
-    int flush = 0;
+    int suit_cnt[4] = {0};
+
+    //(straight)flush checker
+    //it's impossible for seven card to form flush and full house at the same time
+
+    //accumulate cards with same suit
     for(uint8_t i=0;i<c.size();i++)
-    {
-        suit[c[i].suit]++;
-    }
-    //flush checker
+        suit_cnt[c[i].suit]++;
     for(uint8_t i= 0;i<4;i++)
     {
-        if(suit[i] >=5 )
+        //if one of four suits count > 5,flush exist
+        if(suit_cnt[i] >=5 )
         {
-            cardsFlush.clear();
-            if(hole[0].suit == i)
-                flush = hole[0].val;
-            if(hole[1].suit == i && hole[1].val > flush)
-                flush = hole[1].val;
+            vector<card_t> cardsFlush;
             for(uint8_t j=0;j<c.size();j++)
             {
                 if(c[j].suit == i)
-                cardsFlush.push_back(c[i]);
+                    cardsFlush.push_back(c[i]);
             }
+            //=========straight flush checker================
             int top_card = check_straight(cardsFlush);
-            if(top_card > 0)
+            if(top_card > 0) //straight flush
             {
                 rank.type = 9;
                 rank.kicker.push_back(top_card);
                 return rank;
+            }//===============================================
+            else
+            {
+                rank.type = 6;
+                //card value has been sorted greater
+                //kicker = last five elements
+                for(uint8_t j =-1;j>=-5;j--)
+                    rank.kicker.push_back(cardsFlush.end()[j].val);
+                return rank;
             }
-            rank.type = 6;
-            rank.kicker.push_back(flush);
-            return rank;
         }
     }
 
@@ -142,7 +146,7 @@ rank_t Dealer::judge(vector<card_t> c)
         return rank;
     }
 
-    straight = check_straight(c);
+    int straight = check_straight(c);
     if(straight != 0)
     {
         rank.type = 5;
@@ -406,7 +410,7 @@ void Dealer::distribute_pot()
 
             cout<<"Player "<<(*ply_it)->name<<" ";
             (*ply_it)->print_hole_cards();
-            cout<<" got "<<card5_name[rnk.type]<<"\t"<<(*ply_it)->hash_val<<endl;
+            cout<<" got "<<card5_name[rnk.type]<<"\t"<<"hash code:"<<(*ply_it)->hash_val<<endl;
 
             ply_hash_greater.push_back((*ply_it));
         }
