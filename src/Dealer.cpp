@@ -19,8 +19,8 @@ Dealer::Dealer(vector<Player*> players)
     ASSERT((players.size()>0), "players size = 0");
     round_cnt = 1;
     plys = players;
-//    for(uint8_t i=0;i<players.size();i++)
-//        plys.push_back(&players[i]);
+    for(uint8_t i=0;i<plys.size();i++)
+        plys[i]->d = this;
 
     set_blind(15,30);
 
@@ -277,7 +277,7 @@ void Dealer::collect_bets()
     if(ply_bets_smaller.size() == 0)
         return;
 
-    sort(ply_bets_smaller.begin(),ply_bets_smaller.end(),Player::bet_smaller);
+    sort(ply_bets_smaller.begin(),ply_bets_smaller.end(),bet_smaller);
 
     //if there are non equal bet (someone all in) , create side pot
     int cur_scan_bet = ply_bets_smaller.back()->bet;
@@ -322,6 +322,8 @@ void Dealer::collect_bets()
 
 bool Dealer::game_cycle()
 {
+
+
     //ensure valid players >=2
     remove_0chip_players();
     if(plys.size() <= 1)
@@ -348,16 +350,16 @@ bool Dealer::game_cycle()
         for(uint8_t pos=0;pos<ply_nf_seq.size();pos++)
             ply_nf_seq[pos]->init(pos);
         //blind
-        total_pot += ply_nf_seq[0]->blind_bet(this,sb);
-        total_pot += ply_nf_seq[1]->blind_bet(this,bb);
+        total_pot += ply_nf_seq[0]->blind_bet(sb);
+        total_pot += ply_nf_seq[1]->blind_bet(bb);
     }
     else
     {
         ply_nf_seq[0]->init(1); //big blind act first
         ply_nf_seq[1]->init(0);
         //blind
-        total_pot += ply_nf_seq[0]->blind_bet(this,bb);
-        total_pot += ply_nf_seq[1]->blind_bet(this,sb);
+        total_pot += ply_nf_seq[0]->blind_bet(bb);
+        total_pot += ply_nf_seq[1]->blind_bet(sb);
     }
     act_ply = (ply_nf_seq.size()<=3)?ply_nf_seq.begin():ply_nf_seq.begin()+2;
     bet_leader = *act_ply;
@@ -410,7 +412,7 @@ void Dealer::distribute_pot()
 
             ply_hash_greater.push_back((*ply_it));
         }
-        sort(ply_hash_greater.begin(), ply_hash_greater.end(), Player::hash_val_greater);
+        sort(ply_hash_greater.begin(), ply_hash_greater.end(),hash_val_greater);
 
         //win pot field
         //players get main pot, side pot...etc
@@ -475,10 +477,10 @@ void Dealer::wake_up(vector<Player*>::iterator act)
     if((*act)->is_AI)
     {
         act_t a = (*act)->thinking();
-        total_pot += (*act)->action(this,a);
+        total_pot += (*act)->action(a);
     }
     else
-        total_pot += (*act)->action(this);
+        total_pot += (*act)->action();
     cout<<endl;
 }
 void Dealer::start_betting()

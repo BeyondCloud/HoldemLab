@@ -57,6 +57,8 @@ class Dealer
         void next_ply();
         int hash_rank(const rank_t &str);
    private:
+        static bool bet_smaller(Player *l, Player *r) { return (l->bet > r->bet); }
+        static bool hash_val_greater(Player *l, Player *r) { return (l->hash_val <r->hash_val); }
         void remove_0chip_players();
         void wake_up(vector<Player*>::iterator);
         void split_pot(vector<Player*> &split_player);

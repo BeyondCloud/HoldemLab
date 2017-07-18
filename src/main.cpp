@@ -27,22 +27,12 @@ int main ()
     return 0;
     */
 
-//    AIplayer test(namelist[0],1000);
-//    Player* ptr;
-//    ptr = &test;
-//    ptr->thinking();
-//    return 0;
     vector<Player*> players;
-    Player user(namelist[0],1000);
-    players.push_back(&user);
-    AIplayer AI_1(namelist[1],1000);
-    AIplayer AI_2(namelist[2],1000);
+    players.push_back(new Player(namelist[0],1000));
    //initialize player's name and chips
-  //  for(int i=1;i<TBL_SEATS;i++)
-    players.push_back(&AI_1);
-    players.push_back(&AI_2);
+    for(int i=1;i<TBL_SEATS;i++)
+        players.push_back(new AIplayer(namelist[i],1000));
 
-    players.back()->thinking();
 
     Dealer dealer(players);
     //game cycle start here

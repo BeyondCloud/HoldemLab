@@ -9,12 +9,6 @@
 #include <iostream>
 
 using namespace std;
-Player::Player(string n,int c)
-{
-    is_AI = false;
-    name = n;
-    chip = c;
-}
 void Player::print_hole_cards()
 {
     cout<<"["<<card_val[hole_card[0].val]<<card_suit[hole_card[0].suit]<<" ";
@@ -39,10 +33,10 @@ void Player::print_info()
     cout<<endl;
 }
 
-int  Player::blind_bet(Dealer *d,int blind)
+int  Player::blind_bet(int blind)
 {
     if(chip <= blind)
-        all_in(d);
+        all_in();
     else
     {
         bet = blind;
@@ -50,9 +44,9 @@ int  Player::blind_bet(Dealer *d,int blind)
     }
     return bet;
 }
-bool Player::fold(Dealer *dealer)
+bool Player::fold()
 {
-    if(dealer->ply_nf_seq.size() > 1)
+    if(d->ply_nf_seq.size() > 1)
     {
         isFold = true;
         cout<<"player "<<name<<" fold"<<endl;
@@ -62,10 +56,10 @@ bool Player::fold(Dealer *dealer)
     return true;
 
 }
-bool Player::check_call(Dealer *d,int call_to_size)
+bool Player::check_call(int call_to_size)
 {
     if(bet+chip<=call_to_size)
-        return all_in(d);
+        return all_in();
     else if (bet == call_to_size)
         cout<<"you check "<<endl;
     else
@@ -77,11 +71,11 @@ bool Player::check_call(Dealer *d,int call_to_size)
     return true;
 }
 
-bool Player::raise(Dealer *d,int raise_to)
+bool Player::raise(int raise_to)
 {
     int call_to_size = d->call_to_size;
     if(chip+bet<=raise_to || (chip+bet)<=call_to_size )
-        return all_in(d);
+        return all_in();
     else
     {
         if(raise_to < call_to_size*2)
@@ -103,7 +97,7 @@ bool Player::raise(Dealer *d,int raise_to)
     }
 
 }
-bool Player::all_in(Dealer *d)
+bool Player::all_in()
 {
     cout<<"You go all in";
     bet +=chip;
@@ -139,7 +133,7 @@ void Player::record_bet(int bet,int stage)
 }
 //return number of chips pushed out,not total bet
 //EX: A bet 5 ,B raise to 10,A call,in this case return 10-5=5
-int Player::action(Dealer *d)
+int Player::action()
 {
     bool done_act ;
     int orig_bet = bet;
@@ -153,13 +147,13 @@ int Player::action(Dealer *d)
         switch(act[0])
         {
             case 'a':
-                done_act = all_in(d);
+                done_act = all_in();
             break;
             case 'f':
-                done_act = fold(d);
+                done_act = fold();
             break;
             case 'c':
-                done_act = check_call(d,d->call_to_size);
+                done_act = check_call(d->call_to_size);
             break;
             case 'r':
                 if(bet + chip > d->call_to_size)
@@ -176,7 +170,7 @@ int Player::action(Dealer *d)
                 }
                 else    //ALL IN
                     raise_to = bet + chip;
-                done_act = raise(d,raise_to);
+                done_act = raise(raise_to);
             break;
             default:
                 d->print_help();
@@ -192,7 +186,7 @@ int Player::action(Dealer *d)
 
 }
 //AI action
-int Player::action(Dealer *d,act_t a)
+int Player::action(act_t a)
 {
     bool done_act;
     int orig_bet = bet;
@@ -200,19 +194,19 @@ int Player::action(Dealer *d,act_t a)
     switch(a.type)
     {
         case 'a':
-            done_act = all_in(d);
+            done_act = all_in();
         break;
         case 'f':
-            done_act = fold(d);
+            done_act = fold();
         break;
         case 'c':
-            done_act = check_call(d,d->call_to_size);
+            done_act = check_call(d->call_to_size);
         break;
         case 'r':
             if(bet + chip > d->call_to_size)
-                done_act = raise(d,a.raise_to);
+                done_act = raise(a.raise_to);
             else    //ALL IN
-                done_act = raise(d,bet + chip);
+                done_act = raise(bet + chip);
         break;
         default:
             done_act = false;

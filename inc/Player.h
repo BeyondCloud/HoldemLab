@@ -10,7 +10,8 @@ class Dealer;
 class Player
 {
     public:
-        Player(string n,int c);
+        Player(string n,int c):name(n),chip(c){is_AI=false;};
+        //call before each run
         void init(int pos){
             position = pos;
             bet = 0;
@@ -27,25 +28,21 @@ class Player
         void print_hole_cards();
         void print_info();
 
-        static bool hash_val_greater(Player *l, Player *r) { return (l->hash_val <r->hash_val); }
-        static bool bet_smaller(Player *l, Player *r) { return (l->bet > r->bet); }
 
         vector<card_t> hole_card;
         string name;
         int chip;
         int bet;
         int pot_ID;
-        bool fold(Dealer *dealer);
-        bool  check_call(Dealer *dealer,int call_size);
-        bool all_in(Dealer *dealer);
-       // bool check(int call_size);
-        bool  raise(Dealer *dealer,int raise_to);
-        int  blind_bet(Dealer *dealer,int blind);
-        int action(Dealer *dealer); //return push out chip,not total bet
-        int action(Dealer *dealer,act_t act); //auto input
-
+        bool fold();
+        bool  check_call(int call_size);
+        bool all_in();
+        bool  raise(int raise_to);
+        int  blind_bet(int blind);
+        int action(); //return push out chip,not total bet
+        int action(act_t act); //auto input
+        Dealer *d;
         bool isFold;
-        bool isRaise;
         bool isAll_in;
         bool is_AI;
         int hash_val;
