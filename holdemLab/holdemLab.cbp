@@ -33,12 +33,14 @@
 			<Add option="-Wall" />
 			<Add option="-std=c++11" />
 		</Compiler>
+		<Unit filename="../inc/AIplayer.h" />
 		<Unit filename="../inc/Dealer.h" />
 		<Unit filename="../inc/Ndebug.h" />
 		<Unit filename="../inc/Player.h" />
 		<Unit filename="../inc/Useful_func.h" />
 		<Unit filename="../inc/myDefine.h" />
 		<Unit filename="../inc/myStruct.h" />
+		<Unit filename="../src/AIplayer.cpp" />
 		<Unit filename="../src/Dealer.cpp" />
 		<Unit filename="../src/Player.cpp" />
 		<Unit filename="../src/Useful_func.cpp" />

@@ -15,7 +15,7 @@
 	<iostream>
 	<algorithm>
 
-1500298061 source:c:\users\a1989\desktop\holdemlab\src\main.cpp
+1500352506 source:c:\users\a1989\desktop\holdemlab\src\main.cpp
 	<stdio.h>
 	<vector>
 	<algorithm>
@@ -25,26 +25,28 @@
 	"myDefine.h"
 	"Dealer.h"
 	"Player.h"
+	"AIplayer.h"
 
-1500280429 c:\users\a1989\desktop\holdemlab\inc\mystruct.h
+1500345405 c:\users\a1989\desktop\holdemlab\inc\mystruct.h
 	<vector>
 
 1499702805 c:\users\a1989\desktop\holdemlab\inc\mydefine.h
 	"Ndebug.h"
 	<string>
 
-1500299547 c:\users\a1989\desktop\holdemlab\inc\dealer.h
+1500353558 c:\users\a1989\desktop\holdemlab\inc\dealer.h
 	"myStruct.h"
 	"myDefine.h"
 	"Player.h"
 	"iostream"
 
-1500279641 c:\users\a1989\desktop\holdemlab\inc\player.h
+1500352541 c:\users\a1989\desktop\holdemlab\inc\player.h
 	"myStruct.h"
 	<vector>
+	<iostream>
 	<string>
 
-1500279653 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
+1500346915 source:c:\users\a1989\desktop\holdemlab\src\player.cpp
 	"Player.h"
 	"Dealer.h"
 	"myStruct.h"
@@ -56,7 +58,7 @@
 
 1499705197 c:\users\a1989\desktop\holdemlab\inc\useful_func.h
 
-1500281352 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
+1500353608 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
 	"Dealer.h"
 	"myDefine.h"
 	"Useful_func.h"
@@ -75,4 +77,12 @@
 	<stdio.h>
 	<windows.h>
 	<string>
+
+1500347468 source:c:\users\a1989\desktop\holdemlab\src\aiplayer.cpp
+	"AIplayer.h"
+	<iostream>
+
+1500347414 c:\users\a1989\desktop\holdemlab\inc\aiplayer.h
+	"Player.h"
+	"myStruct.h"
 

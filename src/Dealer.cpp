@@ -14,12 +14,13 @@
 
 using namespace std;
 
-Dealer::Dealer(vector<Player> &players)
+Dealer::Dealer(vector<Player*> players)
 {
-    ASSERT(((players).size()>0), "players size = 0");
+    ASSERT((players.size()>0), "players size = 0");
     round_cnt = 1;
-    for(uint8_t i=0;i<players.size();i++)
-        plys.push_back(&players[i]);
+    plys = players;
+//    for(uint8_t i=0;i<players.size();i++)
+//        plys.push_back(&players[i]);
 
     set_blind(15,30);
 
@@ -97,14 +98,15 @@ rank_t Dealer::judge(vector<card_t> c)
     }
 
     //check pair,set,quad
-    int same = 0;
+    int same;
     vector<int> pairs;
     int SET = 0;
-    int prev_val = c[0].val;
+    int cmp_tar = c[0].val; //compare target
 
      for(uint8_t i=1;i<c.size();i++)
     {
-        while(c[i].val == prev_val && i<(c.size()))
+        same = 0;
+        while(c[i].val == cmp_tar && i<(c.size()))
         {
             same++;
             i++;
@@ -112,27 +114,24 @@ rank_t Dealer::judge(vector<card_t> c)
         switch(same)
         {
             case 1:
-                pairs.push_back(prev_val);
+                pairs.push_back(cmp_tar);
             break;
             case 2:
-                if(SET == 0 )
-                    SET = prev_val;
-                else if(SET > prev_val)
-                    SET = prev_val;
+                    SET = cmp_tar; //it may be two set in 7 cards, but again,
+                                   //card val is sorted in increase order
+                                   //so don't worry data overwrite
             break;
             case 3:
                 rank.type = 8; //quad
-                rank.kicker.push_back(prev_val);
-                if(c.back().val == prev_val)
+                rank.kicker.push_back(cmp_tar);
+                if(c.back().val == cmp_tar)
                     rank.kicker.push_back(c.end()[-5].val);
                 else
                     rank.kicker.push_back(c.back().val);
                 return rank;
             break;
         }
-        same = 0;
-        prev_val = c[i].val;
-
+        cmp_tar = c[i].val;
     }
 
     //full house checker
@@ -140,7 +139,7 @@ rank_t Dealer::judge(vector<card_t> c)
     {
         rank.type = 7;
         rank.kicker.push_back(SET);
-        rank.kicker.push_back(*max_element(pairs.begin(),pairs.end()));
+        rank.kicker.push_back(pairs.back());
         return rank;
     }
 
@@ -179,7 +178,6 @@ rank_t Dealer::judge(vector<card_t> c)
     else if(pairs.size() >= 2)
     {
         rank.type = 3;
-        sort(pairs.begin(),pairs.end(),std::greater<int>());
         rank.kicker.push_back(pairs.end()[-1]);
         rank.kicker.push_back(pairs.end()[-2]);
         if(c.end()[-1].val == pairs.back())

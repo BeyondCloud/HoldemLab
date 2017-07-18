@@ -2,6 +2,7 @@
 #define PLAYER_H
 #include "myStruct.h"
 #include <vector>
+#include <iostream>
 #include <string>
 
 using namespace std;
@@ -21,7 +22,7 @@ class Player
             turn_bet.clear();
             river_bet.clear();
         };
-        act_t thinking(); //auto input
+        virtual act_t thinking(){cout<<"base";}; //auto input
 
         void print_hole_cards();
         void print_info();

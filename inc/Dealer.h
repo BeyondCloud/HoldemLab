@@ -9,7 +9,7 @@
 class Dealer
 {
     public:
-        Dealer(vector<Player> &players);
+        Dealer(vector<Player*> players);
         rank_t rank;
         rank_t judge(vector<card_t> c);
         Player* bet_leader;
