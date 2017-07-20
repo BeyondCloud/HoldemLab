@@ -5,7 +5,6 @@
 #include "Player.h"
 #include "iostream"
 
-
 class Dealer
 {
     public:
@@ -44,7 +43,7 @@ class Dealer
         int stage;
         int all_in_plys_cnt;
 
-        bool game_cycle(); //return false is player <=1
+        void game_cycle(); //return false is player <=1
         void collect_bets();
         void start_betting();
         void print_card(card_t c){

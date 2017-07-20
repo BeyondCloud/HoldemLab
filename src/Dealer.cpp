@@ -320,70 +320,68 @@ void Dealer::collect_bets()
     }
 }
 
-bool Dealer::game_cycle()
+void Dealer::game_cycle()
 {
 
+    while(plys.size() > 1)
+    {
+        remove_0chip_players();
+        //Dealer init
+        stage = PFLOP;
+        call_to_size = bb;
+        total_pot = 0;
+        cur_pot_ID = 0;
+        all_in_plys_cnt=0;
+        pots.clear();
+        pots.push_back(0);
+        shared_cards.clear();
 
-    //ensure valid players >=2
-    remove_0chip_players();
-    if(plys.size() <= 1)
-    {
-        cout<<"player<=1 , table closed\n";
-        return false;
-    }
-    //Dealer init
-    stage = PFLOP;
-    call_to_size = bb;
-    total_pot = 0;
-    cur_pot_ID = 0;
-    all_in_plys_cnt=0;
-    pots.clear();
-    pots.push_back(0);
-    shared_cards.clear();
+        //init players position,ply_nf_seq[x] x0=SB,x1=BB...
+        //blind bet
+        ply_nf_seq.clear();
+        ply_nf_seq = plys;
+        if(ply_nf_seq.size()!=2)
+        {
+            for(uint8_t pos=0;pos<ply_nf_seq.size();pos++)
+                ply_nf_seq[pos]->init(pos);
+            //blind
+            total_pot += ply_nf_seq[0]->blind_bet(sb);
+            total_pot += ply_nf_seq[1]->blind_bet(bb);
+        }
+        else
+        {
+            ply_nf_seq[0]->init(1); //big blind act first
+            ply_nf_seq[1]->init(0);
+            //blind
+            total_pot += ply_nf_seq[0]->blind_bet(bb);
+            total_pot += ply_nf_seq[1]->blind_bet(sb);
+        }
+        act_ply = (ply_nf_seq.size()<=3)?ply_nf_seq.begin():ply_nf_seq.begin()+2;
+        bet_leader = *act_ply;
+        //deal card
+        random_shuffle(deck.begin(),deck.end());
+        deck_it = deck.begin();
+        for(ply_it =plys.begin();ply_it!=plys.end();ply_it++)
+        {
+            (*ply_it)->hole_card.clear();
+            (*ply_it)->hole_card.push_back(*(deck_it++));
+            (*ply_it)->hole_card.push_back(*(deck_it++));
+            if((*ply_it)->hole_card[0].val<(*ply_it)->hole_card[1].val)
+                swap((*ply_it)->hole_card[0],(*ply_it)->hole_card[1]);
+        }
+        start_betting();
 
-    //init players position,ply_nf_seq[x] x0=SB,x1=BB...
-    //blind bet
-    ply_nf_seq.clear();
-    ply_nf_seq = plys;
-    if(ply_nf_seq.size()!=2)
-    {
-        for(uint8_t pos=0;pos<ply_nf_seq.size();pos++)
-            ply_nf_seq[pos]->init(pos);
-        //blind
-        total_pot += ply_nf_seq[0]->blind_bet(sb);
-        total_pot += ply_nf_seq[1]->blind_bet(bb);
+        //player stop acting,dealer send chips to winning player.
+        system("cls");
+        distribute_pot();
+        print_round_info();
+        system("pause");
+        //pass down button to next player
+        position_shift();
+        round_cnt++;
     }
-    else
-    {
-        ply_nf_seq[0]->init(1); //big blind act first
-        ply_nf_seq[1]->init(0);
-        //blind
-        total_pot += ply_nf_seq[0]->blind_bet(bb);
-        total_pot += ply_nf_seq[1]->blind_bet(sb);
-    }
-    act_ply = (ply_nf_seq.size()<=3)?ply_nf_seq.begin():ply_nf_seq.begin()+2;
-    bet_leader = *act_ply;
-    //deal card
-    random_shuffle(deck.begin(),deck.end());
-    deck_it = deck.begin();
-    for(ply_it =plys.begin();ply_it!=plys.end();ply_it++)
-    {
-        (*ply_it)->hole_card.clear();
-        (*ply_it)->hole_card.push_back(*(deck_it++));
-        (*ply_it)->hole_card.push_back(*(deck_it++));
-        if((*ply_it)->hole_card[0].val<(*ply_it)->hole_card[1].val)
-            swap((*ply_it)->hole_card[0],(*ply_it)->hole_card[1]);
-    }
-    start_betting();
-
-    //player stop acting,dealer send chips to winning player.
-    system("cls");
-    distribute_pot();
-    print_round_info();
-    system("pause");
-    //pass down button to next player
-    position_shift();
-    round_cnt++;
+    cout<<"player<=1 , table closed\n";
+    return;
 }
 
 void Dealer::distribute_pot()

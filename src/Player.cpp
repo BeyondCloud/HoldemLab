@@ -9,6 +9,10 @@
 #include <iostream>
 
 using namespace std;
+Player::~Player()
+{
+    delete d;
+}
 void Player::print_hole_cards()
 {
     cout<<"["<<card_val[hole_card[0].val]<<card_suit[hole_card[0].suit]<<" ";
@@ -135,42 +139,30 @@ void Player::record_bet(int bet,int stage)
 //EX: A bet 5 ,B raise to 10,A call,in this case return 10-5=5
 int Player::action()
 {
-    bool done_act ;
-    int orig_bet = bet;
-    string act;
+    act_t act;
+    bool done_act;
     string bet_str;
-    int raise_to;
     do
     {
+        done_act = true;
         cout<<"Your action? (enter h to see help)"<<endl;
-        cin>>act;
-        switch(act[0])
+        cin>>act.type;
+        switch(act.type)
         {
             case 'a':
-                done_act = all_in();
-            break;
             case 'f':
-                done_act = fold();
-            break;
             case 'c':
-                done_act = check_call(d->call_to_size);
-            break;
+                break;
             case 'r':
-                if(bet + chip > d->call_to_size)
+                cout<<"amount?"<<endl;
+                cin >>bet_str;
+                if(!isNumber(bet_str))
                 {
-                    cout<<"amount?"<<endl;
-                    cin >>bet_str;
-                    if(!isNumber(bet_str))
-                    {
-                        cout<<"invalid input\n";
-                        done_act = false;
-                        break;
-                    }
-                    raise_to=stoi( bet_str );
+                    cout<<"invalid input\n";
+                    done_act = false;
+                    break;
                 }
-                else    //ALL IN
-                    raise_to = bet + chip;
-                done_act = raise(raise_to);
+                act.raise_to=stoi( bet_str );
             break;
             default:
                 d->print_help();
@@ -178,12 +170,7 @@ int Player::action()
             break;
         }
     }while(!done_act);
-
-    if(bet != 0)
-        record_bet(bet,d->stage);
-
-    return  bet-orig_bet;
-
+    return action(act);
 }
 //AI action
 int Player::action(act_t a)

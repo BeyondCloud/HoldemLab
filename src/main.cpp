@@ -10,12 +10,11 @@
 #include "Dealer.h"
 #include "Player.h"
 #include "AIplayer.h"
-#include "AI_allin.h"
 
 
 
 using namespace std;
-string namelist[TBL_SEATS] = {"A","B","C"};
+string namelist[3] = {"A","B","C"};
 int main ()
 {
 
@@ -35,14 +34,15 @@ int main ()
    //initialize player's name and chips
    // for(int i=1;i<TBL_SEATS;i++)
     players.push_back(new AIplayer(namelist[0],1000));
-    players.push_back(new AI_allin(namelist[1],1000));
-    players.push_back(new AI_allin(namelist[2],1000));
+    players.push_back(new AIplayer(namelist[1],1000));
+    players.push_back(new AIplayer(namelist[2],1000));
+
+ //   players.push_back(new AI_allin(namelist[1],1000));
+ //   players.push_back(new AI_allin(namelist[2],1000));
     Dealer dealer(players);
     //game cycle start here
 
-    while(dealer.game_cycle()){}
-    for(int i=0;i<players.size());i++)
-        delete players[i];
+    dealer.game_cycle();
 
     /*
     for(int i=0;i<TBL_SEATS;i++)
