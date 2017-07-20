@@ -1,13 +1,13 @@
-#ifndef AIPLAYER_H
-#define AIPLAYER_H
+#ifndef AI_ALLIN_H
+#define AI_ALLIN_H
 #include "Player.h"
 
 #include "myStruct.h"
 
-class AIplayer: public Player
+class AI_allin: public Player
 {
     public:
-    AIplayer(string n,int c):Player(n,c)
+    AI_allin(string n,int c):Player(n,c)
                             {is_AI = true;};
     virtual act_t thinking();
     private:

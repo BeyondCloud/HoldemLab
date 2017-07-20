@@ -1,10 +1,10 @@
-#include "AIplayer.h"
+#include "AI_allin.h"
 #include <iostream>
 #include <conio.h>
 
 using namespace std;
 
-act_t AIplayer::thinking()
+act_t AI_allin::thinking()
 {
     switch(d->stage)
     {
@@ -13,14 +13,10 @@ act_t AIplayer::thinking()
         break;
     }
 }
-act_t AIplayer::pflop_act()
+act_t AI_allin::pflop_act()
 {
     act_t act;
-
     //early position
-    if(hole_card[0].val+hole_card[1].val>16)
-        act.type = 'a';
-    else
-        act.type = 'f';
+    act.type = 'a';
     return act;
 }

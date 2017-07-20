@@ -15,7 +15,7 @@
 	<iostream>
 	<algorithm>
 
-1500362891 source:c:\users\a1989\desktop\holdemlab\src\main.cpp
+1500366687 source:c:\users\a1989\desktop\holdemlab\src\main.cpp
 	<stdio.h>
 	<vector>
 	<algorithm>
@@ -58,7 +58,7 @@
 
 1499705197 c:\users\a1989\desktop\holdemlab\inc\useful_func.h
 
-1500365558 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
+1500366754 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
 	"Dealer.h"
 	"myDefine.h"
 	"Useful_func.h"
