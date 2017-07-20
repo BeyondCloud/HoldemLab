@@ -10,6 +10,7 @@
 #include "Dealer.h"
 #include "Player.h"
 #include "AIplayer.h"
+#include "AI_allin.h"
 
 
 
@@ -33,16 +34,26 @@ int main ()
     //players.push_back(new Player(namelist[0],1000));
    //initialize player's name and chips
    // for(int i=1;i<TBL_SEATS;i++)
-    players.push_back(new AIplayer(namelist[0],1000));
+    players.push_back(new AI_allin(namelist[0],1000));
     players.push_back(new AIplayer(namelist[1],1000));
     players.push_back(new AIplayer(namelist[2],1000));
 
  //   players.push_back(new AI_allin(namelist[1],1000));
  //   players.push_back(new AI_allin(namelist[2],1000));
-    Dealer dealer(players);
     //game cycle start here
+    Dealer dealer(players);
+    for(int i = 0;i<50;i++)
+    {
+        dealer.game_cycle();
 
-    dealer.game_cycle();
+        dealer.plys.front()->win_cnt++;
+        for(int i=0;i<players.size();i++)
+            players[i]->chip=1000;
+        dealer.players_join(players);
+
+    }
+    for(int i=0;i<players.size();i++)
+       cout<<namelist[i]<<" "<<players[i]->win_cnt<<endl;
 
     /*
     for(int i=0;i<TBL_SEATS;i++)

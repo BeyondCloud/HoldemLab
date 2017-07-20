@@ -37,6 +37,7 @@ class Player
         string name;
         int chip;
         int bet;
+        int win_cnt=0;
         int pot_ID;
         bool fold();
         bool  check_call(int call_size);

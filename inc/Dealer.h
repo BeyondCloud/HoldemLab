@@ -50,6 +50,9 @@ class Dealer
             std::cout<<card_val[c.val];
             std::cout<<card_suit[c.suit]<<" ";};
         void print_help();
+
+        void players_join(vector<Player*> players);
+
         void print_public_cards();
         void print_round_info();
         void set_blind(int sb_val,int bb_val);
@@ -67,6 +70,13 @@ class Dealer
         int check_straight(vector<card_t> c);
 
 };
+inline void Dealer::players_join(vector<Player*> players)
+{
+    plys = players;
+    for(uint8_t i=0;i<plys.size();i++)
+        plys[i]->d = this;
+}
+
 inline int Dealer::hash_rank(const rank_t &rnk)
 {
     int tmp = 0;

@@ -18,10 +18,7 @@ Dealer::Dealer(vector<Player*> players)
 {
     ASSERT((players.size()>0), "players size = 0");
     round_cnt = 1;
-    plys = players;
-    for(uint8_t i=0;i<plys.size();i++)
-        plys[i]->d = this;
-
+    players_join(players);
     set_blind(15,30);
 
  //random seed,without this will create same value
@@ -71,11 +68,13 @@ rank_t Dealer::judge(vector<card_t> c)
         //if one of four suits count > 5,flush exist
         if(suit_cnt[i] >=5 )
         {
+
             vector<card_t> cardsFlush;
-            for(uint8_t j=0;j<c.size();j++)
+            for(uint16_t j=0;j<c.size();j++)
             {
                 if(c[j].suit == i)
-                    cardsFlush.push_back(c[i]);
+                    cardsFlush.push_back(c[j]);
+                    cout<<j;
             }
             //=========straight flush checker================
             int top_card = check_straight(cardsFlush);
@@ -90,7 +89,7 @@ rank_t Dealer::judge(vector<card_t> c)
                 rank.type = 6;
                 //card value has been sorted greater
                 //kicker = last five elements
-                for(uint8_t j =-1;j>=-5;j--)
+                for(int8_t j =-1;j>=-5;j--)
                     rank.kicker.push_back(cardsFlush.end()[j].val);
                 return rank;
             }
@@ -228,6 +227,7 @@ rank_t Dealer::judge(vector<card_t> c)
             rank.kicker.push_back(c.end()[i].val);
         return rank;
     }
+
 }
 //return the top card of straight if it is
 //else return 0
@@ -374,8 +374,10 @@ void Dealer::game_cycle()
         //player stop acting,dealer send chips to winning player.
         system("cls");
         distribute_pot();
-        print_round_info();
-        system("pause");
+        #ifdef UI_on
+            print_round_info();
+            system("pause");
+        #endif
         //pass down button to next player
         position_shift();
         round_cnt++;
@@ -407,7 +409,6 @@ void Dealer::distribute_pot()
             cout<<"Player "<<(*ply_it)->name<<" ";
             (*ply_it)->print_hole_cards();
             cout<<" got "<<card5_name[rnk.type]<<"\t"<<"hash code:"<<(*ply_it)->hash_val<<endl;
-
             ply_hash_greater.push_back((*ply_it));
         }
         sort(ply_hash_greater.begin(), ply_hash_greater.end(),hash_val_greater);
@@ -466,8 +467,10 @@ void Dealer::distribute_pot()
 
 void Dealer::wake_up(vector<Player*>::iterator act)
 {
-    system("cls");
-    print_round_info();
+    #ifdef UI_on
+        system("cls");
+        print_round_info();
+    #endif // UI_on
     cout<<"Player "<<(*act)->name<<"'s turn"<<endl;
     cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
     (*act)->print_hole_cards();
