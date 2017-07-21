@@ -36,7 +36,7 @@ int main ()
    // for(int i=1;i<TBL_SEATS;i++)
     players.push_back(new AI_allin(namelist[0],1000));
     players.push_back(new AIplayer(namelist[1],1000));
-    players.push_back(new AIplayer(namelist[2],1000));
+    //players.push_back(new AIplayer(namelist[2],1000));
 
  //   players.push_back(new AI_allin(namelist[1],1000));
  //   players.push_back(new AI_allin(namelist[2],1000));

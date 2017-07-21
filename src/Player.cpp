@@ -145,7 +145,9 @@ int Player::action()
     do
     {
         done_act = true;
+        #ifdef UI_on
         cout<<"Your action? (enter h to see help)"<<endl;
+        #endif // UI_on
         cin>>act.type;
         switch(act.type)
         {
@@ -154,7 +156,10 @@ int Player::action()
             case 'c':
                 break;
             case 'r':
+                #ifdef UI_on
                 cout<<"amount?"<<endl;
+                #endif // UI_on
+
                 cin >>bet_str;
                 if(!isNumber(bet_str))
                 {

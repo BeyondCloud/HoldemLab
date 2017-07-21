@@ -18,7 +18,8 @@ act_t AIplayer::pflop_act()
     act_t act;
 
     //early position
-    if(hole_card[0].val+hole_card[1].val>16)
+    if(hole_card[0].val+hole_card[1].val>22||
+       hole_card[0].val==hole_card[1].val)
         act.type = 'a';
     else
         act.type = 'f';

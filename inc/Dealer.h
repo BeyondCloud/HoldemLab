@@ -66,7 +66,7 @@ class Dealer
         void split_pot(vector<Player*> &split_player);
         void distribute_pot();
         void position_shift();  //means pass down button to next player
-
+        int stage_init_pot_size;
         int check_straight(vector<card_t> c);
 
 };

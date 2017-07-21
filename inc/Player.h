@@ -17,7 +17,7 @@ class Player
         void init(int pos){
             position = pos;
             bet = 0;
-            pot_ID = -1;
+            pot_ID = 1;
             isAll_in = false;
             isFold = false;
             pflop_bet.clear();

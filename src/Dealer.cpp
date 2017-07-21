@@ -74,7 +74,6 @@ rank_t Dealer::judge(vector<card_t> c)
             {
                 if(c[j].suit == i)
                     cardsFlush.push_back(c[j]);
-                    cout<<j;
             }
             //=========straight flush checker================
             int top_card = check_straight(cardsFlush);
@@ -260,10 +259,13 @@ int Dealer::check_straight(vector<card_t> c)
 // to build the side pot until no one have bet chips remain
 void Dealer::collect_bets()
 {
+    //no one bet in this stage,nothing to do
+    if(total_pot== stage_init_pot_size)
+        return;
     vector<Player*> ply_bets_smaller;
     int orig_pot_ID =cur_pot_ID;
     //don't need to worry about fold player
-    //it has been add to pots at
+    //it has been add to pots before
     for(ply_it = ply_nf_seq.begin();ply_it!=ply_nf_seq.end();ply_it++)
     {
         if((*ply_it)->bet != 0)
@@ -274,8 +276,6 @@ void Dealer::collect_bets()
         }
 
     }
-    if(ply_bets_smaller.size() == 0)
-        return;
 
     sort(ply_bets_smaller.begin(),ply_bets_smaller.end(),bet_smaller);
 
@@ -286,10 +286,8 @@ void Dealer::collect_bets()
         ply_rit !=ply_bets_smaller.rend();ply_rit++)
     {
         if( (*ply_rit)->bet == cur_scan_bet)
-        {
             (*ply_rit)->pot_ID =cur_pot_ID;
-        }
-        else
+        else //create side pot
         {
             cur_scan_bet = (*ply_rit)->bet;
             cur_pot_ID++;
@@ -372,7 +370,7 @@ void Dealer::game_cycle()
         start_betting();
 
         //player stop acting,dealer send chips to winning player.
-        system("cls");
+        //system("cls");
         distribute_pot();
         #ifdef UI_on
             print_round_info();
@@ -390,13 +388,16 @@ void Dealer::distribute_pot()
 {
     vector<Player*> ply_hash_greater;
     ply_hash_greater.clear();
+//    cout<<"p:"<<pots.size()<<endl;
 
     //if one ply remain , don't need judge
     if(ply_nf_seq.size() == 1)
     {
+        #ifdef UI_on
             cout<<"Player"<<ply_nf_seq.front()->name<<" takes "<< pots.back()<<"$"<<endl;
-            ply_nf_seq.front()->chip += pots.back();
-            return;
+        #endif // UI_on
+        ply_nf_seq.front()->chip += pots.back();
+        return;
     }
     else
     {
@@ -405,27 +406,20 @@ void Dealer::distribute_pot()
         {
             rank_t rnk = judge((*ply_it)->hole_card);
             (*ply_it)->hash_val = hash_rank(rnk);
-
+            #ifdef UI_on
             cout<<"Player "<<(*ply_it)->name<<" ";
             (*ply_it)->print_hole_cards();
             cout<<" got "<<card5_name[rnk.type]<<"\t"<<"hash code:"<<(*ply_it)->hash_val<<endl;
+            #endif // UI_on
             ply_hash_greater.push_back((*ply_it));
         }
         sort(ply_hash_greater.begin(), ply_hash_greater.end(),hash_val_greater);
 
-        //win pot field
-        //players get main pot, side pot...etc
-        //if tie , split pot
-        /*
-        for(uint8_t i =0;i<ply_hash_greater.size();i++)
-            cout<<"Player "<<ply_hash_greater[i]->name<<" potID = "<<ply_hash_greater[i]->pot_ID<<endl;
-        */
+
     }
-    //uint8_t is not able to print by cout
-    /*
-    for(uint16_t i =0;i<pots.size();i++)
-        cout<<"pot "<<i<<":"<<pots[i]<<endl;
-    */
+    //win pot field
+    //players get main pot, side pot...etc
+    //if tie , split pot
     //start from the highest pot ID
     //if players have pot ID >=current pot ID
     //he can join competition
@@ -447,16 +441,32 @@ void Dealer::distribute_pot()
         }
         if(split_player.size() ==1)
         {
-            cout<<"Player"<<split_player.front()->name<<" takes "<<pots.back()<<"$"<<endl;
+            #ifdef UI_on
+                cout<<"Player"<<split_player.front()->name<<" takes "<<pots.back()<<"$"<<endl;
+            #endif // UI_on
             split_player.front()->chip+=pots.back();
             pots.pop_back();
             continue;
         }
         else if(split_player.size() == 0)
         {
+            //Exception zone ,if enter this field,bug occur
+            cout<<pots.size()<<" ";
+            for(uint8_t i =0;i<ply_hash_greater.size();i++)
+            {
+               cout<<ply_hash_greater[i]->pot_ID<<" ";
+
+                //if(ply_hash_greater[i]->isFold)
+                //    cout<<"fold";
+
+            }
+            cout<<"t:"<<total_pot;
+            cout<<"i:"<<stage_init_pot_size;
+
             cout<<" split_player.size() == 0\n";
             cout<<" this should be at least 1\n";
             cout<<"dealer.pots.back() / split_player.size() error"<<endl;
+            system("pause");
             break;
         }
         else
@@ -470,11 +480,12 @@ void Dealer::wake_up(vector<Player*>::iterator act)
     #ifdef UI_on
         system("cls");
         print_round_info();
-    #endif // UI_on
     cout<<"Player "<<(*act)->name<<"'s turn"<<endl;
     cout<<"Pot:"<<total_pot<<" ,Your chip: "<<(*act)->chip<<endl;
     (*act)->print_hole_cards();
     cout<<endl;
+    #endif // UI_on
+
     if((*act)->is_AI)
     {
         act_t a = (*act)->thinking();
@@ -482,12 +493,14 @@ void Dealer::wake_up(vector<Player*>::iterator act)
     }
     else
         total_pot += (*act)->action();
-    cout<<endl;
+    //cout<<endl;
+
 }
 void Dealer::start_betting()
 {
     do
     {
+        stage_init_pot_size=total_pot;//see if we need to collect bet or not
         if(ply_nf_seq.size()-all_in_plys_cnt == 1)
         {
             while(shared_cards.size()!=5)
@@ -536,7 +549,7 @@ void Dealer::start_betting()
         act_ply = ply_nf_seq.begin();
         bet_leader = *act_ply;
         stage = (stage<3)?stage+1:stage;
-        cout<<endl;
+
     } while(shared_cards.size()!=5);
 
 }
