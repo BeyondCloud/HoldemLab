@@ -328,6 +328,7 @@ void Dealer::game_cycle()
         stage = PFLOP;
         call_to_size = bb;
         total_pot = 0;
+        stage_init_pot_size=total_pot;
         cur_pot_ID = 0;
         all_in_plys_cnt=0;
         pots.clear();
@@ -493,14 +494,13 @@ void Dealer::wake_up(vector<Player*>::iterator act)
     }
     else
         total_pot += (*act)->action();
-    //cout<<endl;
+    cout<<endl;
 
 }
 void Dealer::start_betting()
 {
     do
     {
-        stage_init_pot_size=total_pot;//see if we need to collect bet or not
         if(ply_nf_seq.size()-all_in_plys_cnt == 1)
         {
             while(shared_cards.size()!=5)
@@ -549,6 +549,8 @@ void Dealer::start_betting()
         act_ply = ply_nf_seq.begin();
         bet_leader = *act_ply;
         stage = (stage<3)?stage+1:stage;
+        stage_init_pot_size=total_pot;//see if we need to collect bet or not
+
 
     } while(shared_cards.size()!=5);
 

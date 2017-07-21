@@ -21,6 +21,8 @@ act_t AIplayer::pflop_act()
     if(hole_card[0].val+hole_card[1].val>22||
        hole_card[0].val==hole_card[1].val)
         act.type = 'a';
+    else if(chip>1500)
+        act.type = 'a';
     else
         act.type = 'f';
     return act;

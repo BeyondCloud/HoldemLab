@@ -31,7 +31,7 @@
 1500345405 c:\users\a1989\desktop\holdemlab\inc\mystruct.h
 	<vector>
 
-1500601717 c:\users\a1989\desktop\holdemlab\inc\mydefine.h
+1500607554 c:\users\a1989\desktop\holdemlab\inc\mydefine.h
 	"Ndebug.h"
 	<string>
 
@@ -41,7 +41,7 @@
 	"Player.h"
 	"iostream"
 
-1500606556 c:\users\a1989\desktop\holdemlab\inc\player.h
+1500606578 c:\users\a1989\desktop\holdemlab\inc\player.h
 	"myStruct.h"
 	<vector>
 	<iostream>
@@ -59,7 +59,7 @@
 
 1499705197 c:\users\a1989\desktop\holdemlab\inc\useful_func.h
 
-1500606048 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
+1500607399 source:c:\users\a1989\desktop\holdemlab\src\dealer.cpp
 	"Dealer.h"
 	"myDefine.h"
 	"Useful_func.h"
