@@ -53,10 +53,12 @@ bool Player::fold()
     if(d->ply_nf_seq.size() > 1)
     {
         isFold = true;
-        cout<<"player "<<name<<" fold"<<endl;
+        #ifdef UI_on
+        cout<<name<<" fold"<<endl;
+        #endif // UI_on
     }
-    else
-        cout<<"you are last player in the ring"<<endl;
+    else //this should not be call,if called,bug occurred
+        cout<<name<<" is the last player in the ring"<<endl;
     return true;
 
 }
@@ -64,11 +66,13 @@ bool Player::check_call(int call_to_size)
 {
     if(bet+chip<=call_to_size)
         return all_in();
+    #ifdef UI_on
     else if (bet == call_to_size)
-        cout<<"you check "<<endl;
+        cout<<name<<" check "<<endl;
+    #endif // UI_on
     else
     {
-        cout<<"you call "<<call_to_size<<"$"<<endl;
+        cout<<name<<" call "<<call_to_size<<"$"<<endl;
         chip -= (call_to_size-bet);
         bet = call_to_size;
     }
@@ -82,16 +86,18 @@ bool Player::raise(int raise_to)
         return all_in();
     else
     {
-        if(raise_to < call_to_size*2)
+        if(raise_to < call_to_size+d->bb)
         {
             cout<<"Your raise is smaller than min raise size(";
-            cout<<  call_to_size * 2 <<")"<<endl;
+            cout<<  call_to_size <<"+"<< d->bb <<")"<<endl;
             cout<<"please try other action"<<endl;
             return false;
         }
         else
         {
-            cout<<"you raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
+            #ifdef UI_on
+            cout<<name<<" raise from"<<bet<<"$ to"<<raise_to<<"$"<<endl;
+            #endif // UI_on
             chip-=raise_to - bet;
             bet = raise_to;
             d->call_to_size = bet;
@@ -103,7 +109,9 @@ bool Player::raise(int raise_to)
 }
 bool Player::all_in()
 {
+    #ifdef UI_on
     cout<<"You go all in";
+    #endif // UI_on
     bet +=chip;
     if(bet > d->call_to_size)
     {

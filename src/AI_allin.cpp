@@ -4,7 +4,7 @@
 
 using namespace std;
 
-act_t AI_allin::thinking()
+act_t AI_allin::getStrategy()
 {
     switch(d->stage)
     {

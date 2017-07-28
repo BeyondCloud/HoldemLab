@@ -4,7 +4,7 @@
 
 using namespace std;
 
-act_t AIplayer::thinking()
+act_t AIplayer::getStrategy()
 {
     switch(d->stage)
     {

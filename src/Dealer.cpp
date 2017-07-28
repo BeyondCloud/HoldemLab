@@ -328,7 +328,6 @@ void Dealer::game_cycle()
         stage = PFLOP;
         call_to_size = bb;
         total_pot = 0;
-        stage_init_pot_size=total_pot;
         cur_pot_ID = 0;
         all_in_plys_cnt=0;
         pots.clear();
@@ -339,24 +338,7 @@ void Dealer::game_cycle()
         //blind bet
         ply_nf_seq.clear();
         ply_nf_seq = plys;
-        if(ply_nf_seq.size()!=2)
-        {
-            for(uint8_t pos=0;pos<ply_nf_seq.size();pos++)
-                ply_nf_seq[pos]->init(pos);
-            //blind
-            total_pot += ply_nf_seq[0]->blind_bet(sb);
-            total_pot += ply_nf_seq[1]->blind_bet(bb);
-        }
-        else
-        {
-            ply_nf_seq[0]->init(1); //big blind act first
-            ply_nf_seq[1]->init(0);
-            //blind
-            total_pot += ply_nf_seq[0]->blind_bet(bb);
-            total_pot += ply_nf_seq[1]->blind_bet(sb);
-        }
-        act_ply = (ply_nf_seq.size()<=3)?ply_nf_seq.begin():ply_nf_seq.begin()+2;
-        bet_leader = *act_ply;
+
         //deal card
         random_shuffle(deck.begin(),deck.end());
         deck_it = deck.begin();
@@ -489,16 +471,37 @@ void Dealer::wake_up(vector<Player*>::iterator act)
 
     if((*act)->is_AI)
     {
-        act_t a = (*act)->thinking();
+        act_t a = (*act)->getStrategy();
         total_pot += (*act)->action(a);
     }
     else
         total_pot += (*act)->action();
+    #ifdef UI_on
     cout<<endl;
+    #endif // UI_on
 
 }
 void Dealer::start_betting()
 {
+    stage_init_pot_size=total_pot;
+    if(ply_nf_seq.size()!=2)
+    {
+        for(uint8_t pos=0;pos<ply_nf_seq.size();pos++)
+            ply_nf_seq[pos]->init(pos);
+        //blind
+        total_pot += ply_nf_seq[0]->blind_bet(sb);
+        total_pot += ply_nf_seq[1]->blind_bet(bb);
+    }
+    else
+    {
+        ply_nf_seq[0]->init(1); //big blind act first
+        ply_nf_seq[1]->init(0);
+        //blind
+        total_pot += ply_nf_seq[0]->blind_bet(bb);
+        total_pot += ply_nf_seq[1]->blind_bet(sb);
+    }
+    act_ply = (ply_nf_seq.size()<=3)?ply_nf_seq.begin():ply_nf_seq.begin()+2;
+    bet_leader = *act_ply;
     do
     {
         if(ply_nf_seq.size()-all_in_plys_cnt == 1)

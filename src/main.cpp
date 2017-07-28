@@ -47,12 +47,12 @@ int main ()
         dealer.game_cycle();
 
         dealer.plys.front()->win_cnt++;
-        for(int i=0;i<players.size();i++)
+        for(uint8_t i=0;i<players.size();i++)
             players[i]->chip=1000;
         dealer.players_join(players);
 
     }
-    for(int i=0;i<players.size();i++)
+    for(uint8_t i=0;i<players.size();i++)
        cout<<namelist[i]<<" "<<players[i]->win_cnt<<endl;
 
     /*

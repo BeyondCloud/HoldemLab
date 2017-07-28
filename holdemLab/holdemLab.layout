@@ -2,34 +2,19 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="..\inc\Dealer.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2764" topLine="62" />
-		</Cursor>
-	</File>
-	<File name="..\src\AIplayer.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="10" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="298" topLine="3" />
-		</Cursor>
-	</File>
-	<File name="..\src\Player.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="270" topLine="22" />
-		</Cursor>
-	</File>
-	<File name="..\inc\myDefine.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="7" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="77" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="..\inc\Ndebug.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="6" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="101" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\inc\myStruct.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
+	<File name="..\src\AIplayer.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="10" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="136" topLine="0" />
+			<Cursor1 position="117" topLine="2" />
+		</Cursor>
+	</File>
+	<File name="..\inc\AI_allin.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="204" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="..\inc\Useful_func.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
@@ -37,14 +22,29 @@
 			<Cursor1 position="46" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\inc\Player.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
+	<File name="..\src\AI_allin.cpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="10" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="940" topLine="34" />
+			<Cursor1 position="42" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\src\Dealer.cpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
+	<File name="..\src\Player.cpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="11886" topLine="395" />
+			<Cursor1 position="2500" topLine="80" />
+		</Cursor>
+	</File>
+	<File name="..\inc\Dealer.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2100" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="..\inc\AIplayer.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="9" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="198" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\inc\myDefine.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="7" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="98" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="..\src\Useful_func.cpp" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
@@ -52,24 +52,24 @@
 			<Cursor1 position="130" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="..\inc\Player.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="722" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="..\src\Dealer.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="13738" topLine="457" />
+		</Cursor>
+	</File>
+	<File name="..\inc\myStruct.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="136" topLine="0" />
+		</Cursor>
+	</File>
 	<File name="..\src\main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1119" topLine="36" />
-		</Cursor>
-	</File>
-	<File name="..\inc\AIplayer.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="9" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="154" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="..\src\AI_allin.cpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="10" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="188" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="..\inc\AI_allin.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="4" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="141" topLine="0" />
+			<Cursor1 position="1397" topLine="24" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

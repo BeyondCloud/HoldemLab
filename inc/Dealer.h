@@ -38,7 +38,10 @@ class Dealer
                         //since player will be remove at any time
                         //this will record the index of ply pos
         int total_pot;
-        vector<int> pots;
+        vector<int> pots; //use pot vector to store side pots if needed
+                          //if A bet 45$ B all in 30$
+                          //side pot 15$ will push_back this vector
+                          //later dealer will return 15 to A in distribute_pot()
         int cur_pot_ID;
         int stage;
         int all_in_plys_cnt;

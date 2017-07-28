@@ -27,7 +27,7 @@ class Player
         };
         //auto input
         //AI can implement it's own method by rewrite this
-        virtual act_t thinking(){cout<<"base";act_t a;return a;};
+        virtual act_t getStrategy(){cout<<"base";act_t a;return a;};
 
         void print_hole_cards();
         void print_info();
